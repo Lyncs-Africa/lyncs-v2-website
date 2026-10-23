@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Medium.woff2') format('woff2'),
+  url('/fonts/Satoshi-Medium.woff') format('woff'),
+  url('/fonts/Satoshi-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/Satoshi-Bold.woff2') format('woff2'),
+  url('/fonts/Satoshi-Bold.woff') format('woff'),
+  url('/fonts/Satoshi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --page-bg: #ffffff;
+  }
+
+  .dark {
+    --page-bg: #0b1120;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+}
+
+/* Partner logos scroll at a constant speed instead of easing between slides */
+.partner-swiper .swiper-wrapper {
+  transition-timing-function: linear;
+}
+
+/*
+ * Hero panel notch: the panel masks a rounded notch out of its own top edge,
+ * so the page background shows through instead of a painted cover.
+ * Layers are unioned; each one is anchored at an edge because mask-position
+ * percentages are relative to (box - layer size).
+ */
+.hero-notch-vars {
+  --notch-w: 656px;
+  --notch-h: 92px;
+  --notch-r: 32px;
+  --notch-side: calc(50% - var(--notch-w) / 2);
+}
+
+@media (min-width: 768px) {
+  .hero-panel-notch {
+    --r: var(--notch-r);
+    --in: calc(var(--r) - 0.5px);
+    --shoulder: radial-gradient(circle var(--r) at calc(100% - var(--r)) 100%, #000 var(--in), transparent var(--r));
+    --shoulder-r: radial-gradient(circle var(--r) at var(--r) 100%, #000 var(--in), transparent var(--r));
+    --foot: radial-gradient(circle var(--r) at 100% 0, transparent var(--in), #000 var(--r));
+    --foot-r: radial-gradient(circle var(--r) at 0 0, transparent var(--in), #000 var(--r));
+    --solid: linear-gradient(#000, #000);
+
+    -webkit-mask-image: var(--solid), var(--solid), var(--shoulder), var(--shoulder-r), var(--solid), var(--solid), var(--solid), var(--foot), var(--foot-r);
+    mask-image: var(--solid), var(--solid), var(--shoulder), var(--shoulder-r), var(--solid), var(--solid), var(--solid), var(--foot), var(--foot-r);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size:
+      calc(var(--notch-side) - var(--r)) 100%,
+      calc(var(--notch-side) - var(--r)) 100%,
+      var(--notch-side) var(--r),
+      var(--notch-side) var(--r),
+      var(--notch-side) calc(100% - var(--r)),
+      var(--notch-side) calc(100% - var(--r)),
+      100% calc(100% - var(--notch-h)),
+      calc(var(--notch-side) + var(--r)) var(--r),
+      calc(var(--notch-side) + var(--r)) var(--r);
+    mask-size:
+      calc(var(--notch-side) - var(--r)) 100%,
+      calc(var(--notch-side) - var(--r)) 100%,
+      var(--notch-side) var(--r),
+      var(--notch-side) var(--r),
+      var(--notch-side) calc(100% - var(--r)),
+      var(--notch-side) calc(100% - var(--r)),
+      100% calc(100% - var(--notch-h)),
+      calc(var(--notch-side) + var(--r)) var(--r),
+      calc(var(--notch-side) + var(--r)) var(--r);
+    -webkit-mask-position:
+      0 0,
+      100% 0,
+      0 0,
+      100% 0,
+      0 var(--r),
+      100% var(--r),
+      0 var(--notch-h),
+      0 calc(var(--notch-h) - var(--r)),
+      100% calc(var(--notch-h) - var(--r));
+    mask-position:
+      0 0,
+      100% 0,
+      0 0,
+      100% 0,
+      0 var(--r),
+      100% var(--r),
+      0 var(--notch-h),
+      0 calc(var(--notch-h) - var(--r)),
+      100% calc(var(--notch-h) - var(--r));
+  }
+}
