@@ -38,7 +38,7 @@ const PurchaseDeliveryModal = ({
     if (!form.firstName.trim()) errs.firstName = "First name is required";
     if (!form.lastName.trim()) errs.lastName = "Last name is required";
     if (!form.email.trim() || !form.email.includes("@")) errs.email = "Valid email is required";
-    
+
     const formattedPhone = toInternationalFormat(form.phone);
     if (!formattedPhone) {
       errs.phone = "Valid phone number (E.164) is required, e.g. +2348012345678";
@@ -172,7 +172,7 @@ const PurchaseDeliveryModal = ({
       </div>
 
       {/* Buttons */}
-      <div className="flex items-center justify-between pt-4 border-t border-light dark:border-slate-800">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-light dark:border-slate-800">
         <Button
           variant="bordered"
           radius="full"

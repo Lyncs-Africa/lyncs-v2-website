@@ -36,14 +36,14 @@ const CarPageView = ({ initialTab = "brand-new", initialAction = /** @type {stri
       <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} />
 
       {/* Page Title & Subtitle */}
-      <div className="mb-6 sm:mb-8">
+      {/* <div className="mb-6 sm:mb-8">
         <h1 className="text-28px sm:text-36px font-extrabold text-slate-900 dark:text-white tracking-tight">
           Vehicle Store & Import
         </h1>
         <p className="text-14px sm:text-15px text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
           Explore brand new factory units and certified foreign used cars available for Lagos port delivery.
         </p>
-      </div>
+      </div> */}
 
       {/* Tabs */}
       <div className="space-y-3 mb-6 sm:mb-8">

@@ -95,7 +95,6 @@ const RequestVehicleForm = ({
                 }
               >
                 <SelectItem key="petrol" value="petrol">Petrol</SelectItem>
-                <SelectItem key="diesel" value="diesel">Diesel</SelectItem>
                 <SelectItem key="hybrid" value="hybrid">Hybrid</SelectItem>
                 <SelectItem key="electric" value="electric">Electric</SelectItem>
               </Select>
