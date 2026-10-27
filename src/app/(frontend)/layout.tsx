@@ -5,6 +5,8 @@ import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import ScrollToTop from '../../components/ui/ScrollToTop'
 import ThemeProvider, { themeScript } from '../../components/theme/ThemeProvider'
+import 'react-international-phone/style.css'
+import 'react-toastify/dist/ReactToastify.css'
 import '../globals.css'
 
 const quicksand = Quicksand({ subsets: ['latin'], variable: '--font-quicksand' })

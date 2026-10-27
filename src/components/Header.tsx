@@ -43,6 +43,7 @@ const NAV_ITEMS: NavItem[] = [
     label: "Cars",
     badge: "New",
     children: [
+      { href: "/cars/list", label: "Browse all cars" },
       { href: "/cars/swap", label: "Swap your car for EV" },
       { href: "/cars/new", label: "Buy new cars" },
       { href: "/cars/used", label: "Buy used cars " },
