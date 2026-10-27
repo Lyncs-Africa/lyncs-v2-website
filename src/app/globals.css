@@ -2,11 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/Satoshi-Medium.woff2') format('woff2'),
-  url('/fonts/Satoshi-Medium.woff') format('woff'),
-  url('/fonts/Satoshi-Medium.ttf') format('truetype');
+    url('/fonts/Satoshi-Medium.woff') format('woff'),
+    url('/fonts/Satoshi-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -15,8 +28,8 @@
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/Satoshi-Bold.woff2') format('woff2'),
-  url('/fonts/Satoshi-Bold.woff') format('woff'),
-  url('/fonts/Satoshi-Bold.ttf') format('truetype');
+    url('/fonts/Satoshi-Bold.woff') format('woff'),
+    url('/fonts/Satoshi-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -33,13 +46,13 @@
 
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
   }
 
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
   }
 }
 
@@ -116,4 +129,232 @@
       0 calc(var(--notch-h) - var(--r)),
       100% calc(var(--notch-h) - var(--r));
   }
+}
+
+/* Modal Drawer & Backdrop Overlay System */
+.slideUp {
+  background-size: contain;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  color: #fff;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  z-index: 99;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .slideUp {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 750px;
+    z-index: 99;
+    padding: 0;
+  }
+}
+
+.main-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  height: 100%;
+  inset: 0;
+  position: fixed;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+  z-index: 99;
+}
+
+.smaller-modal {
+  background-color: #fff;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05);
+  overflow: auto;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .smaller-modal {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: 750px;
+    max-width: 750px;
+    left: auto;
+    margin: 0;
+  }
+}
+
+.dark .slideUp {
+  background-color: #0f172a;
+}
+
+.dark .smaller-modal {
+  background-color: #0f172a;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+/* Slim scrollbar utility */
+.slim-scroll::-webkit-scrollbar {
+  width: 6px !important;
+  background: transparent;
+}
+
+.slim-scroll::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.slim-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 20px;
+  border: none;
+}
+
+.dark .slim-scroll::-webkit-scrollbar-thumb {
+  background-color: #334155;
+}
+
+.slim-scroll {
+  scrollbar-width: thin;
+}
+
+/* React International Phone Unified Styling */
+.react-international-phone-input-container {
+  display: flex !important;
+  width: 100% !important;
+  height: 44px !important;
+  align-items: stretch !important;
+  position: relative !important;
+}
+
+.react-international-phone-country-selector {
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.react-international-phone-country-selector-button {
+  height: 100% !important;
+  min-height: 44px !important;
+  border-radius: 12px 0 0 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-right: none !important;
+  background-color: #ffffff !important;
+  padding: 0 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+.react-international-phone-country-selector-button:hover {
+  background-color: #f8fafc !important;
+}
+
+.react-international-phone-country-selector-button .react-international-phone-country-selector-button__button-content {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.react-international-phone-country-selector-button__dropdown-arrow {
+  margin-left: 2px !important;
+  margin-right: 0 !important;
+}
+
+.react-international-phone-input {
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 44px !important;
+  border-radius: 0 12px 12px 0 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 1px solid #f1f5f9 !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  font-size: 14px !important;
+  padding: 0 12px !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.react-international-phone-input-container:focus-within .react-international-phone-country-selector-button {
+  border-color: #0052cc !important;
+}
+
+.react-international-phone-input-container:focus-within .react-international-phone-input {
+  border-color: #0052cc !important;
+}
+
+.react-international-phone-country-selector-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  z-index: 99999 !important;
+  top: 48px !important;
+  max-height: 220px !important;
+  width: 280px !important;
+}
+
+.react-international-phone-country-selector-dropdown__list-item {
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+}
+
+.react-international-phone-country-selector-dropdown__list-item:hover,
+.react-international-phone-country-selector-dropdown__list-item--focused {
+  background-color: #f1f5f9 !important;
+}
+
+/* Dark Mode Overrides */
+.dark .react-international-phone-country-selector-button {
+  background-color: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-right: none !important;
+}
+
+.dark .react-international-phone-country-selector-button:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .react-international-phone-country-selector-button__dropdown-arrow {
+  border-top-color: #94a3b8 !important;
+}
+
+.dark .react-international-phone-input {
+  background-color: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .react-international-phone-input-container:focus-within .react-international-phone-country-selector-button,
+.dark .react-international-phone-input-container:focus-within .react-international-phone-input {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark .react-international-phone-country-selector-dropdown {
+  background-color: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .react-international-phone-country-selector-dropdown__list-item:hover,
+.dark .react-international-phone-country-selector-dropdown__list-item--focused {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .react-international-phone-country-selector-dropdown__list-item-country-name {
+  color: #f1f5f9 !important;
+}
+
+.dark .react-international-phone-country-selector-dropdown__list-item-dial-code {
+  color: #94a3b8 !important;
 }
