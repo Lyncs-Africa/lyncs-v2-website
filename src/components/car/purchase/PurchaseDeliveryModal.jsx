@@ -5,7 +5,7 @@ import { Button, Input, Checkbox } from "../../ui/HeroUI.jsx";
 import { FiMapPin, FiTruck } from "react-icons/fi";
 import { PhoneInput } from "react-international-phone";
 import cn from "classnames";
-import { numberWithCommas, toInternationalFormat } from "../../../lib/utils.js";
+import { numberWithCommas, toInternationalFormat, normalizePhoneInput } from "../../../lib/utils.js";
 import { getDeliveryFeeInfo } from "../../../lib/carPurchase.js";
 
 const PurchaseDeliveryModal = ({
@@ -138,7 +138,14 @@ const PurchaseDeliveryModal = ({
           <PhoneInput
             defaultCountry="ng"
             value={form.phone}
-            onChange={(val) => setForm({ ...form, phone: val })}
+            onChange={(val) => {
+              const normalized = normalizePhoneInput(val);
+              setForm((prev) => ({
+                ...prev,
+                phone: normalized,
+                whatsapp: prev.isSameAsPhone ? normalized : prev.whatsapp,
+              }));
+            }}
             className="w-full"
           />
           {errors.phone && <p className="text-11px text-red-500 mt-1">{errors.phone}</p>}
@@ -162,7 +169,10 @@ const PurchaseDeliveryModal = ({
               <PhoneInput
                 defaultCountry="ng"
                 value={form.whatsapp}
-                onChange={(val) => setForm({ ...form, whatsapp: val })}
+                onChange={(val) => {
+                  const normalized = normalizePhoneInput(val);
+                  setForm((prev) => ({ ...prev, whatsapp: normalized }));
+                }}
                 className="w-full"
               />
               {errors.whatsapp && <p className="text-11px text-red-500 mt-1">{errors.whatsapp}</p>}

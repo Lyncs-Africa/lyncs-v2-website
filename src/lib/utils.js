@@ -12,6 +12,28 @@ export function titleCase(str) {
     .join(" ");
 }
 
+export function normalizePhoneInput(val) {
+  if (!val || typeof val !== "string") return val || "";
+  let str = val.trim();
+  // If browser autofill inserts leading 0 (e.g. 080... or +080...)
+  if (str.startsWith("+0")) {
+    return "+234" + str.slice(2);
+  }
+  if (str.startsWith("0")) {
+    return "+234" + str.slice(1);
+  }
+  if (str.startsWith("+2340")) {
+    return "+234" + str.slice(5);
+  }
+  if (str.startsWith("2340")) {
+    return "+234" + str.slice(4);
+  }
+  if (/^[789]\d{9}$/.test(str)) {
+    return "+234" + str;
+  }
+  return str;
+}
+
 export function toInternationalFormat(phone) {
   if (!phone || typeof phone !== "string") return "";
 
@@ -19,8 +41,10 @@ export function toInternationalFormat(phone) {
   let cleaned = phone.replace(/[^\d+]/g, "").trim();
   if (!cleaned) return "";
 
-  // 2. Normalize leading + and country code
-  if (!cleaned.startsWith("+")) {
+  // 2. Handle autofilled numbers starting with +0 (e.g. +08012345678)
+  if (cleaned.startsWith("+0")) {
+    cleaned = "+234" + cleaned.slice(2);
+  } else if (!cleaned.startsWith("+")) {
     if (cleaned.startsWith("0")) {
       cleaned = "+234" + cleaned.replace(/^0+/, "");
     } else if (cleaned.startsWith("234")) {

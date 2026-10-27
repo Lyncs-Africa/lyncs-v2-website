@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Input, Checkbox } from "../../ui/HeroUI.jsx";
 import { IoMdClose } from "react-icons/io";
 import classNames from "classnames";
-import { numberWithCommas, toInternationalFormat } from "../../../lib/utils.js";
+import { numberWithCommas, toInternationalFormat, normalizePhoneInput } from "../../../lib/utils.js";
 import {
   computeInstallmentBreakdown,
   getInstallmentTermOptions,
@@ -98,17 +98,19 @@ const PurchaseInstallmentTermModal = ({
   };
 
   const handlePhoneChange = (val) => {
-    setPhone(val);
-    const newWhatsapp = isSameAsPhone ? val : whatsapp;
+    const normalized = normalizePhoneInput(val);
+    setPhone(normalized);
+    const newWhatsapp = isSameAsPhone ? normalized : whatsapp;
     if (isSameAsPhone) {
-      setWhatsapp(val);
+      setWhatsapp(normalized);
     }
-    notifyChange({ phone: val, whatsapp: newWhatsapp });
+    notifyChange({ phone: normalized, whatsapp: newWhatsapp });
   };
 
   const handleWhatsappChange = (val) => {
-    setWhatsapp(val);
-    notifyChange({ whatsapp: val });
+    const normalized = normalizePhoneInput(val);
+    setWhatsapp(normalized);
+    notifyChange({ whatsapp: normalized });
   };
 
   const handleEmailChange = (val) => {

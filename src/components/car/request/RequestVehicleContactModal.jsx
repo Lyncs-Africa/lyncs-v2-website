@@ -3,6 +3,7 @@
 import React from "react";
 import { Button, Input, Checkbox } from "../../ui/HeroUI.jsx";
 import { PhoneInput } from "react-international-phone";
+import { normalizePhoneInput } from "../../../lib/utils.js";
 import SmallerModal from "../shared/SmallerModal.jsx";
 
 const RequestVehicleContactModal = ({
@@ -66,12 +67,19 @@ const RequestVehicleContactModal = ({
             {/* Seamless Phone Input */}
             <div className="space-y-1">
               <label className="text-12px font-medium text-slate-700 dark:text-slate-300 block">
-                Phone Number (E.164) <span className="text-red-500">*</span>
+                Phone Number  <span className="text-red-500">*</span>
               </label>
               <PhoneInput
                 defaultCountry="ng"
                 value={contactData.phone}
-                onChange={(val) => setContactData({ ...contactData, phone: val })}
+                onChange={(val) => {
+                  const normalized = normalizePhoneInput(val);
+                  setContactData((prev) => ({
+                    ...prev,
+                    phone: normalized,
+                    whatsapp: prev.isSameAsPhone ? normalized : prev.whatsapp,
+                  }));
+                }}
                 className="w-full"
               />
               {contactErrors.phone && (
@@ -99,7 +107,10 @@ const RequestVehicleContactModal = ({
                   <PhoneInput
                     defaultCountry="ng"
                     value={contactData.whatsapp}
-                    onChange={(val) => setContactData({ ...contactData, whatsapp: val })}
+                    onChange={(val) => {
+                      const normalized = normalizePhoneInput(val);
+                      setContactData((prev) => ({ ...prev, whatsapp: normalized }));
+                    }}
                     className="w-full"
                   />
                   {contactErrors.whatsapp && (
