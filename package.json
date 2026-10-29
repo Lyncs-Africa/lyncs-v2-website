@@ -25,7 +25,13 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.7.0",
+<<<<<<< HEAD
+    "react-international-phone": "^4.8.0",
+    "react-toastify": "^11.1.0",
+    "sharp": "^0.33.0",
+=======
     "sharp": "^0.35.5",
+>>>>>>> e0da0498854c646c310d4fefce836e4f4ca1ebab
     "swiper": "^14.1.0"
   },
   "devDependencies": {

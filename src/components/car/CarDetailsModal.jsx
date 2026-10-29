@@ -778,58 +778,58 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
         </div>
 
         {(purchaseStep === "address" || purchaseStep === "success") && (
-            <PurchaseFooter>
-              {purchaseStep === "success" ? (
+          <PurchaseFooter>
+            {purchaseStep === "success" ? (
+              <Button
+                onPress={handleClose}
+                className="uppercase text-white font-[500] px-12 min-w-[200px]"
+                size="md"
+                color="primary"
+                radius="full"
+              >
+                Done
+              </Button>
+            ) : (
+              <>
                 <Button
-                  onPress={handleClose}
-                  className="uppercase text-white font-[500] px-12 min-w-[200px]"
+                  onPress={goBack}
+                  className="uppercase px-8 font-[500] text-red-600 dark:text-red-400 border-red-300 dark:border-red-500/40"
                   size="md"
-                  color="primary"
+                  variant="bordered"
                   radius="full"
                 >
-                  Done
+                  Back
                 </Button>
-              ) : (
-                <>
+                {purchaseStep === "review-pay" && (
                   <Button
-                    onPress={goBack}
-                    className="uppercase px-8 font-[500] text-red-600 dark:text-red-400 border-red-300 dark:border-red-500/40"
+                    onPress={handleRequestQuote}
+                    isDisabled={isSubmitting}
+                    className="disabled:opacity-50 disabled:pointer-events-none uppercase text-white font-[500] px-10 shadow-xs cursor-pointer"
                     size="md"
-                    variant="bordered"
+                    color="primary"
                     radius="full"
+                    isLoading={isSubmitting}
                   >
-                    Back
+                    Request a quote
                   </Button>
-                  {purchaseStep === "review-pay" && (
-                    <Button
-                      onPress={handleRequestQuote}
-                      isDisabled={isSubmitting}
-                      className="disabled:opacity-50 disabled:pointer-events-none uppercase text-white font-[500] px-10 shadow-xs cursor-pointer"
-                      size="md"
-                      color="primary"
-                      radius="full"
-                      isLoading={isSubmitting}
-                    >
-                      Request a quote
-                    </Button>
-                  )}
-                  {purchaseStep === "address" && (
-                    <Button
-                      onPress={handleSubmitAddress}
-                      isDisabled={isSubmitting}
-                      className="disabled:opacity-50 disabled:pointer-events-none uppercase text-white font-[500] min-w-[140px] shadow-xs cursor-pointer"
-                      size="md"
-                      color="primary"
-                      radius="full"
-                      isLoading={isSubmitting}
-                    >
-                      Confirm
-                    </Button>
-                  )}
-                </>
-              )}
-            </PurchaseFooter>
-          )}
+                )}
+                {purchaseStep === "address" && (
+                  <Button
+                    onPress={handleSubmitAddress}
+                    isDisabled={isSubmitting}
+                    className="disabled:opacity-50 disabled:pointer-events-none uppercase text-white font-[500] min-w-[140px] shadow-xs cursor-pointer"
+                    size="md"
+                    color="primary"
+                    radius="full"
+                    isLoading={isSubmitting}
+                  >
+                    Confirm
+                  </Button>
+                )}
+              </>
+            )}
+          </PurchaseFooter>
+        )}
       </div>
     );
   }
