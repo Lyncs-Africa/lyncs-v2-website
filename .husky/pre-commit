@@ -1,0 +1,25 @@
+#!/bin/sh
+# Block commits that contain secrets. Scans only staged changes.
+# Requires gitleaks: https://github.com/gitleaks/gitleaks  (winget install Gitleaks.Gitleaks)
+
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "⚠️  gitleaks not found on PATH — secret scan SKIPPED."
+  echo "    Install it:  winget install Gitleaks.Gitleaks   (then restart your shell)"
+  echo "    To bypass intentionally:  git commit --no-verify"
+  exit 0
+fi
+
+echo "🔍 gitleaks: scanning staged changes for secrets..."
+gitleaks git --staged --redact --verbose
+status=$?
+
+if [ $status -ne 0 ]; then
+  echo ""
+  echo "⛔ Commit blocked: gitleaks found a potential secret above."
+  echo "   Remove it, or mark a false positive with a 'gitleaks:allow' comment on the line."
+  echo "   To bypass this check for one commit (use with care):  git commit --no-verify"
+  exit 1
+fi
+
+echo "✅ gitleaks: no secrets found."
+exit 0
