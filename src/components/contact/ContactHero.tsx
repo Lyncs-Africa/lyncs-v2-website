@@ -117,7 +117,7 @@ export default function ContactHero() {
 
           <p className="mt-12 flex items-center gap-2 text-sm text-primary dark:text-slate-300">
             <LuMouse size={18} aria-hidden="true" />
-            Keep scrolling to pick your services and schedule
+            Keep scrolling to schedule a demo or send a message
           </p>
         </div>
 

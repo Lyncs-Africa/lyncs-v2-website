@@ -489,7 +489,7 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
                   <GoArrowUpRight size={18} />
                 </Link>
                 <a
-                  href={`https://wa.me/2348028859627?text=Hello%20Lyncs%2C%20I%20want%20to%20learn%20more%20about%20${encodeURIComponent(service.label)}.`}
+                  href={`https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20I%20want%20to%20learn%20more%20about%20${encodeURIComponent(service.label)}.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded border-2 border-white bg-transparent px-6 py-3.5 text-[15px] font-bold text-white transition hover:bg-white/10"
