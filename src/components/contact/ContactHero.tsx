@@ -31,7 +31,7 @@ const CIRCLES = [
     color: 'bg-[#DCE5EA] dark:bg-sky-400/10',
   },
   {
-    title: 'EV & Wallets',
+    title: 'EV',
     image: '/images/23.jpg',
     label: 'Fleet swap & fuel control',
     pos: 'right-[2%] top-[50%] w-[48%]',

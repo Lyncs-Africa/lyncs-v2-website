@@ -1,7 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { GiBrain } from 'react-icons/gi'
+import { GoArrowUpRight } from 'react-icons/go'
 import { LuWallet, LuShieldCheck, LuReceipt, LuHeadphones, LuCheck } from 'react-icons/lu'
 
 const outline = 'border-2 border-[#111]'
@@ -36,6 +38,15 @@ const FOUNDATIONS = [
     perks: ['Dedicated enterprise account manager', '15-min average emergency recovery dispatch', 'Direct priority WhatsApp line for HR & admins'],
   },
 ]
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, delay: i * 0.1 },
+  }),
+}
 
 export default function PlatformIntegrationShowcase() {
   return (
@@ -72,12 +83,22 @@ export default function PlatformIntegrationShowcase() {
             {FOUNDATIONS.map((item, idx) => {
               const Icon = item.icon
               return (
-                <div
+                <motion.div
                   key={idx}
-                  className={`rounded-2xl bg-white p-6 sm:p-8 ${outline} dark:bg-slate-900 shadow-[4px_4px_0_#111]`}
+                  custom={idx}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  variants={cardVariants}
+                  className={`rounded-2xl bg-white p-6 sm:p-8 ${outline} dark:bg-slate-900 shadow-[4px_4px_0_#111] dark:shadow-[4px_4px_0_#fff]`}
                 >
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color} ${outline} text-[#111]`}>
-                    <Icon size={24} />
+                  <div className="flex items-center justify-between">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color} ${outline} text-[#111]`}>
+                      <Icon size={24} />
+                    </div>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-slate-600 dark:bg-white/10 dark:text-slate-300">
+                      Core Layer 0{idx + 1}
+                    </span>
                   </div>
                   <h3 className="mt-4 text-xl font-bold text-[#111] dark:text-white">
                     {item.title}
@@ -87,15 +108,36 @@ export default function PlatformIntegrationShowcase() {
                   </p>
                   <ul className="mt-4 space-y-2 border-t border-slate-100 dark:border-white/10 pt-4">
                     {item.perks.map((perk, pIdx) => (
-                      <li key={pIdx} className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                      <li key={pIdx} className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
                         <LuCheck size={14} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
                         <span>{perk}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               )
             })}
+          </div>
+
+          {/* Bottom Master Switch Bar (mirrors PlugInSection socket bar) */}
+          <div className={`mt-8 flex flex-col gap-5 rounded-2xl bg-white p-5 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between ${outline}`}>
+            <div className="flex items-center gap-4">
+              <span aria-hidden className={`flex h-7 w-12 shrink-0 items-center justify-end rounded-full bg-[#EF6702] p-0.5 ${outline}`}>
+                <span className="h-5 w-5 rounded-full border-2 border-[#111] bg-white" />
+              </span>
+              <p className="text-sm sm:text-base leading-snug text-slate-700 dark:text-slate-300">
+                Activate all 8 rails on <span className="font-bold text-[#111] dark:text-white">one web command portal</span> for your admins and staff.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="group inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-[#111] py-2.5 pl-5 pr-2.5 text-sm font-bold text-white transition hover:bg-primary sm:self-auto dark:bg-white dark:text-[#111]"
+            >
+              Switch it on
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#EF6702] text-white transition group-hover:rotate-45">
+                <GoArrowUpRight size={16} aria-hidden="true" />
+              </span>
+            </Link>
           </div>
         </div>
       </div>
