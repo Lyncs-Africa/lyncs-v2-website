@@ -42,7 +42,7 @@ const CIRCLES = [
 
 const CHIPS = [
   { text: '8 Integrated Rails', className: 'left-[22%] top-[50%]' },
-  { text: 'One Master Wallet', className: 'left-[54%] top-[4%]' },
+  { text: '', className: 'left-[54%] top-[4%]' },
   { text: 'Zero Wahala', className: 'right-1 top-[58%]' },
 ]
 
@@ -161,16 +161,14 @@ export default function PlatformOverviewHero() {
                   />
                 )}
                 <p
-                  className={`relative font-bold tracking-tight ${
-                    image ? 'text-white' : 'text-primary dark:text-white'
-                  } ${big ? 'text-lg sm:text-2xl lg:text-3xl' : 'text-base sm:text-xl lg:text-2xl'}`}
+                  className={`relative font-bold tracking-tight ${image ? 'text-white' : 'text-primary dark:text-white'
+                    } ${big ? 'text-lg sm:text-2xl lg:text-3xl' : 'text-base sm:text-xl lg:text-2xl'}`}
                 >
                   {title}
                 </p>
                 <p
-                  className={`relative mt-0.5 px-3 text-[10px] font-medium leading-tight sm:mt-1 sm:px-4 sm:text-xs ${
-                    image ? 'text-white/90' : 'text-primary/80 dark:text-slate-300'
-                  }`}
+                  className={`relative mt-0.5 px-3 text-[10px] font-medium leading-tight sm:mt-1 sm:px-4 sm:text-xs ${image ? 'text-white/90' : 'text-primary/80 dark:text-slate-300'
+                    }`}
                 >
                   {label}
                 </p>

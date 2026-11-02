@@ -12,7 +12,7 @@ const FOUNDATIONS = [
     desc: 'Fund one central balance via bank transfer or credit terms. All 8 rails draw from this single master treasury.',
     icon: LuWallet,
     color: 'bg-[#E6F0DC]',
-    perks: ['Supports NGN and USD treasury balances', 'Automated low-balance alerts & top-ups', 'Zero cash disbursements to staff'],
+    perks: ['Dedicated NGN corporate treasury balance', 'Automated low-balance alerts & top-ups', 'Zero cash disbursements to staff'],
   },
   {
     title: 'Automated Policy Engine',

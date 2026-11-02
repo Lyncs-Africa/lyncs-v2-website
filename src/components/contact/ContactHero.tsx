@@ -160,16 +160,14 @@ export default function ContactHero() {
                   />
                 )}
                 <p
-                  className={`relative font-bold tracking-tight ${
-                    image ? 'text-white' : 'text-primary dark:text-white'
-                  } ${big ? 'text-lg sm:text-2xl lg:text-3xl' : 'text-base sm:text-xl lg:text-2xl'}`}
+                  className={`relative font-bold tracking-tight ${image ? 'text-white' : 'text-primary dark:text-white'
+                    } ${big ? 'text-lg sm:text-2xl lg:text-3xl' : 'text-base sm:text-xl lg:text-2xl'}`}
                 >
                   {title}
                 </p>
                 <p
-                  className={`relative mt-0.5 px-3 text-[10px] font-medium leading-tight sm:mt-1 sm:px-4 sm:text-xs ${
-                    image ? 'text-white/90' : 'text-primary/80 dark:text-slate-300'
-                  }`}
+                  className={`relative mt-0.5 px-3 text-[10px] font-medium leading-tight sm:mt-1 sm:px-4 sm:text-xs ${image ? 'text-white/90' : 'text-primary/80 dark:text-slate-300'
+                    }`}
                 >
                   {label}
                 </p>

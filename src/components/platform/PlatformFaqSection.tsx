@@ -35,10 +35,10 @@ const CARDS = [
     rings: '',
   },
   {
-    title: 'App & Dashboard',
+    title: 'Web App & Dashboard',
     Icon: LuSmartphone,
     question: 'How do employees and finance managers access the platform daily?',
-    answer: 'Employees use the lightweight Lyncs mobile app for on-demand rides, bus passes, and fuel vouchers. Finance and HR use the web command portal.',
+    answer: 'Both staff and company admins use the Lyncs web app—employees book rides, bus passes, and fuel vouchers on any browser, while Finance and HR manage policies and billing from the admin dashboard.',
     reaction: 'Sharp. Total convenience for staff and full visibility for finance.',
     avatar: '/images/24.jpg',
     color: 'bg-purple-950 dark:bg-purple-100/10',

@@ -66,57 +66,15 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
         />
 
         <div className="relative mx-auto max-w-7xl px-4">
-          {/* Horizontal Service Switcher Bar */}
-          <div className="mb-10 overflow-x-auto pb-2 scrollbar-none">
-            <div className="flex items-center gap-2 min-w-max">
-              <Link
-                href="/platform"
-                className="flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
-              >
-                ← Platform Suite
-              </Link>
-              <span className="h-4 w-px bg-slate-300 dark:bg-white/20 mx-1" />
-              {allServices.map((item) => {
-                const ItemIcon = ICON_MAP[item.iconName] || LuCar
-                const isActive = item.slug === service.slug
-                return (
-                  <Link
-                    key={item.slug}
-                    href={`/platform/${item.slug}`}
-                    className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
-                      isActive
-                        ? `bg-[#1A2747] text-white ${outline} shadow-[2px_2px_0_#EF6702] dark:bg-white dark:text-primary dark:shadow-[2px_2px_0_#fff]`
-                        : 'border border-slate-200 bg-white/70 text-slate-600 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10'
-                    }`}
-                  >
-                    <ItemIcon size={14} />
-                    <span>{item.label}</span>
-                  </Link>
-                )
-              })}
-            </div>
-          </div>
-
           <div className="grid items-center gap-12 lg:grid-cols-2">
             {/* Left: Copy & Banter */}
             <div className="max-w-xl">
-              <div className="flex items-center gap-2">
-                <span className={`inline-flex items-center gap-1.5 rounded-full ${service.color} px-3 py-1 text-xs font-bold text-[#111] ${outline}`}>
-                  <Icon size={14} />
-                  {service.badge}
-                </span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                  Platform Rail
-                </span>
-              </div>
-
-              <h1 className="mt-6 text-4xl font-bold !leading-[1.1] tracking-tight text-primary dark:text-white md:text-[2.75rem] xl:text-[3.25rem]">
+              <h1 className="mt-4 text-4xl font-bold !leading-[1.1] tracking-tight text-primary dark:text-white md:text-[2.75rem] xl:text-[3.25rem]">
                 {service.heroHeading}{' '}
                 <span className="block mt-1 text-accent">{service.heroAccent}</span>
               </h1>
-
               {/* Conversational banter */}
-              <div className="mt-6 flex flex-col items-start gap-3 text-left text-base md:text-lg">
+              <div className="mt-4 flex flex-col items-start gap-3 text-left text-base md:text-lg">
                 <p className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-400">
                     <GiBrain size={18} aria-hidden="true" />
@@ -165,12 +123,7 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
 
                 {/* Top Badge on image */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className={`rounded-full bg-white px-3 py-1 text-xs font-bold text-primary ${outline}`}>
-                    {service.label} Module
-                  </span>
-                  <span className="rounded-full bg-accent/90 px-3 py-1 text-xs font-bold text-white">
-                    Live in Nigeria
-                  </span>
+
                 </div>
 
                 {/* Bottom Card Overlay */}
@@ -202,29 +155,6 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Connected Providers Showcase Bar */}
-      <section className="border-y border-slate-200 bg-white py-6 dark:border-white/10 dark:bg-night">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Integrated Networks & Infrastructure:
-            </span>
-            <div className="flex flex-wrap items-center gap-3">
-              {service.providers.map((p, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center gap-2 rounded-xl bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-primary dark:bg-white/5 dark:text-white ${outline}`}
-                >
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                  <span>{p.name}</span>
-                  <span className="text-[10px] text-slate-400 font-normal">({p.tag})</span>
-                </div>
-              ))}
             </div>
           </div>
         </div>
@@ -400,15 +330,13 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
               ) => (
                 <div
                   key={title}
-                  className={`relative min-h-[260px] rounded-2xl px-6 py-8 md:min-h-[300px] text-white ${
-                    i === 0 ? 'z-20' : i === 1 ? 'z-10' : ''
-                  } ${color}`}
+                  className={`relative min-h-[260px] rounded-2xl px-6 py-8 md:min-h-[300px] text-white ${i === 0 ? 'z-20' : i === 1 ? 'z-10' : ''
+                    } ${color}`}
                 >
                   <div
                     aria-hidden
-                    className={`absolute -right-8 top-0 h-full w-12 space-y-8 py-10 ${
-                      i === 2 ? 'md:hidden' : ''
-                    }`}
+                    className={`absolute -right-8 top-0 h-full w-12 space-y-8 py-10 ${i === 2 ? 'md:hidden' : ''
+                      }`}
                   >
                     <div className={RING} />
                     <div className={RING} />
