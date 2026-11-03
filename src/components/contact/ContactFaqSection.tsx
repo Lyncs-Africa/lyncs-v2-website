@@ -155,7 +155,7 @@ export default function ContactFaqSection() {
               Book 15-min demo
             </a>
             <a
-              href="https://wa.me/2348028859627?text=Hello%20Lyncs%2C%20I%20have%20questions%20about%20corporate%20mobility."
+              href="https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20I%20have%20questions%20about%20corporate%20mobility."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded border border-primary px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-primary/5 dark:border-white/30 dark:text-white dark:hover:bg-white/5"

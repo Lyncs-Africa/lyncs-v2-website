@@ -31,7 +31,7 @@ const CIRCLES = [
     color: 'bg-[#DCE5EA] dark:bg-sky-400/10',
   },
   {
-    title: 'EV & Wallets',
+    title: 'EV',
     image: '/images/23.jpg',
     label: 'Fleet swap & fuel control',
     pos: 'right-[2%] top-[50%] w-[48%]',
@@ -117,7 +117,7 @@ export default function ContactHero() {
 
           <p className="mt-12 flex items-center gap-2 text-sm text-primary dark:text-slate-300">
             <LuMouse size={18} aria-hidden="true" />
-            Keep scrolling to pick your services and schedule
+            Keep scrolling to schedule a demo or send a message
           </p>
         </div>
 
@@ -160,16 +160,14 @@ export default function ContactHero() {
                   />
                 )}
                 <p
-                  className={`relative font-bold tracking-tight ${
-                    image ? 'text-white' : 'text-primary dark:text-white'
-                  } ${big ? 'text-lg sm:text-2xl lg:text-3xl' : 'text-base sm:text-xl lg:text-2xl'}`}
+                  className={`relative font-bold tracking-tight ${image ? 'text-white' : 'text-primary dark:text-white'
+                    } ${big ? 'text-lg sm:text-2xl lg:text-3xl' : 'text-base sm:text-xl lg:text-2xl'}`}
                 >
                   {title}
                 </p>
                 <p
-                  className={`relative mt-0.5 px-3 text-[10px] font-medium leading-tight sm:mt-1 sm:px-4 sm:text-xs ${
-                    image ? 'text-white/90' : 'text-primary/80 dark:text-slate-300'
-                  }`}
+                  className={`relative mt-0.5 px-3 text-[10px] font-medium leading-tight sm:mt-1 sm:px-4 sm:text-xs ${image ? 'text-white/90' : 'text-primary/80 dark:text-slate-300'
+                    }`}
                 >
                   {label}
                 </p>

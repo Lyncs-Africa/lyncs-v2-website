@@ -35,10 +35,10 @@ const CARDS = [
     rings: '',
   },
   {
-    title: 'App & Dashboard',
+    title: 'Web App & Dashboard',
     Icon: LuSmartphone,
     question: 'How do employees and finance managers access the platform daily?',
-    answer: 'Employees use the lightweight Lyncs mobile app for on-demand rides, bus passes, and fuel vouchers. Finance and HR use the web command portal.',
+    answer: 'Both staff and company admins use the Lyncs web app—employees book rides, bus passes, and fuel vouchers on any browser, while Finance and HR manage policies and billing from the admin dashboard.',
     reaction: 'Sharp. Total convenience for staff and full visibility for finance.',
     avatar: '/images/24.jpg',
     color: 'bg-purple-950 dark:bg-purple-100/10',
@@ -163,7 +163,7 @@ export default function PlatformFaqSection() {
               Book a live walkthrough
             </Link>
             <a
-              href="https://wa.me/2348028859627?text=Hello%20Lyncs%2C%20we%20want%20to%20learn%20more%20about%20the%20platform%20suite."
+              href="https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20we%20want%20to%20learn%20more%20about%20the%20platform%20suite."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded border border-primary px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-primary/5 dark:border-white/30 dark:text-white dark:hover:bg-white/5"

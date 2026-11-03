@@ -389,8 +389,8 @@ export const PLATFORM_SERVICES: Record<string, PlatformService> = {
         desc: 'Restrict wallet spending to official work hours or specific locations such as customer offices or airports.',
       },
       {
-        title: 'Bulk Funding via Naira or USD',
-        desc: 'Fund your master treasury through corporate bank transfer, card, or direct ACH transfer with instant value credit.',
+        title: 'Instant NGN Corporate Funding',
+        desc: 'Fund your master Naira treasury through corporate bank transfer, card, or direct transfer with instant value credit.',
       },
       {
         title: 'Line-by-Line Spend Telemetry',
@@ -401,7 +401,7 @@ export const PLATFORM_SERVICES: Record<string, PlatformService> = {
       { label: 'Unused transport allowance clawback', val: '100%' },
       { label: 'Time saved on allowance disbursement', val: '95%' },
       { label: 'Zero cash leakage guarantee', val: '100%' },
-      { label: 'Multi-currency support', val: 'NGN & USD' },
+      { label: 'Dedicated Naira treasury', val: '100% NGN' },
     ],
     faq: [
       {
