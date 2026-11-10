@@ -57,7 +57,7 @@ export default function AboutHero() {
 
   return (
     <section className="relative -mt-20 md:-mt-[130px] overflow-hidden bg-[#FAF8F6] font-Quicksand dark:bg-night pb-16 pt-[120px] md:pt-[190px]">
-      {/* Background subtle grid matching HomeHero */}
+      {/* Background subtle grid matching PlatformShowcase */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 dark:hidden"
@@ -119,7 +119,7 @@ export default function AboutHero() {
           </p>
         </div>
 
-        {/* Right: Floating Circle Cluster (ExplainerCircles style, no fuzzy shadows) */}
+        {/* Right: Floating Circle Cluster (BeyondTheFleetSection style, no fuzzy shadows) */}
         <div className="relative mx-auto aspect-square w-full max-w-[500px] lg:max-w-[560px]">
           <span
             aria-hidden

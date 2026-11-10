@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import {motion, useReducedMotion} from 'framer-motion'
-import {GiBrain} from 'react-icons/gi'
-import {IoCheckmarkCircle} from 'react-icons/io5'
+import {IoCheckmarkCircleOutline} from 'react-icons/io5'
 import {LuMouse} from 'react-icons/lu'
+import SectionBadge from '../ui/SectionBadge'
 
 // Positions and sizes are percentages of a square stage, so the cluster
 // scales down cleanly on small screens.
@@ -12,7 +12,7 @@ const CIRCLES = [
     {
         title: 'Rides',
         image: '/images/13.jpg',
-        label: 'Bolt, inDrive, Lagride & more',
+        label: 'Major ride hailing serivces',
         pos: 'left-[16%] top-[2%] w-[45%]',
         color: 'bg-[#E6F0DC] dark:bg-emerald-400/10',
         big: true,
@@ -34,7 +34,7 @@ const CIRCLES = [
     {
         title: 'Services',
         image: '/images/23.jpg',
-        label: 'Car hire, tow, fuel & mechanics',
+        label: 'Car hire, tow & mechanics',
         pos: 'right-[2%] top-[52%] w-[50%]',
         color: 'bg-[#E3ECFA] dark:bg-accent/15',
         big: true,
@@ -54,30 +54,42 @@ const AVATARS = [
     {src: '/images/24.jpg', className: 'left-[30%] top-[86%] w-[10%] object-[50%_20%]'},
 ]
 
-export default function ExplainerCircles() {
+export default function BeyondTheFleetSection() {
     const still = useReducedMotion()
 
     return (
-        <section className="relative overflow-hidden bg-[#FAF8F6] py-16 font-Quicksand dark:bg-night md:py-24">
+        <section className="relative overflow-hidden bg-[#FAF8F6] pt-16 pb-10 font-Quicksand dark:bg-[#15203A] md:pt-24 md:pb-16">
             <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 lg:grid-cols-2">
                 {/* Copy */}
                 <div className="max-w-xl">
-                    <p className="flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-surface px-3 py-1.5 text-sm text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
-                        <GiBrain size={14} aria-hidden="true" className="text-emerald-600 dark:text-emerald-400"/>
-                        Okay, I have scrolled. Are you going to break it down now?
-                    </p>
+                    <SectionBadge number="05" label="Beyond the fleet" variant="auto"/>
                     <h2 className="mt-6 text-4xl font-bold !leading-[1.1] tracking-tight text-primary dark:text-white md:text-[2.5rem] xl:text-[3rem]">
-                        You are constantly moving your people but this time, you control it all from one place
+                        That’s how your fleet moves.{" "}
+                        <span className="text-accent">Here’s how the rest of your team does.</span>
                     </h2>
                     <p className="mt-6 text-base leading-relaxed text-slate-500 dark:text-slate-400 md:text-[16px]">
-                        Ride, bus, flights, rentals, e.t.c booked, managed and paid from one place. One wallet. One bill. No wahala, no
-                        ten
-                        apps.
+                        Rides, buses, flights and services for your staff, all on one plan. And for management, something transport never gives them: visibility.
+                    </p>
+                    <ul className="mt-5 space-y-2.5">
+                        {[
+                            'Who travelled, and why?',
+                            'Was it approved?',
+                            'How much did it cost?',
+                            'Who went over policy?',
+                        ].map((question) => (
+                            <li key={question} className="flex items-center gap-2.5 text-[15px] text-slate-600 dark:text-slate-300">
+                                <IoCheckmarkCircleOutline size={18} aria-hidden="true" className="shrink-0 text-emerald-500 dark:text-emerald-400"/>
+                                {question}
+                            </li>
+                        ))}
+                    </ul>
+                    <p className="mt-5 text-base font-medium leading-relaxed text-primary dark:text-white md:text-[16px]">
+                        Lyncs answers every one of these, in one dashboard.
                     </p>
                     <div className="mt-8 flex flex-wrap items-center gap-4">
                         <Link
-                            href="/contact"
-                            className="inline-flex rounded bg-accent px-6 py-3 text-[15px] font-medium text-white shadow-lg shadow-accent/20 transition hover:bg-opacity-90"
+                            href="/book-demo"
+                            className="inline-flex rounded bg-accent px-6 py-3 text-[15px] font-medium text-white shadow-lg shadow-accent/20 transition hover:bg-opacity-90 dark:bg-[#2D419A]"
                         >
                             Book a demo
                         </Link>
@@ -89,10 +101,6 @@ export default function ExplainerCircles() {
                             Tell me more about this
                         </Link>
                     </div>
-                    <p className="mt-14 flex items-center gap-2 text-sm text-primary dark:text-slate-300">
-                        <LuMouse size={18} aria-hidden="true"/>
-                        Keep scrolling to see how it works
-                    </p>
                 </div>
 
                 <div className="relative mx-auto aspect-square w-full max-w-[520px] lg:max-w-[580px]">

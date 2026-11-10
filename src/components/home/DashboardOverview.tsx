@@ -133,9 +133,9 @@ export default function DashboardOverview() {
             </span>
             <p className="mt-3 text-base font-medium text-primary dark:text-white">Book a trip for your team</p>
             <p className="mt-0.5 text-[10px] text-slate-400">
-              Arrange rides, bus trips, flights, or vouchers for your staff in one place.
+              Arrange rides, bus trips, or flights for your staff in one place.
             </p>
-            <span className="mt-3 inline-flex items-center gap-1 rounded-md bg-accent px-3 py-1.5 text-[10px] font-medium text-white">
+            <span className="mt-3 inline-flex items-center gap-1 rounded-md bg-accent px-3 py-1.5 text-[10px] font-medium text-white dark:bg-[#2D419A]">
               Book now <IoChevronForward size={10} aria-hidden="true" />
             </span>
 

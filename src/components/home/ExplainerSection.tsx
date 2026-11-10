@@ -94,7 +94,7 @@ export default function ExplainerSection() {
 
               <div className="mt-10 flex flex-wrap items-center gap-5">
                 <Link
-                  href="/contact"
+                  href="/book-demo"
                   className="rounded-full bg-primary px-6 py-3 text-[15px] font-medium text-white transition hover:bg-opacity-90 dark:bg-white dark:text-primary dark:hover:bg-slate-200"
                 >
                   Book a demo

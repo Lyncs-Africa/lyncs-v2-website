@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { Button, Select, SelectItem } from "../../ui/HeroUI.jsx";
 import { CiSearch } from "react-icons/ci";
 import { IoClose } from "react-icons/io5";
@@ -9,6 +10,7 @@ import { numberWithCommas, titleCase } from "../../../lib/utils.js";
 import { useCarStore } from "../../../store/carStore.js";
 import { TOP_MAKES } from "../../../lib/vehicleBrands.js";
 import { fetchCarsCatalog, normalizeCar } from "../../../lib/api/cars.js";
+import { CAR_TABS, getTab, USE_CASE_OPTIONS } from "../../../lib/carSegments.js";
 import CarCard from "./CarCard.jsx";
 
 export const MAKES = TOP_MAKES;
@@ -32,13 +34,15 @@ export const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
-const CarsView = ({ usage = "brand-new" }) => {
+const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
+  const activeTabMeta = getTab(activeTab);
   const { openRequestVehicle } = useCarStore();
   const [type, setType] = useState("all");
   const [make, setMake] = useState("");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [origin, setOrigin] = useState("all");
+  const [useCase, setUseCase] = useState("all");
   const [sort, setSort] = useState("newest");
   const [isLoading, setIsLoading] = useState(false);
   const [cars, setCars] = useState([]);
@@ -62,6 +66,7 @@ const CarsView = ({ usage = "brand-new" }) => {
       origin: isUsedTab && origin !== "all" ? origin : undefined,
       make: make || undefined,
       keyword: debouncedSearch || undefined,
+      segment: useCase !== "all" ? useCase : undefined,
       sort: sort || undefined,
       limit: 30,
     })
@@ -82,7 +87,7 @@ const CarsView = ({ usage = "brand-new" }) => {
     return () => {
       active = false;
     };
-  }, [normalizedUsage, type, origin, make, debouncedSearch, isUsedTab, sort]);
+  }, [normalizedUsage, type, origin, make, debouncedSearch, isUsedTab, sort, useCase]);
 
   const filteredCars = useMemo(() => {
     const list = cars.filter((car) => {
@@ -209,6 +214,50 @@ const CarsView = ({ usage = "brand-new" }) => {
 
   return (
     <div className="w-full space-y-6">
+      {/* Audience / condition tabs — one segmented toggle, two pills in a single track. */}
+      <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
+        <div
+          className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/60 p-1"
+          role="tablist"
+          aria-label="Browse cars by audience"
+        >
+          {CAR_TABS.map((tab) => {
+            const isActive = tab.key === activeTab;
+            return (
+              <Link
+                key={tab.key}
+                href={tab.href}
+                role="tab"
+                aria-selected={isActive}
+                scroll={false}
+                className={cn(
+                  "flex-shrink-0 rounded-full px-6 py-2.5 text-15px font-semibold transition-all duration-200 cursor-pointer",
+                  isActive
+                    ? "bg-primary text-white shadow-sm dark:bg-accent dark:text-white"
+                    : "bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                )}
+              >
+                {tab.label}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Active audience headline */}
+      {activeTabMeta?.headline && (
+        <div className="space-y-1">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            {activeTabMeta.headline}
+          </h1>
+          {activeTabMeta.blurb && (
+            <p className="text-13px sm:text-14px text-slate-500 dark:text-slate-400 max-w-2xl">
+              {activeTabMeta.blurb}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Top Controls: Search + Dropdowns + Request Button */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Search */}
@@ -227,6 +276,22 @@ const CarsView = ({ usage = "brand-new" }) => {
 
         {/* Filters */}
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
+          <div className="w-full sm:w-48">
+            <Select
+              placeholder="Use case"
+              selectedKeys={useCase ? [useCase] : ["all"]}
+              onSelectionChange={(keys) => setUseCase(Array.from(keys)[0] || "all")}
+              size="md"
+              aria-label="Filter by use case"
+            >
+              {USE_CASE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+
           <div className="w-full sm:w-44">
             <Select
               placeholder="Fuel Type"

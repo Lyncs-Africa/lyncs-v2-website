@@ -7,9 +7,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#1A2747',
+        primary: '#334155',
         secondary: '#1D293D',
-        accent: '#6584F6',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
         highlight: '#FC7C35',
         muted: '#969AAC',
         surface: '#F1F1F8',
@@ -42,6 +42,7 @@ module.exports = {
       fontFamily: {
         Satoshi: ['Satoshi', 'sans-serif'],
         Quicksand: ['var(--font-quicksand)', 'sans-serif'],
+        Geist: ['var(--font-geist)', 'sans-serif'],
       },
       keyframes: {
         'fade-in-up': {

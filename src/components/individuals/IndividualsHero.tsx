@@ -23,9 +23,9 @@ const CIRCLES = [
     color: 'bg-[#ECE8F1] dark:bg-violet-400/10',
   },
   {
-    title: 'Fuel Vouchers',
+    title: 'Ride Wallet',
     image: '/images/24.jpg',
-    label: 'Discounted station QR codes',
+    label: 'One balance for all trips',
     pos: 'left-0 top-[52%] w-[34%]',
     color: 'bg-[#DCE5EA] dark:bg-sky-400/10',
   },
@@ -95,7 +95,7 @@ export default function IndividualsHero() {
                 <GiLips size={18} aria-hidden="true" />
               </span>
               <span className="text-[15px]">
-                Not at all! Individuals use Lyncs to compare ride rates without opening 5 apps, buy discounted fuel vouchers, and swap expensive petrol cars for reliable electric vehicles.
+                Not at all! Individuals use Lyncs to compare ride rates without opening 5 apps, access 24/7 roadside mechanics, and swap expensive petrol cars for reliable electric vehicles.
               </span>
             </p>
           </div>

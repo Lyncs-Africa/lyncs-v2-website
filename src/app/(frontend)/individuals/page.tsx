@@ -8,7 +8,7 @@ import IndividualsCtaSection from '../../../components/individuals/IndividualsCt
 export const metadata: Metadata = {
   title: 'Smart Mobility & EV Car Swaps for Individuals | Lyncs',
   description:
-    'Compare ride prices across Bolt, Uber, and LagRide. Swap your petrol car for an EV to cut fuel expenses by 80%, buy discounted fuel vouchers, and access 24/7 roadside mechanics in Lagos.',
+    'Compare ride prices across Bolt, Uber, and LagRide. Swap your petrol car for an EV to cut fuel expenses by 80% and access 24/7 roadside mechanics in Lagos.',
 }
 
 export default function IndividualsPage() {

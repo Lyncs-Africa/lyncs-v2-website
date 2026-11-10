@@ -35,19 +35,19 @@ const CIRCLES = [
     href: '#rail-buses',
   },
   {
-    title: 'Fuel & Fleet',
+    title: 'Fleet Care',
     image: '/images/23.jpg',
-    label: 'Vouchers, rentals, tow & repairs',
+    label: 'Rentals, tow & repairs',
     pos: 'right-[2%] top-[50%] w-[48%]',
     color: 'bg-[#E3ECFA] dark:bg-accent/15',
     big: true,
     ring: true,
-    href: '#rail-fuel-vouchers',
+    href: '#rail-car-rentals',
   },
 ]
 
 const CHIPS = [
-  { text: '8 Integrated Rails', className: 'left-[20%] top-[49%] bg-[#FEC804] text-[#111]' },
+  { text: '7 Integrated Rails', className: 'left-[20%] top-[49%] bg-[#FEC804] text-[#111]' },
   { text: '1 NGN Treasury', className: 'left-[53%] top-[4%] bg-[#E6F0DC] text-[#111]' },
   { text: 'Zero Wahala', className: 'right-1 top-[56%] bg-white text-[#111]' },
 ]
@@ -65,7 +65,6 @@ const EIGHT_PLUGS = [
   { name: 'Ride Wallets', slug: 'ride-wallets', color: 'bg-[#F6EEDD] text-[#111]' },
   { name: 'Car Rentals', slug: 'car-rentals', color: 'bg-white text-[#111]' },
   { name: 'Car Tow', slug: 'car-tow', color: 'bg-[#E6F0DC] text-[#111]' },
-  { name: 'Fuel Vouchers', slug: 'fuel-vouchers', color: 'bg-[#F49AC1] text-[#111]' },
   { name: 'Mechanic', slug: 'mechanic', color: 'bg-[#DCE5EA] text-[#111]' },
 ]
 
@@ -104,7 +103,7 @@ export default function PlatformOverviewHero() {
             className="flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-surface px-3 py-1.5 text-sm text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
           >
             <GiBrain size={14} aria-hidden="true" className="shrink-0 text-emerald-600 dark:text-emerald-400" />
-            Complete Mobility Suite • 8 Integrated Services
+            Complete Mobility Suite • 7 Integrated Services
           </motion.p>
 
           <motion.h1
@@ -191,7 +190,7 @@ export default function PlatformOverviewHero() {
             <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Click any rail to jump or inspect:
             </p>
-            <ul className="flex flex-wrap gap-2.5" aria-label="8 Mobility Rails">
+            <ul className="flex flex-wrap gap-2.5" aria-label="7 Mobility Rails">
               {EIGHT_PLUGS.map(({ name, slug, color }, i) => (
                 <motion.li key={slug} variants={plugVariants} custom={i}>
                   <a
@@ -223,13 +222,13 @@ export default function PlatformOverviewHero() {
               href="#platform-services"
               className="inline-flex rounded-xl border-2 border-accent px-6 py-3 text-[15px] font-bold text-accent transition hover:bg-accent/5 dark:border-white/20 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/5"
             >
-              Explore all 8 services
+              Explore all 7 services
             </a>
           </div>
 
           <p className="mt-10 flex items-center gap-2 text-sm text-primary dark:text-slate-300">
             <LuMouse size={18} aria-hidden="true" />
-            Keep scrolling to see all 8 interactive mobility modules
+            Keep scrolling to see all 7 interactive mobility modules
           </p>
         </div>
 

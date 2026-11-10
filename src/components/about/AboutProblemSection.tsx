@@ -17,7 +17,6 @@ const PAIN_POINTS = [
 
 const LYNC_SOLUTIONS = [
   'Automatic corporate billing. Staff rides straight from company wallet',
-  'Pre-allocated digital fuel vouchers with real-time station authorization',
   'Bolt, Uber, Shuttles, Flights, Tow & EV fleet connected to one portal',
   'One single consolidated invoice with line-by-line employee audit trail',
 ]
@@ -50,7 +49,7 @@ export default function AboutProblemSection() {
             </h2>
 
             <p className="mt-4 text-base text-slate-700 dark:text-slate-300 md:text-lg">
-              We watched companies in Lagos, Nairobi, and Accra lose millions of Naira every month to commute reconciliation waste, untracked fuel vouchers, and fragmented vendor contracts.
+              We watched companies in Lagos, Nairobi, and Accra lose millions of Naira every month to commute reconciliation waste, untracked expense claims, and fragmented vendor contracts.
             </p>
           </div>
 

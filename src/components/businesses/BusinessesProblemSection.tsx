@@ -17,7 +17,6 @@ const PAIN_POINTS = [
 
 const LYNC_SOLUTIONS = [
   'Direct corporate ride wallets: staff book without paying out of pocket',
-  'Digital fuel vouchers with real-time station authorization and QR validation',
   'Bolt, Uber, LagRide, corporate shuttles, flights & EV fleet in 1 portal',
   'Automated policy rules: curfew hours, geofences, and role-based monthly caps',
   'One single consolidated tax invoice with employee audit trails and VAT',

@@ -6,7 +6,7 @@ import { GiBrain } from 'react-icons/gi'
 import { IoHelpCircleOutline } from 'react-icons/io5'
 import { LuCheckCheck, LuSparkles } from 'react-icons/lu'
 
-// Binder layout follows EVSupportSection directly: page-coloured rings
+// Binder layout follows HowItWorksSection directly: page-coloured rings
 // hang off each card's right edge across the gap, and earlier cards sit above
 // later ones so their rings overlap the next card.
 const CARDS = [
@@ -82,7 +82,7 @@ export default function ContactFaqSection() {
           </h2>
         </div>
 
-        {/* Binder layout matching EVSupportSection directly (NO fuzzy shadows) */}
+        {/* Binder layout matching HowItWorksSection directly (NO fuzzy shadows) */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -142,7 +142,7 @@ export default function ContactFaqSection() {
           ))}
         </motion.div>
 
-        {/* Bottom Bar matching EVSupportSection */}
+        {/* Bottom Bar matching HowItWorksSection */}
         <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[20px] tracking-tight text-primary dark:text-white md:text-[20px]">
             Ready to test it with your staff?
@@ -155,7 +155,7 @@ export default function ContactFaqSection() {
               Book 15-min demo
             </a>
             <a
-              href="https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20I%20have%20questions%20about%20corporate%20mobility."
+              href="https://wa.me/2349055555407?text=Hello%20Lyncs%2C%20I%20have%20questions%20about%20corporate%20mobility."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded border border-primary px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-primary/5 dark:border-white/30 dark:text-white dark:hover:bg-white/5"

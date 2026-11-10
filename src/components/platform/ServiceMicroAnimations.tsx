@@ -337,7 +337,7 @@ function WalletsAnimation({ still }: { still: boolean }) {
 /* -------------------------------------------------------------------------- */
 /* 5. CAR RENTALS: Executive Chauffeur & VIP Protocol Vehicle                 */
 /* -------------------------------------------------------------------------- */
-// Exact wheel centres and radius in 26.png (2014 x 780), matching <EVSection />
+// Exact wheel centres and radius in 26.png (2014 x 780), matching <FleetSwapHero />
 const CAR_IMG_W = 2014
 const CAR_IMG_H = 780
 const CAR_WHEEL_R = 150

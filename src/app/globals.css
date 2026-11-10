@@ -38,10 +38,14 @@
 @layer base {
   :root {
     --page-bg: #ffffff;
+    /* accent token, space-separated RGB for Tailwind's <alpha-value> */
+    --accent: 45 65 154; /* #2D419A */
   }
 
   .dark {
     --page-bg: #0b1120;
+    /* lighter indigo so decorative accent reads on the dark background */
+    --accent: 165 180 252; /* indigo-300 #A5B4FC */
   }
 
   html {
@@ -54,11 +58,33 @@
     -moz-osx-font-smoothing: grayscale;
     /* overflow-x: hidden; */
   }
+
+  /* Headings use Geist; everything else stays on Quicksand (the body font) */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-geist), sans-serif;
+  }
 }
 
 /* Partner logos scroll at a constant speed instead of easing between slides */
 .partner-swiper .swiper-wrapper {
   transition-timing-function: linear;
+}
+
+/*
+ * Plug-in section: two columns from lg up. Kept as plain CSS because the
+ * equivalent Tailwind arbitrary value, grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)],
+ * crashes Tailwind's JIT — its value normaliser sees the "max(" inside
+ * "minmax(" and recurses until the call stack overflows.
+ */
+@media (min-width: 1024px) {
+  .plugin-grid-cols {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
 }
 
 /*
@@ -357,4 +383,239 @@
 
 .dark .react-international-phone-country-selector-dropdown__list-item-dial-code {
   color: #94a3b8 !important;
+}
+
+/*
+ * Testimonials marquee: a seamless horizontal auto-scroll. The track holds the
+ * cards twice, so translating it to -50% lands exactly on the duplicate and the
+ * loop is invisible. Hovering the row pauses it; reduced-motion stops it.
+ */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 60s linear infinite;
+  width: max-content;
+}
+
+.marquee-pause:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/*
+ * Book-a-demo phone input: an underline-only field matching the card's inputs.
+ * The card is themed now, so this is light by default and dark under .dark.
+ * Scoped to .demo-phone and placed last so it wins over the generic overrides.
+ */
+.demo-phone .react-international-phone-input-container {
+  height: 40px !important;
+}
+.demo-phone .react-international-phone-country-selector-button {
+  border: 0 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  min-height: 40px !important;
+  padding: 0 8px 0 0 !important;
+}
+.demo-phone .react-international-phone-country-selector-button:hover {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+.demo-phone .react-international-phone-country-selector-button__dropdown-arrow {
+  border-top-color: #64748b !important;
+}
+.demo-phone .react-international-phone-input {
+  border: 0 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  color: #0f172a !important;
+  font-size: 15px !important;
+  min-height: 40px !important;
+  padding: 0 0 0 8px !important;
+  font-family: inherit !important;
+}
+.demo-phone .react-international-phone-input::placeholder {
+  color: #94a3b8 !important;
+}
+.demo-phone .react-international-phone-input-container:focus-within .react-international-phone-country-selector-button,
+.demo-phone .react-international-phone-input-container:focus-within .react-international-phone-input {
+  border-bottom-color: #0f172a !important;
+}
+.demo-phone .react-international-phone-country-selector-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.demo-phone .react-international-phone-country-selector-dropdown__list-item:hover,
+.demo-phone .react-international-phone-country-selector-dropdown__list-item--focused {
+  background-color: #f1f5f9 !important;
+}
+.demo-phone .react-international-phone-country-selector-dropdown__list-item-country-name {
+  color: #0f172a !important;
+}
+.demo-phone .react-international-phone-country-selector-dropdown__list-item-dial-code {
+  color: #64748b !important;
+}
+
+/* Dark mode: white-on-dark underline */
+.dark .demo-phone .react-international-phone-country-selector-button,
+.dark .demo-phone .react-international-phone-input {
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+.dark .demo-phone .react-international-phone-country-selector-button:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+.dark .demo-phone .react-international-phone-country-selector-button__dropdown-arrow {
+  border-top-color: rgba(255, 255, 255, 0.5) !important;
+}
+.dark .demo-phone .react-international-phone-input {
+  color: #ffffff !important;
+}
+.dark .demo-phone .react-international-phone-input::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+.dark .demo-phone .react-international-phone-input-container:focus-within .react-international-phone-country-selector-button,
+.dark .demo-phone .react-international-phone-input-container:focus-within .react-international-phone-input {
+  border-bottom-color: #ffffff !important;
+}
+.dark .demo-phone .react-international-phone-country-selector-dropdown {
+  background-color: #131a28 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+.dark .demo-phone .react-international-phone-country-selector-dropdown__list-item:hover,
+.dark .demo-phone .react-international-phone-country-selector-dropdown__list-item--focused {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.dark .demo-phone .react-international-phone-country-selector-dropdown__list-item-country-name {
+  color: #ffffff !important;
+}
+.dark .demo-phone .react-international-phone-country-selector-dropdown__list-item-dial-code {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/*
+ * Kill the browser autofill background on the book-a-demo card so the inputs
+ * stay transparent. The ~infinite background transition prevents the UA from
+ * ever painting its yellow/blue fill; text colour follows the theme.
+ */
+.demo-card input:-webkit-autofill,
+.demo-card input:-webkit-autofill:hover,
+.demo-card input:-webkit-autofill:focus,
+.demo-card input:-webkit-autofill:active {
+  -webkit-text-fill-color: #0f172a;
+  caret-color: #0f172a;
+  transition: background-color 9999s ease-in-out 0s;
+}
+.dark .demo-card input:-webkit-autofill,
+.dark .demo-card input:-webkit-autofill:hover,
+.dark .demo-card input:-webkit-autofill:focus,
+.dark .demo-card input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+}
+
+/*
+ * Boxed phone input for the contact card, matching its white, bordered,
+ * rounded fields (the .demo-phone variant is an underline style instead).
+ */
+.contact-phone .react-international-phone-input-container {
+  height: 50px !important;
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.contact-phone .react-international-phone-country-selector-button {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  height: 100% !important;
+  padding: 0 6px 0 10px !important;
+}
+.contact-phone .react-international-phone-country-selector-button:hover {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+.contact-phone .react-international-phone-country-selector-button__dropdown-arrow {
+  border-top-color: #64748b !important;
+}
+.contact-phone .react-international-phone-input {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  width: 100%;
+  font-size: 15px;
+  color: #0f172a !important;
+}
+.contact-phone .react-international-phone-input::placeholder {
+  color: #94a3b8 !important;
+}
+.contact-phone .react-international-phone-input-container:focus-within {
+  border-color: #2d419a;
+  box-shadow: 0 0 0 2px rgba(45, 65, 154, 0.3);
+}
+.contact-phone .react-international-phone-country-selector-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.contact-phone .react-international-phone-country-selector-dropdown__list-item:hover,
+.contact-phone .react-international-phone-country-selector-dropdown__list-item--focused {
+  background-color: #f1f5f9 !important;
+}
+.contact-phone .react-international-phone-country-selector-dropdown__list-item-country-name {
+  color: #0f172a !important;
+}
+.contact-phone .react-international-phone-country-selector-dropdown__list-item-dial-code {
+  color: #64748b !important;
+}
+
+/* Dark mode: match the card's faint white fill + border */
+.dark .contact-phone .react-international-phone-input-container {
+  border-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+.dark .contact-phone .react-international-phone-country-selector-button:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+.dark .contact-phone .react-international-phone-country-selector-button__dropdown-arrow {
+  border-top-color: rgba(255, 255, 255, 0.5) !important;
+}
+.dark .contact-phone .react-international-phone-input {
+  color: #ffffff !important;
+}
+.dark .contact-phone .react-international-phone-input::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+.dark .contact-phone .react-international-phone-input-container:focus-within {
+  border-color: #6584f6;
+  box-shadow: 0 0 0 2px rgba(101, 132, 246, 0.3);
+}
+.dark .contact-phone .react-international-phone-country-selector-dropdown {
+  background-color: #131a28 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+.dark .contact-phone .react-international-phone-country-selector-dropdown__list-item:hover,
+.dark .contact-phone .react-international-phone-country-selector-dropdown__list-item--focused {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+.dark .contact-phone .react-international-phone-country-selector-dropdown__list-item-country-name {
+  color: #ffffff !important;
+}
+.dark .contact-phone .react-international-phone-country-selector-dropdown__list-item-dial-code {
+  color: rgba(255, 255, 255, 0.5) !important;
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { Quicksand } from 'next/font/google'
+import { Geist, Quicksand } from 'next/font/google'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import ScrollToTop from '../../components/ui/ScrollToTop'
@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import '../globals.css'
 
 const quicksand = Quicksand({ subsets: ['latin'], variable: '--font-quicksand' })
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist' })
 
 export const metadata: Metadata = {
   title: 'Lyncs',
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
     // The theme script sets the `dark` class before hydration
-    <html lang="en" className={quicksand.variable} suppressHydrationWarning>
+    <html lang="en" className={`${quicksand.variable} ${geist.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

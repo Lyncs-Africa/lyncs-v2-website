@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { GiBrain } from 'react-icons/gi'
 import { LuShieldCheck, LuReceipt, LuZap } from 'react-icons/lu'
 
-// Binder layout follows EVSupportSection: page-coloured rings
+// Binder layout follows HowItWorksSection: page-coloured rings
 // hang off each card's right edge across the gap
 const CARDS = [
   {
@@ -169,7 +169,7 @@ export default function BusinessesFaqSection() {
               Book a live walkthrough
             </Link>
             <a
-              href="https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20we%20want%20to%20learn%20more%20about%20corporate%20mobility%20for%20our%20company."
+              href="https://wa.me/2349055555407?text=Hello%20Lyncs%2C%20we%20want%20to%20learn%20more%20about%20corporate%20mobility%20for%20our%20company."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded border border-primary px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-primary/5 dark:border-white/30 dark:text-white dark:hover:bg-white/5"

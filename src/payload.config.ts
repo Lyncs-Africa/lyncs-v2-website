@@ -6,6 +6,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { payloadCloudinaryPlugin } from '@jhb.software/payload-cloudinary-plugin'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
+import { ValuationLeads } from './collections/ValuationLeads'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -28,7 +29,7 @@ export default buildConfig({
     },
   },
 
-  collections: [Media, Users],
+  collections: [Media, Users, ValuationLeads],
 
   editor: lexicalEditor({}),
 
