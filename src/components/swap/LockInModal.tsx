@@ -104,7 +104,7 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
                         animate={{y: 0, opacity: 1, scale: 1}}
                         exit={{y: 24, opacity: 0, scale: 0.98}}
                         transition={{duration: 0.25, ease: 'easeOut'}}
-                        className="relative z-10 max-h-[92vh] w-full max-w-md overflow-auto rounded-t-[28px] bg-gray-100 p-6 text-slate-900 shadow-2xl sm:rounded-[28px] sm:p-8 dark:bg-[#0E131F] dark:text-white dark:ring-1 dark:ring-white/10"
+                        className="relative z-10 max-h-[92vh] w-full max-w-md overflow-auto no-scrollbar rounded-t-[28px] bg-gray-100 p-6 text-slate-900 shadow-2xl sm:rounded-[28px] sm:p-8 dark:bg-[#0E131F] dark:text-white dark:ring-1 dark:ring-white/10"
                     >
                         <button
                             type="button"

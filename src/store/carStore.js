@@ -10,21 +10,41 @@ export const useCarStore = create((set) => ({
   requestMode: "bespoke", // "bespoke" | "swap"
   startPurchase: false,
 
-  openCarDetails: (car, startPurchase = false) =>
+  openCarDetails: (car, startPurchase = false) => {
     set({
-      slideUpOpen: true,
-      modal: "car-details",
+      slideUpOpen: false,
+      modal: "",
       selectedCar: car,
       startPurchase,
-    }),
+    });
+    const carId = car?.productId || car?.id;
+    if (carId && typeof window !== "undefined") {
+      try {
+        window.sessionStorage.setItem(`lyncs_car_${carId}`, JSON.stringify(car));
+      } catch {
+        // ignore storage error
+      }
+      const platform = car?.platform || car?.source;
+      const params = new URLSearchParams();
+      if (platform) params.set("platform", platform);
+      if (startPurchase) params.set("purchase", "1");
+      const qs = params.toString();
+      window.location.href = `/cars/${encodeURIComponent(carId)}${qs ? `?${qs}` : ""}`;
+    }
+  },
 
-  openRequestVehicle: (targetCarForSwap = null, mode = null) =>
+  openRequestVehicle: (targetCarForSwap = null, mode = null) => {
+    const resolvedMode = mode || (targetCarForSwap ? "swap" : "bespoke");
     set({
-      slideUpOpen: true,
-      modal: "request-a-vehicle",
+      slideUpOpen: false,
+      modal: "",
       swapTargetCar: targetCarForSwap,
-      requestMode: mode || (targetCarForSwap ? "swap" : "bespoke"),
-    }),
+      requestMode: resolvedMode,
+    });
+    if (typeof window !== "undefined") {
+      window.location.href = resolvedMode === "swap" ? "/swap" : "/request-vehicle";
+    }
+  },
 
   openSmallerModal: (modalName) =>
     set({

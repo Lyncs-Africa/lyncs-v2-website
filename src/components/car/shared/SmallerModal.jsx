@@ -41,7 +41,7 @@ const SmallerModal = ({
             exit={{ y: 550, opacity: 0 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className={classNames(
-              "smaller-modal md:h-auto h-full max-h-[92vh] md:max-h-[85vh] z-[100] w-full md:w-[750px] md:max-w-[750px] md:right-0 md:left-auto md:rounded-tl-[24px] md:rounded-tr-none px-6 pt-6 md:py-[2rem] bg-white dark:bg-slate-900 border-t md:border-l border-slate-200 dark:border-white/10 shadow-2xl text-slate-900 dark:text-slate-100 overflow-y-auto slim-scroll"
+              "smaller-modal md:h-auto h-full max-h-[92vh] md:max-h-[85vh] z-[100] w-full md:w-[750px] md:max-w-[750px] md:right-0 md:left-auto md:rounded-tl-[24px] md:rounded-tr-none px-6 pt-6 md:py-[2rem] bg-white dark:bg-slate-900 border-t md:border-l border-slate-200 dark:border-white/10 shadow-2xl text-slate-900 dark:text-slate-100 overflow-y-auto no-scrollbar"
             )}
           >
             {children}
