@@ -89,7 +89,7 @@ export const CarCard = ({ car }) => {
             {car.origin && (
               <>
                 <span className="text-slate-300 dark:text-slate-600">•</span>
-                <span>{car.origin === "local" ? "Nigerian Used" : "Foreign Used"}</span>
+                <span>{car.condition !== "NEW" ? "Nigerian Used" : "Brand new"}</span>
               </>
             )}
           </div>
