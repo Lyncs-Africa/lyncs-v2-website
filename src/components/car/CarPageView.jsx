@@ -1,19 +1,18 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import CarsView from "./tab-views/CarsView.jsx";
 import { resolveActiveTab } from "../../lib/carSegments.js";
 import SlideUpModal from "./shared/SlideUpModal.jsx";
 import SmallerModal from "./shared/SmallerModal.jsx";
-import { useCarStore } from "../../store/carStore.js";
 import { ToastContainer } from "react-toastify";
 
 /**
  * @param {{ initialAction?: string | null }} props
  */
 const CarPageView = ({ initialAction = /** @type {string | null} */ (null) }) => {
-  const { openRequestVehicle } = useCarStore();
+  const router = useRouter();
   const searchParams = useSearchParams();
   // Read query params on the client so this page can be statically rendered
   // (no server-side searchParams access).
@@ -25,9 +24,11 @@ const CarPageView = ({ initialAction = /** @type {string | null} */ (null) }) =>
 
   useEffect(() => {
     if (action === "swap") {
-      openRequestVehicle(null, "swap");
+      router.replace("/swap");
+    } else if (action === "request") {
+      router.replace("/request-vehicle");
     }
-  }, [action, openRequestVehicle]);
+  }, [action, router]);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative">

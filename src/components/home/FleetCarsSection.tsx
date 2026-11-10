@@ -32,7 +32,7 @@ const cardVariants = {
 }
 
 export default function FleetCarsSection() {
-    const {openCarDetails, openRequestVehicle} = useCarStore()
+    const {openCarDetails} = useCarStore()
 
     return (
         <section className="relative overflow-hidden bg-black pb-16 font-Quicksand text-white md:pb-24">
@@ -126,16 +126,13 @@ export default function FleetCarsSection() {
                                         >
                                             Purchase vehicle
                                         </button>
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                openRequestVehicle(car, 'swap')
-                                            }}
+                                        <Link
+                                            href="/swap"
+                                            onClick={(e) => e.stopPropagation()}
                                             className="inline-flex flex-1 justify-center rounded border border-white/30 px-4 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-white/10"
                                         >
                                             Swap my fleet
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             </motion.div>

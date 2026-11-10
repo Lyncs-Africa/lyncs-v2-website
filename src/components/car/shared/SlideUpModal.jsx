@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import classNames from "classnames";
 import { useCarStore } from "../../../store/carStore.js";
 import CarDetailsModal from "../CarDetailsModal.jsx";
-import RequestVehicleModal from "../RequestVehicleModal.jsx";
 
 const SlideUpModal = () => {
   const { slideUpOpen, modal, closeAllModals } = useCarStore();
@@ -53,7 +52,6 @@ const SlideUpModal = () => {
         )}
       >
         {modal === "car-details" && <CarDetailsModal onClose={closeAllModals} />}
-        {modal === "request-a-vehicle" && <RequestVehicleModal onClose={closeAllModals} />}
       </div>
     </div>
   );

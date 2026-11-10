@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Input } from "../ui/HeroUI.jsx";
 import { FaCar, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -212,7 +213,7 @@ const QuoteSummaryStep = ({
 
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b border-light dark:border-white/10 text-15px">
-            <span className="text-slate-600 dark:text-slate-300">Estimated Price</span>
+            <span className="text-slate-600 dark:text-slate-300">Starting from</span>
             <span className="font-semibold text-black dark:text-white">₦{numberWithCommas(car.price || 0)}</span>
           </div>
 
@@ -416,7 +417,8 @@ const PurchaseSuccessStep = ({ car, order, contactInfo }) => {
 };
 
 const CarDetailsModal = ({ onClose: propOnClose }) => {
-  const { selectedCar, startPurchase, openRequestVehicle, closeAllModals } = useCarStore();
+  const router = useRouter();
+  const { selectedCar, startPurchase, closeAllModals } = useCarStore();
   const initialCar = selectedCar || {};
   const carPlatform =
     initialCar.platform ||
@@ -746,7 +748,8 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const handlePurchase = () => setPurchaseStep("payment-mode");
 
   const handleSwap = () => {
-    openRequestVehicle(car);
+    closeAllModals();
+    router.push("/swap");
   };
 
   const isFullStepView =
@@ -916,7 +919,7 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
           </div>
 
           <div>
-            <p className="text-12px text-slate-400 dark:text-slate-500">Estimated Price</p>
+            <p className="text-12px text-slate-400 dark:text-slate-500">Starting from</p>
             <div className="flex items-center gap-2">
               <p className="text-18px font-semibold text-slate-800 dark:text-white">
                 ₦{numberWithCommas(car.price || 0)}

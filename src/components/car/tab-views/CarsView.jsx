@@ -36,7 +36,6 @@ export const SORT_OPTIONS = [
 
 const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   const activeTabMeta = getTab(activeTab);
-  const { openRequestVehicle } = useCarStore();
   const [type, setType] = useState("all");
   const [make, setMake] = useState("");
   const [search, setSearch] = useState("");
@@ -342,15 +341,12 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
             </Select>
           </div>
 
-          <Button
-            color="primary"
-            size="md"
-            radius="full"
-            onPress={() => openRequestVehicle()}
-            className="w-full sm:w-auto font-medium text-white px-5 shadow-xs shrink-0 cursor-pointer"
+          <Link
+            href="/request-vehicle"
+            className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-full bg-primary px-5 text-14px font-medium text-white shadow-xs transition hover:bg-primary/90 shrink-0 cursor-pointer"
           >
             Request a vehicle
-          </Button>
+          </Link>
         </div>
       </div>
 
