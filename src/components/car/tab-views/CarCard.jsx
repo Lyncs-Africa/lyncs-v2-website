@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { FaCar } from "react-icons/fa";
 import { IoFlash } from "react-icons/io5";
 import { BsFuelPumpFill } from "react-icons/bs";
@@ -16,28 +17,46 @@ export const FUEL_TYPE_BADGE = {
 };
 
 export const CarCard = ({ car }) => {
-  const { openCarDetails, openRequestVehicle } = useCarStore();
+  const router = useRouter();
   const fuelBadge = FUEL_TYPE_BADGE[car.type] || FUEL_TYPE_BADGE.petrol;
+
+  const navigateToCarListing = (startPurchase = false) => {
+    const carId = car.productId || car.id;
+    if (!carId) return;
+    const platform = car.platform || car.source;
+    if (typeof window !== "undefined") {
+      try {
+        window.sessionStorage.setItem(`lyncs_car_${carId}`, JSON.stringify(car));
+      } catch {
+        // ignore storage error
+      }
+    }
+    const params = new URLSearchParams();
+    if (platform) params.set("platform", platform);
+    if (startPurchase) params.set("purchase", "1");
+    const qs = params.toString();
+    router.push(`/cars/${encodeURIComponent(carId)}${qs ? `?${qs}` : ""}`);
+  };
 
   const handlePurchase = (e) => {
     e.stopPropagation();
-    openCarDetails(car, false);
+    navigateToCarListing(true);
   };
 
   const handleSwap = (e) => {
     e.stopPropagation();
-    openRequestVehicle(car); // Opens swap intake with this car preselected as target
+    router.push("/swap");
   };
 
   return (
     <div
-      onClick={() => openCarDetails(car, false)}
+      onClick={() => navigateToCarListing(false)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          openCarDetails(car, false);
+          navigateToCarListing(false);
         }
       }}
       className="group bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden cursor-pointer transition-all flex flex-col justify-between dark:shadow-none"
@@ -99,7 +118,7 @@ export const CarCard = ({ car }) => {
         <div className="pt-2 border-t border-slate-100 dark:border-white/10 space-y-3">
           <div>
             <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
-              Estimated Price
+              Starting from
             </p>
             <div className="flex items-baseline gap-2">
               <span className="text-18px font-bold text-slate-900 dark:text-white">
@@ -113,7 +132,7 @@ export const CarCard = ({ car }) => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pt-1">
+          {/* <div className="flex items-center gap-2 pt-1">
             <button
               type="button"
               onClick={handlePurchase}
@@ -128,7 +147,7 @@ export const CarCard = ({ car }) => {
             >
               Swap
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

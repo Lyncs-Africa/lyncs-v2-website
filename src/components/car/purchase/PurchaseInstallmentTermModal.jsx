@@ -169,7 +169,7 @@ const PurchaseInstallmentTermModal = ({
   const downPaymentPercent = Math.round(INSTALLMENT_DOWN_PAYMENT_PERCENT * 100);
 
   return (
-    <div className="space-y-4 max-h-[80vh] overflow-y-auto px-1 slim-scroll">
+    <div className="space-y-4 px-1 no-scrollbar">
       <div className="flex items-start justify-between pb-2 border-b border-light dark:border-slate-800">
         <div>
           <h2 className="text-18px font-semibold text-black dark:text-white">Installment Plan</h2>
@@ -308,6 +308,7 @@ const PurchaseInstallmentTermModal = ({
           size="md"
           color="danger"
           variant="bordered"
+          radius="full"
         >
           Back
         </Button>
@@ -318,6 +319,7 @@ const PurchaseInstallmentTermModal = ({
           className="disabled:opacity-50 disabled:pointer-events-none uppercase text-white font-[500] px-8"
           size="md"
           color="primary"
+          radius="full"
         >
           {isSubmitting ? "Submitting Quote..." : "Get a quote"}
         </Button>
