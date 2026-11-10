@@ -1,18 +1,28 @@
-import HomeHero from '../../components/home/HomeHero'
-// Previous chat-bubble version kept in ExplainerSection.tsx
-import ExplainerCircles from '../../components/home/ExplainerCircles'
-import PlugInSection from '../../components/home/PlugInSection'
-import EVSection from '../../components/home/EVSection'
-import EVSupportSection from '../../components/home/EVSupportSection'
+import FleetSwapHero from '../../components/home/FleetSwapHero'
+import HowItWorksSection from '../../components/home/HowItWorksSection'
+import CoverageSection from '../../components/home/CoverageSection'
+import FleetCarsSection from '../../components/home/FleetCarsSection'
+import DifferentiatorsSection from '../../components/home/DifferentiatorsSection'
+import BeyondTheFleetSection from '../../components/home/BeyondTheFleetSection'
+import IndividualsSection from '../../components/home/IndividualsSection'
+import FaqSection from '../../components/home/FaqSection'
+import PlatformShowcase from '../../components/home/PlatformShowcase'
 
 export default function HomePage() {
   return (
     <>
-      <HomeHero />
-      <ExplainerCircles />
-      <PlugInSection />
-      <EVSection />
-      <EVSupportSection />
+      <FleetSwapHero />
+      <HowItWorksSection />
+      <CoverageSection />
+      <FleetCarsSection />
+      <DifferentiatorsSection />
+      <BeyondTheFleetSection />
+      <IndividualsSection />
+      {/*<Testimonials />*/}
+      <FaqSection />
+      {/*<Strip />*/}
+      {/*<PlugInSection />*/}
+      <PlatformShowcase />
     </>
   )
 }

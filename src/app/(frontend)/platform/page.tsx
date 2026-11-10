@@ -8,7 +8,7 @@ import BusinessesCtaSection from '../../../components/businesses/BusinessesCtaSe
 export const metadata: Metadata = {
   title: 'Platform Suite & Mobility Rails | Lyncs',
   description:
-    'Explore the 8 integrated corporate mobility rails by Lyncs: rides, staff buses, executive flights, digital fuel vouchers, car rentals, emergency towing, and on-demand mechanics.',
+    'Explore the 7 integrated corporate mobility rails by Lyncs: rides, staff buses, executive flights, car rentals, emergency towing, and on-demand mechanics.',
 }
 
 export default function PlatformPage() {

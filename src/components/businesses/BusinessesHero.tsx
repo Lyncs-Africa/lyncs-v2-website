@@ -30,9 +30,9 @@ const CIRCLES = [
     color: 'bg-[#DCE5EA] dark:bg-sky-400/10',
   },
   {
-    title: 'Fleet & Fuel',
+    title: 'Fleet & EV Swap',
     image: '/images/overview.jpg',
-    label: 'Digital vouchers & EV swap',
+    label: 'Trade petrol fleet for EVs',
     pos: 'right-[2%] top-[50%] w-[48%]',
     color: 'bg-[#E3ECFA] dark:bg-accent/15',
     big: true,

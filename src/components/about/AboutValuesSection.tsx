@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { GiBrain } from 'react-icons/gi'
 import { LuSparkles, LuGlobe, LuZap } from 'react-icons/lu'
 
-// Binder layout follows EVSupportSection directly: page-coloured rings
+// Binder layout follows HowItWorksSection directly: page-coloured rings
 // hang off each card's right edge across the gap, and earlier cards sit above
 // later ones so their rings overlap the next card.
 const CARDS = [
@@ -80,7 +80,7 @@ export default function AboutValuesSection() {
           </h2>
         </div>
 
-        {/* Binder layout matching EVSupportSection directly (NO fuzzy shadows) */}
+        {/* Binder layout matching HowItWorksSection directly (NO fuzzy shadows) */}
         <motion.div
           initial="hidden"
           whileInView="visible"

@@ -42,7 +42,7 @@ export const Tabs = ({
               size === "lg" ? "px-6 py-2.5 text-14px" : "px-4 py-1.5 text-13px",
               radius === "full" ? "rounded-full" : "rounded-lg",
               isSelected
-                ? "bg-primary text-white shadow-xs font-bold dark:bg-accent"
+                ? "bg-primary text-white shadow-xs font-bold dark:bg-[#2D419A]"
                 : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
             )}
           >
@@ -184,7 +184,7 @@ export const Button = ({
     primary:
       variant === "bordered"
         ? "border border-primary text-primary hover:bg-primary/5 dark:border-accent dark:text-accent dark:hover:bg-accent/10"
-        : "bg-primary text-white hover:bg-primary/90 dark:bg-accent dark:hover:bg-accent/90 shadow-xs",
+        : "bg-primary text-white hover:bg-primary/90 dark:bg-[#2D419A] dark:hover:bg-[#2D419A]/90 shadow-xs",
     bordered: "border border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5",
     default: "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700",
   };
@@ -336,7 +336,7 @@ export const Checkbox = ({
           "flex items-center justify-center rounded-md border transition-colors",
           size === "sm" ? "w-4 h-4" : "w-5 h-5",
           isSelected
-            ? "bg-primary border-primary dark:bg-accent dark:border-accent text-white"
+            ? "bg-primary border-primary dark:bg-[#2D419A] dark:border-[#2D419A] text-white"
             : "border-slate-300 dark:border-white/20 bg-white dark:bg-slate-900"
         )}
       >

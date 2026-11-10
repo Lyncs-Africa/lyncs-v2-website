@@ -11,7 +11,7 @@ const outline = 'border-2 border-[#111]'
 const FOUNDATIONS = [
   {
     title: '1 Central Corporate Treasury',
-    desc: 'Fund one central balance via bank transfer or credit terms. All 8 rails draw from this single master treasury.',
+    desc: 'Fund one central balance via bank transfer or credit terms. All 7 rails draw from this single master treasury.',
     icon: LuWallet,
     color: 'bg-[#E6F0DC]',
     perks: ['Dedicated NGN corporate treasury balance', 'Automated low-balance alerts & top-ups', 'Zero cash disbursements to staff'],
@@ -25,7 +25,7 @@ const FOUNDATIONS = [
   },
   {
     title: '1 Consolidated Tax Invoice',
-    desc: 'At month-end, finance gets one single audit-ready invoice covering rides, buses, fuel, and flights with line-by-line VAT.',
+    desc: 'At month-end, finance gets one single audit-ready invoice covering rides, buses, rentals, and flights with line-by-line VAT.',
     icon: LuReceipt,
     color: 'bg-[#F6EEDD]',
     perks: ['One bill replaces 400 expense claims', 'Direct CSV export to QuickBooks, SAP, Zoho', '100% compliant with FIRS & tax audits'],
@@ -63,7 +63,7 @@ export default function PlatformIntegrationShowcase() {
             </p>
 
             <h2 className="mt-6 text-3xl font-bold !leading-[1.1] tracking-tight text-[#111] dark:text-white sm:text-4xl md:text-[2.75rem]">
-              How 8 different mobility services become{' '}
+              How 7 different mobility services become{' '}
               <span className="mt-2 block">
                 one seamless{' '}
                 <span className={`inline-block -rotate-2 rounded-full bg-[#EF6702] px-3.5 py-0.5 text-white md:px-4 ${outline}`}>
@@ -126,7 +126,7 @@ export default function PlatformIntegrationShowcase() {
                 <span className="h-5 w-5 rounded-full border-2 border-[#111] bg-white" />
               </span>
               <p className="text-sm sm:text-base leading-snug text-slate-700 dark:text-slate-300">
-                Activate all 8 rails on <span className="font-bold text-[#111] dark:text-white">one web command portal</span> for your admins and staff.
+                Activate all 7 rails on <span className="font-bold text-[#111] dark:text-white">one web command portal</span> for your admins and staff.
               </p>
             </div>
             <Link

@@ -9,8 +9,8 @@ const CARDS = [
   {
     title: 'Modular Adoption',
     Icon: LuLayers,
-    question: 'Can we start with just one service (like Rides or Fuel) before rolling out the rest?',
-    answer: '100% yes. Activate only what you need today—such as staff rides or digital fuel vouchers—and turn on Shuttles, Flights, or Towing as your operations scale.',
+    question: 'Can we start with just one service (like Rides or Flights) before rolling out the rest?',
+    answer: '100% yes. Activate only what you need today—such as staff rides or car rentals—and turn on Shuttles, Flights, or Towing as your operations scale.',
     reaction: 'Ehen! Exactly the modularity our company wanted.',
     avatar: '/images/face-1.png',
     color: 'bg-green-950 dark:bg-green-100/10',
@@ -24,8 +24,8 @@ const CARDS = [
     title: 'Unified Billing',
     Icon: LuReceipt,
     question: 'How does billing work when our team uses 4 different services in one month?',
-    answer: 'All expenses draw from your single company treasury balance. At month-end, finance receives 1 consolidated tax invoice itemizing every ride, flight, and fuel litre.',
-    reaction: 'One single invoice for Bolt, flights, shuttles, and fuel? Perfect.',
+    answer: 'All expenses draw from your single company treasury balance. At month-end, finance receives 1 consolidated tax invoice itemizing every ride, flight, and rental.',
+    reaction: 'One single invoice for Bolt, flights, shuttles, and rentals? Perfect.',
     avatar: '/images/face-three.png',
     color: 'bg-fuchsia-950 dark:bg-fuchsia-100/10',
     tint: 'text-fuchsia-300',
@@ -38,7 +38,7 @@ const CARDS = [
     title: 'Web App & Dashboard',
     Icon: LuSmartphone,
     question: 'How do employees and finance managers access the platform daily?',
-    answer: 'Both staff and company admins use the Lyncs web app—employees book rides, bus passes, and fuel vouchers on any browser, while Finance and HR manage policies and billing from the admin dashboard.',
+    answer: 'Both staff and company admins use the Lyncs web app—employees book rides, bus passes, and car rentals on any browser, while Finance and HR manage policies and billing from the admin dashboard.',
     reaction: 'Sharp. Total convenience for staff and full visibility for finance.',
     avatar: '/images/24.jpg',
     color: 'bg-purple-950 dark:bg-purple-100/10',
@@ -163,7 +163,7 @@ export default function PlatformFaqSection() {
               Book a live walkthrough
             </Link>
             <a
-              href="https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20we%20want%20to%20learn%20more%20about%20the%20platform%20suite."
+              href="https://wa.me/2349055555407?text=Hello%20Lyncs%2C%20we%20want%20to%20learn%20more%20about%20the%20platform%20suite."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded border border-primary px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-primary/5 dark:border-white/30 dark:text-white dark:hover:bg-white/5"

@@ -42,7 +42,7 @@ export default function PlugInSection() {
                     className={`z-10 relative overflow-hidden rounded-[32px] bg-[#EF6702] bg-cover bg-no-repeat bg-[position:75%_center] p-4 pt-64 sm:p-6 sm:pt-80 lg:bg-[length:auto_100%] lg:bg-right lg:p-10 ${outline}`}
                     style={{backgroundImage: "url('/images/25.png')"}}
                 >
-                    <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+                    <div className="grid plugin-grid-cols">
                         <motion.div
                             variants={cardVariants}
                             initial="hidden"

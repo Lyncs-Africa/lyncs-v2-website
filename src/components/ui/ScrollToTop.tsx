@@ -1,20 +1,20 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { FiArrowUp } from 'react-icons/fi'
+import {useEffect, useState} from 'react'
+import {BsRocket} from 'react-icons/bs'
 
 export default function ScrollToTop() {
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
-        const onScroll = () => setVisible(window.scrollY > 400)
+        const onScroll = () => setVisible(window.scrollY > 300)
         onScroll()
-        window.addEventListener('scroll', onScroll, { passive: true })
+        window.addEventListener('scroll', onScroll, {passive: true})
         return () => window.removeEventListener('scroll', onScroll)
     }, [])
 
     const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({top: 0, behavior: 'smooth'})
     }
 
     return (
@@ -22,11 +22,11 @@ export default function ScrollToTop() {
             type="button"
             onClick={scrollToTop}
             aria-label="Scroll to top"
-            className={`fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-accent text-white shadow-lg flex items-center justify-center hover:bg-accent/90 transition-all duration-300 ${
-                visible ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-3 pointer-events-none'
+            className={`group fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-primary bg-white text-primary shadow-lg transition-all duration-300 hover:bg-slate-50 dark:border-white/20 dark:bg-primary dark:text-white dark:hover:bg-primary/80 ${
+                visible ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-3 opacity-0 pointer-events-none'
             }`}
         >
-            <FiArrowUp size={18} aria-hidden="true"/>
+            <BsRocket size={22} aria-hidden="true" className="group-hover:animate-bounce"/>
         </button>
     )
 }

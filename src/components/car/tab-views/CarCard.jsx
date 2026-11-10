@@ -117,7 +117,7 @@ export const CarCard = ({ car }) => {
             <button
               type="button"
               onClick={handlePurchase}
-              className="flex-1 bg-primary text-white text-13px font-semibold rounded-full py-2 border border-primary hover:bg-primary/90 dark:bg-accent dark:border-accent dark:hover:bg-accent/90 transition-colors cursor-pointer"
+              className="flex-1 bg-primary text-white text-13px font-semibold rounded-full py-2 border border-primary hover:bg-primary/90 dark:bg-[#2D419A] dark:border-[#2D419A] dark:hover:bg-[#2D419A]/90 transition-colors cursor-pointer"
             >
               Purchase
             </button>

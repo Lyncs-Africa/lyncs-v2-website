@@ -9,6 +9,7 @@ import {
   getDeliveryFeeInfo,
 } from "../carPurchase.js";
 import { numberWithCommas, toInternationalFormat } from "../utils.js";
+import { LOCAL_CARS_RAW } from "../localCarsCatalog.js";
 
 const RAW_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -249,104 +250,131 @@ async function apiRequest(path, options = {}) {
  *
  * Query params: page, limit, condition ('NEW' | 'USED'), fuelType, origin, make, keyword, sort, source
  */
-export async function fetchCarsCatalog(params = {}) {
-  const apiParams = {};
+// The local stock from cars.json, normalized once. All brand-new; origin cleared
+// so cards don't render a "Foreign Used" tag on new vehicles.
+const LOCAL_NORMALIZED = LOCAL_CARS_RAW.map(normalizeCar)
+  .filter(Boolean)
+  .map((car) => ({ ...car, usage: "brand-new", condition: "NEW", origin: undefined }));
 
-  if (params.page) apiParams.page = params.page;
-  if (params.limit) apiParams.limit = Math.min(Number(params.limit) || 20, 50);
+// Use-case audience filter (e-hailing, families, businesses, schools). Keys off
+// each car's `segments` tag; until any car is tagged this is a no-op so the
+// use-case tabs still show the catalog instead of an empty list. The backend has
+// no `segment` param, so we always apply this client-side.
+function applySegmentFilter(cars, segment) {
+  if (!segment) return cars;
+  const seg = String(segment).toLowerCase();
+  const anyTagged = cars.some((c) => Array.isArray(c.segments) && c.segments.length);
+  if (!anyTagged) return cars;
+  return cars.filter(
+    (c) => Array.isArray(c.segments) && c.segments.map((s) => String(s).toLowerCase()).includes(seg),
+  );
+}
 
-  // Condition: 'NEW' or 'USED' per API spec
-  if (params.condition) {
-    const c = String(params.condition).toUpperCase();
-    if (c === "NEW" || c === "BRAND-NEW" || c === "BRAND_NEW") {
-      apiParams.condition = "NEW";
-    } else if (c === "USED" || c === "FOREIGN-USED" || c === "FOREIGN_USED" || c === "USED-CARS") {
-      apiParams.condition = "USED";
-    } else {
-      apiParams.condition = params.condition;
-    }
-  }
+// Offline fallback: serve the local cars.json catalog when the live endpoint is
+// unreachable, so the page never ends up empty.
+function localCatalog(params = {}) {
+  const condition = String(params.condition || "").toUpperCase();
+  const wantUsed =
+    condition === "USED" ||
+    condition === "FOREIGN-USED" ||
+    condition === "FOREIGN_USED" ||
+    condition === "USED-CARS";
+
+  // The local catalog is all brand-new stock, so the "Used cars" tab is empty.
+  let cars = wantUsed ? [] : [...LOCAL_NORMALIZED];
 
   if (params.fuelType && params.fuelType !== "all") {
-    apiParams.fuelType = params.fuelType;
-  }
-
-  if (params.origin && params.origin !== "all") {
-    apiParams.origin = params.origin;
+    const f = String(params.fuelType).toLowerCase();
+    cars = cars.filter((c) => c.type === f);
   }
 
   if (params.make) {
-    apiParams.make = params.make;
+    const m = String(params.make).toLowerCase();
+    cars = cars.filter((c) => (c.make || "").toLowerCase().includes(m));
   }
 
-  if (params.keyword || params.q || params.keyWord) {
-    apiParams.keyword = params.keyword || params.q || params.keyWord;
+  cars = applySegmentFilter(cars, params.segment);
+
+  const keyword = params.keyword || params.q || params.keyWord;
+  if (keyword) {
+    const q = String(keyword).toLowerCase();
+    cars = cars.filter((c) =>
+      [c.name, c.make, c.model].some((v) => String(v || "").toLowerCase().includes(q))
+    );
   }
 
-  if (params.sort) {
-    apiParams.sort = params.sort;
-  }
+  if (params.sort === "price_asc") cars.sort((a, b) => (a.price || 0) - (b.price || 0));
+  else if (params.sort === "price_desc") cars.sort((a, b) => (b.price || 0) - (a.price || 0));
+  else if (params.sort === "newest") cars.sort((a, b) => (b.year || 0) - (a.year || 0));
 
-  if (params.source && params.source !== "all") {
-    apiParams.source = params.source;
-  }
+  return {
+    success: true,
+    message: "Local car catalog",
+    data: {
+      cars,
+      pagination: {
+        page: 1,
+        pageSize: cars.length,
+        limit: cars.length,
+        totalCount: cars.length,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
+    },
+    source: "local",
+  };
+}
 
-  const query = buildQueryString(apiParams);
+export async function fetchCarsCatalog(params = {}) {
+  const query = buildQueryString({
+    page: params.page,
+    limit: params.limit,
+    condition: params.condition, // 'NEW' | 'USED'
+    fuelType: params.fuelType,
+    origin: params.origin,
+    make: params.make,
+    keyword: params.keyword || params.q || params.keyWord,
+    sort: params.sort,
+    source: params.source,
+  });
+
   try {
-    const res = await apiRequest(`cars/catalog${query}`, {
-      method: "GET",
-      next: { revalidate: 60 },
-    });
+    const res = await apiRequest(`cars/catalog${query}`, { method: "GET" });
 
-    const rawList = Array.isArray(res?.data?.cars)
-      ? res.data.cars
-      : Array.isArray(res?.cars)
-      ? res.cars
-      : Array.isArray(res?.data)
-      ? res.data
-      : Array.isArray(res)
-      ? res
-      : [];
+    // Tolerate the common response shapes.
+    const rawCars =
+      res?.data?.cars ||
+      res?.cars ||
+      (Array.isArray(res?.data) ? res.data : null) ||
+      (Array.isArray(res) ? res : []);
 
-    const normalizedCars = rawList.map(normalizeCar).filter(Boolean);
-    const pagination = res?.data?.pagination || res?.pagination || {
-      page: Number(apiParams.page) || 1,
-      pageSize: apiParams.limit || 20,
-      limit: apiParams.limit || 20,
-      totalCount: normalizedCars.length,
-      totalPages: 1,
-      hasNextPage: false,
-      hasPrevPage: false,
-    };
+    const cars = applySegmentFilter(
+      (rawCars || []).map(normalizeCar).filter(Boolean),
+      params.segment,
+    );
+
+    const pagination = res?.data?.pagination ||
+      res?.pagination || {
+        page: 1,
+        pageSize: cars.length,
+        limit: cars.length,
+        totalCount: cars.length,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
+      };
 
     return {
       success: true,
-      message: res?.message || "Unified car catalog fetched successfully",
-      data: {
-        cars: normalizedCars,
-        pagination,
-      },
+      message: res?.message || "Live car catalog",
+      data: { cars, pagination },
       source: "api",
     };
   } catch (err) {
-    console.error("API /cars/catalog error:", err?.message || err);
-    return {
-      success: false,
-      message: err?.message || "Failed to fetch car catalog",
-      data: {
-        cars: [],
-        pagination: {
-          page: Number(apiParams.page) || 1,
-          pageSize: apiParams.limit || 20,
-          limit: apiParams.limit || 20,
-          totalCount: 0,
-          totalPages: 0,
-          hasNextPage: false,
-          hasPrevPage: false,
-        },
-      },
-      error: err?.message,
-    };
+    // Backend down / unreachable — fall back to the local catalog.
+    console.error("fetchCarsCatalog: live /cars/catalog failed, using local fallback.", err?.message || err);
+    return localCatalog(params);
   }
 }
 
@@ -356,6 +384,10 @@ export async function fetchCarsCatalog(params = {}) {
  */
 export async function fetchCarDetail(id, platform = null) {
   if (!id) return null;
+
+  // Serve the local catalog cars straight from cars.json.
+  const local = LOCAL_NORMALIZED.find((c) => String(c.id) === String(id));
+  if (local) return local;
 
   try {
     const endpoint =

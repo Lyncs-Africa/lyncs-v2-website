@@ -1,68 +1,40 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Tab, Tabs } from "../ui/HeroUI.jsx";
+import React, { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import CarsView from "./tab-views/CarsView.jsx";
+import { resolveActiveTab } from "../../lib/carSegments.js";
 import SlideUpModal from "./shared/SlideUpModal.jsx";
 import SmallerModal from "./shared/SmallerModal.jsx";
 import { useCarStore } from "../../store/carStore.js";
 import { ToastContainer } from "react-toastify";
 
 /**
- * @param {{ initialTab?: string, initialAction?: string | null }} props
+ * @param {{ initialAction?: string | null }} props
  */
-const CarPageView = ({ initialTab = "brand-new", initialAction = /** @type {string | null} */ (null) }) => {
-  const normalizedInitial =
-    initialTab === "used" || initialTab === "used-cars" ? "used-cars" : "brand-new";
-  const [selectedView, setSelectedView] = useState(normalizedInitial);
+const CarPageView = ({ initialAction = /** @type {string | null} */ (null) }) => {
   const { openRequestVehicle } = useCarStore();
+  const searchParams = useSearchParams();
+  // Read query params on the client so this page can be statically rendered
+  // (no server-side searchParams access).
+  const action = searchParams.get("action") ?? initialAction;
+  // ?condition=used shows the used catalog; anything else is brand-new.
+  const condition = searchParams.get("condition");
+  const usage = condition === "used" ? "used" : "brand-new";
+  const activeTab = resolveActiveTab(condition);
 
   useEffect(() => {
-    if (initialAction === "swap") {
+    if (action === "swap") {
       openRequestVehicle(null, "swap");
     }
-  }, [initialAction, openRequestVehicle]);
-
-  useEffect(() => {
-    if (initialTab) {
-      setSelectedView(
-        initialTab === "used" || initialTab === "used-cars" ? "used-cars" : "brand-new"
-      );
-    }
-  }, [initialTab]);
+  }, [action, openRequestVehicle]);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative">
       <ToastContainer position="top-right" autoClose={4000} hideProgressBar={false} />
 
-      {/* Page Title & Subtitle */}
-      {/* <div className="mb-6 sm:mb-8">
-        <h1 className="text-28px sm:text-36px font-extrabold text-slate-900 dark:text-white tracking-tight">
-          Vehicle Store & Import
-        </h1>
-        <p className="text-14px sm:text-15px text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
-          Explore brand new factory units and certified foreign used cars available for Lagos port delivery.
-        </p>
-      </div> */}
-
-      {/* Tabs */}
-      <div className="space-y-3 mb-6 sm:mb-8">
-        <Tabs
-          aria-label="Car Catalog Tabs"
-          size="lg"
-          radius="full"
-          color="primary"
-          selectedKey={selectedView}
-          onSelectionChange={(key) => setSelectedView(String(key))}
-        >
-          <Tab key="brand-new" id="brand-new" title="Brand new" />
-          <Tab key="used-cars" id="used-cars" title="Used cars" />
-        </Tabs>
-      </div>
-
-      {/* Catalog View */}
-      {selectedView === "brand-new" && <CarsView usage="brand-new" />}
-      {(selectedView === "used-cars" || selectedView === "used") && <CarsView usage="used" />}
+      {/* New vs used is driven by ?condition. */}
+      <CarsView usage={usage} activeTab={activeTab} />
 
       {/* Global Slide-Over Drawer (.slideUp) */}
       <SlideUpModal />

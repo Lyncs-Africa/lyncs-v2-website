@@ -19,7 +19,7 @@ export default function CareersHero() {
 
   return (
     <section className="relative -mt-20 md:-mt-[130px] overflow-hidden bg-[#FAF8F6] font-Quicksand dark:bg-night pb-16 pt-[120px] md:pt-[190px]">
-      {/* Background subtle grid matching HomeHero */}
+      {/* Background subtle grid matching PlatformShowcase */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 dark:hidden"

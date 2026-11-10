@@ -64,7 +64,7 @@ const plugVariants = {
   }),
 }
 
-// Wheel centres and radius in 26.png (2014 x 780), matching <EVSection />
+// Wheel centres and radius in 26.png (2014 x 780), matching <FleetSwapHero />
 const IMG_W = 2014
 const IMG_H = 780
 const WHEEL_R = 150
@@ -166,7 +166,7 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
               href="/platform"
               className="mr-2 rounded-full border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-600 transition hover:border-primary hover:text-primary dark:border-white/15 dark:bg-white/5 dark:text-slate-300"
             >
-              ← All 8 Rails
+              ← All 7 Rails
             </Link>
             {allServices.map((item) => {
               const ItemIcon = ICON_MAP[item.iconName] || LuCar
@@ -303,7 +303,7 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
         </div>
       </section>
 
-      {/* Scroll-Driven Executive Vehicle Showcase (for Car Rentals, matching <EVSection />) */}
+      {/* Scroll-Driven Executive Vehicle Showcase (for Car Rentals, matching <FleetSwapHero />) */}
       {service.slug === 'car-rentals' && (
         <section className="relative overflow-x-clip bg-[#FAF8F6] pb-16 font-Quicksand dark:bg-night md:pb-24">
           <div
@@ -373,7 +373,7 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
                     className="absolute inset-y-0 left-0 rounded-full bg-accent"
                   />
                   <span className="absolute -left-0.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full border-[3px] border-accent bg-white dark:bg-night" />
-                  <span className="absolute -right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-white shadow-md shadow-accent/30">
+                  <span className="absolute -right-1 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-white shadow-md shadow-accent/30 dark:bg-[#2D419A]">
                     <LuCar size={14} aria-hidden="true" />
                   </span>
                 </div>
@@ -650,7 +650,7 @@ export default function PlatformServiceDetail({ service }: { service: PlatformSe
                   <GoArrowUpRight size={18} />
                 </Link>
                 <a
-                  href={`https://wa.me/2349055552055?text=Hello%20Lyncs%2C%20I%20want%20to%20learn%20more%20about%20${encodeURIComponent(service.label)}.`}
+                  href={`https://wa.me/2349055555407?text=Hello%20Lyncs%2C%20I%20want%20to%20learn%20more%20about%20${encodeURIComponent(service.label)}.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded border-2 border-white bg-transparent px-6 py-3.5 text-[15px] font-bold text-white transition hover:bg-white/10"

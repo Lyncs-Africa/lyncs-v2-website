@@ -1,0 +1,544 @@
+[
+  {
+    "id": "byd-seagull-405km",
+    "make": "BYD",
+    "model": "Seagull 405km",
+    "priceUSD": {
+      "display": "$9,500 ~ $11,600",
+      "min": 9500,
+      "max": 11600
+    },
+    "powerType": "BEV",
+    "specs": "55kW motor, 5-door 4-seat hatchback, fast charge, V2L optional",
+    "batteryKWh": 38.88,
+    "rangeKm": 405,
+    "year": "2024/2025",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/byd-seagull-405km-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/byd-seagull-405km-front.jpg"
+      },
+      {
+        "view": "interior",
+        "src": "/images/cars/byd-seagull-405km-interior.jpg"
+      },
+      {
+        "view": "dashboard",
+        "src": "/images/cars/byd-seagull-405km-dashboard.jpg"
+      },
+      {
+        "view": "side",
+        "src": "/images/cars/byd-seagull-405km-side.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "byd-song-plus",
+    "make": "BYD",
+    "model": "Song Plus",
+    "priceUSD": {
+      "display": "$21,000 ~ $21,900",
+      "min": 21000,
+      "max": 21900
+    },
+    "powerType": "PHEV (DM-i)",
+    "specs": "1.5L engine +145kW e-motor,5-seat SUV,15.6\" rotating screen, V2L",
+    "batteryKWh": 18.3,
+    "rangeKm": "105 (EV range)",
+    "year": "2024/2025",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/byd-song-plus-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/byd-song-plus-front.jpg"
+      },
+      {
+        "view": "dashboard",
+        "src": "/images/cars/byd-song-plus-dashboard.jpg"
+      },
+      {
+        "view": "interior",
+        "src": "/images/cars/byd-song-plus-interior.jpg"
+      },
+      {
+        "view": "rear",
+        "src": "/images/cars/byd-song-plus-rear.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "jetour-t2-hybrid",
+    "make": "Jetour",
+    "model": "T2 Hybrid",
+    "priceUSD": {
+      "display": "$21,000 ~ $28,100",
+      "min": 21000,
+      "max": 28100
+    },
+    "powerType": "PHEV",
+    "specs": "Off-road SUV,1.5T turbo +3DHT, AWD optional",
+    "batteryKWh": "26.7 / 43.24",
+    "rangeKm": "160 (EV range)",
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/jetour-t2-hybrid-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/jetour-t2-hybrid-front.jpg"
+      },
+      {
+        "view": "dashboard",
+        "src": "/images/cars/jetour-t2-hybrid-dashboard.jpg"
+      },
+      {
+        "view": "rear",
+        "src": "/images/cars/jetour-t2-hybrid-rear.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "aion-y-plus",
+    "make": "Aion",
+    "model": "Y Plus",
+    "priceUSD": {
+      "display": "$11,300 ~ $15,050",
+      "min": 11300,
+      "max": 15050
+    },
+    "powerType": "BEV",
+    "specs": "Compact family SUV,150kW motor, spacious rear cabin",
+    "batteryKWh": "50.66 / 63.2",
+    "rangeKm": "410 / 490",
+    "year": "2024/2025",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/aion-y-plus-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/aion-y-plus-front.jpg"
+      },
+      {
+        "view": "dashboard",
+        "src": "/images/cars/aion-y-plus-dashboard.jpg"
+      },
+      {
+        "view": "doors-open",
+        "src": "/images/cars/aion-y-plus-doors-open.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "leapmotor-c16",
+    "make": "Leapmotor",
+    "model": "C16",
+    "priceUSD": {
+      "display": "$19,300 ~ $25,300",
+      "min": 19300,
+      "max": 25300
+    },
+    "powerType": "BEV",
+    "specs": "6-seater large family SUV,218kW motor, intelligent ADAS",
+    "batteryKWh": 67.7,
+    "rangeKm": 520,
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/leapmotor-c16-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/leapmotor-c16-front.jpg"
+      },
+      {
+        "view": "dashboard",
+        "src": "/images/cars/leapmotor-c16-dashboard.jpg"
+      },
+      {
+        "view": "doors-open",
+        "src": "/images/cars/leapmotor-c16-doors-open.jpg"
+      },
+      {
+        "view": "rear",
+        "src": "/images/cars/leapmotor-c16-rear.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "bmw-ix3-ev",
+    "make": "BMW",
+    "model": "iX3 EV",
+    "priceUSD": {
+      "display": "$31,000 ~ $34,900",
+      "min": 31000,
+      "max": 34900
+    },
+    "powerType": "BEV",
+    "specs": "Premium compact luxury SUV, rear-wheel drive",
+    "batteryKWh": 80,
+    "rangeKm": 470,
+    "year": "2023/2024",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/bmw-ix3-ev-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/bmw-ix3-ev-front.jpg"
+      },
+      {
+        "view": "dashboard",
+        "src": "/images/cars/bmw-ix3-ev-dashboard.jpg"
+      },
+      {
+        "view": "doors-open",
+        "src": "/images/cars/bmw-ix3-ev-doors-open.jpg"
+      },
+      {
+        "view": "rear",
+        "src": "/images/cars/bmw-ix3-ev-rear.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "wuling-yangguang-van",
+    "make": "Wuling",
+    "model": "Yangguang Van",
+    "priceUSD": {
+      "display": "$10,000 ~ $12,200",
+      "min": 10000,
+      "max": 12200
+    },
+    "powerType": "BEV",
+    "specs": "Light commercial electric cargo van",
+    "batteryKWh": "30~50",
+    "rangeKm": "230~405",
+    "year": "2024/2025",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/wuling-yangguang-van-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/wuling-yangguang-van-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "wuling-electric-truck",
+    "make": "Wuling",
+    "model": "Electric Truck",
+    "priceUSD": {
+      "display": "$11,100 ~ $16,300",
+      "min": 11100,
+      "max": 16300
+    },
+    "powerType": "BEV",
+    "specs": "Small electric cargo truck for urban logistics",
+    "batteryKWh": "40~60",
+    "rangeKm": "250~350",
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/wuling-electric-truck-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/wuling-electric-truck-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": false,
+      "note": "Image is an identical copy of the Yangguang Van photo, not a truck."
+    }
+  },
+  {
+    "id": "wuling-linye-electric-van",
+    "make": "Wuling",
+    "model": "LINYE Electric Van",
+    "priceUSD": {
+      "display": "$11,000 ~ $17,700",
+      "min": 11000,
+      "max": 17700
+    },
+    "powerType": "BEV",
+    "specs": "Mini electric delivery van",
+    "batteryKWh": "32~42",
+    "rangeKm": "250~320",
+    "year": 2024,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/wuling-linye-electric-van-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/wuling-linye-electric-van-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": false,
+      "note": "Image shows a box truck. Looks like it belongs to the Wuling Electric Truck row."
+    }
+  },
+  {
+    "id": "aito-m9",
+    "make": "AITO",
+    "model": "M9",
+    "priceUSD": {
+      "display": "$58,000 ~ $72,000",
+      "min": 58000,
+      "max": 72000
+    },
+    "powerType": "BEV / EREV",
+    "specs": "Flagship large luxury SUV, Huawei ADS intelligent driving",
+    "batteryKWh": "97 / 40",
+    "rangeKm": "630(BEV),175(EREV pure electric)",
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/aito-m9-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/aito-m9-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "rox-1",
+    "make": "ROX",
+    "model": "1",
+    "priceUSD": {
+      "display": "$36,500 ~ $46,500",
+      "min": 36500,
+      "max": 46500
+    },
+    "powerType": "EREV",
+    "specs": "Hardcore off-road luxury SUV, AWD, total range>1100km",
+    "batteryKWh": 56,
+    "rangeKm": 235,
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/rox-1-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/rox-1-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": false,
+      "note": "Shape does not match the boxy ROX 01 off-roader."
+    }
+  },
+  {
+    "id": "zeekr-9x",
+    "make": "Zeekr",
+    "model": "9X",
+    "priceUSD": {
+      "display": "$63,000 ~ $79,500",
+      "min": 63000,
+      "max": 79500
+    },
+    "powerType": "PHEV",
+    "specs": "6-seat luxury performance SUV,660kW peak power",
+    "batteryKWh": 70,
+    "rangeKm": 179,
+    "year": 2026,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/zeekr-9x-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/zeekr-9x-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": false,
+      "note": "Image shows a low sedan/shooting brake, not the 9X SUV. Badge text reads ZEEKK."
+    }
+  },
+  {
+    "id": "zeekr-1",
+    "make": "Zeekr",
+    "model": "1",
+    "priceUSD": {
+      "display": "$32,000 ~ $44,600",
+      "min": 32000,
+      "max": 44600
+    },
+    "powerType": "BEV",
+    "specs": "Premium sport liftback, AWD optional, air suspension",
+    "batteryKWh": 100,
+    "rangeKm": 750,
+    "year": "2024/2025",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/zeekr-1-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/zeekr-1-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "mercedes-benz-eqe500",
+    "make": "Mercedes Benz",
+    "model": "EQE500",
+    "priceUSD": {
+      "display": "$37,000 ~ $57,500",
+      "min": 37000,
+      "max": 57500
+    },
+    "powerType": "BEV",
+    "specs": "Executive luxury electric sedan, dual motor 4MATIC",
+    "batteryKWh": 90.5,
+    "rangeKm": 620,
+    "year": "2023/2024",
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/mercedes-benz-eqe500-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/mercedes-benz-eqe500-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "byd-t5-ev-100kwh",
+    "make": "BYD",
+    "model": "T5 EV 100kWh",
+    "priceUSD": {
+      "display": "$23,000 ~ $32,300",
+      "min": 23000,
+      "max": 32300
+    },
+    "powerType": "BEV",
+    "specs": "Commercial electric light cargo truck,3-seat cabin",
+    "batteryKWh": 100,
+    "rangeKm": "260~420",
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/byd-t5-ev-100kwh-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/byd-t5-ev-100kwh-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": false,
+      "note": "Image shows a passenger hatchback, not a cargo truck."
+    }
+  },
+  {
+    "id": "byd-tsdm-hybrid-55-seater",
+    "make": "BYD",
+    "model": "TSDM hybrid 55 seater",
+    "priceUSD": {
+      "display": "$14,800 ~ $22,900",
+      "min": 14800,
+      "max": 22900
+    },
+    "powerType": "Hybrid Bus",
+    "specs": "55-seat passenger coach, hybrid powertrain for intercity transport",
+    "batteryKWh": 28,
+    "rangeKm": "Long distance",
+    "year": 2024,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/byd-tsdm-hybrid-55-seater-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/byd-tsdm-hybrid-55-seater-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": false,
+      "note": "Image shows a box truck, not a 55-seat coach. Likely the BYD T5 truck photo."
+    }
+  },
+  {
+    "id": "xiaomi-su7-ultra",
+    "make": "Xiaomi",
+    "model": "SU7 Ultra",
+    "priceUSD": {
+      "display": "$28,000 ~ $46,000",
+      "min": 28000,
+      "max": 46000
+    },
+    "powerType": "BEV",
+    "specs": "Triple motor super EV,1548hp,800V platform",
+    "batteryKWh": 93.7,
+    "rangeKm": 630,
+    "year": 2025,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/xiaomi-su7-ultra-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/xiaomi-su7-ultra-front.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  },
+  {
+    "id": "changan-uni-z",
+    "make": "Changan",
+    "model": "Uni-z",
+    "priceUSD": {
+      "display": "$14,500 - $16,500",
+      "min": 14500,
+      "max": 16500
+    },
+    "powerType": "Premiumi Edition Smart New Blue Core",
+    "specs": null,
+    "batteryKWh": null,
+    "rangeKm": "130km",
+    "year": 2026,
+    "category": "New Energy Vehicles",
+    "thumbnail": "/images/cars/changan-uni-z-front.jpg",
+    "images": [
+      {
+        "view": "front",
+        "src": "/images/cars/changan-uni-z-front.jpg"
+      },
+      {
+        "view": "exterior",
+        "src": "/images/cars/changan-uni-z-exterior.jpg"
+      }
+    ],
+    "imageCheck": {
+      "ok": true
+    }
+  }
+]

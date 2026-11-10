@@ -42,7 +42,7 @@ export default function IndividualsCtaSection() {
             </h2>
 
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
-              Swap your current petrol vehicle for an electric car today, compare ride rates across apps, and access discounted fuel vouchers all from one platform.
+              Swap your current petrol vehicle for an electric car today, compare ride rates across apps, and access 24/7 roadside support all from one platform.
             </p>
 
             <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-white/95">
@@ -63,7 +63,7 @@ export default function IndividualsCtaSection() {
                 <GoArrowUpRight size={18} />
               </Link>
               <Link
-                href="/cars/list"
+                href="/cars"
                 className="inline-flex items-center gap-2 rounded border-2 border-white bg-transparent px-6 py-3.5 text-[15px] font-bold text-white transition hover:bg-white/10"
               >
                 <LuCar size={20} />

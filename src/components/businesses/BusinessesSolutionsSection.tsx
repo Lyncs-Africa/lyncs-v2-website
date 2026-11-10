@@ -9,7 +9,6 @@ import { IoAnalyticsSharp } from 'react-icons/io5'
 import {
   LuWallet,
   LuBus,
-  LuFuel,
   LuPlane,
   LuZap,
   LuBuilding2,
@@ -47,20 +46,6 @@ const PILLARS = [
       'Live bus tracking and passenger check-in QR codes',
       'Guaranteed on-time arrivals to beat peak-hour traffic bottlenecks',
       'Vetted, insured commercial drivers with 100% background checks',
-    ],
-  },
-  {
-    id: 'fuel',
-    title: 'Digital Fuel & Diesel Vouchers',
-    badge: 'Instant Station QR Codes',
-    tagColor: 'bg-[#F6EEDD] text-amber-900',
-    icon: LuFuel,
-    desc: 'Eliminate cash advances, missing fuel receipts, and generator diesel theft with pre-authorized digital station vouchers.',
-    perks: [
-      'Redeemable at top filling station networks across Nigeria',
-      'Instant SMS and QR code validation at the pump with vehicle plate lock',
-      'Real-time litre balance and station transaction timestamping',
-      'Automated VAT receipts delivered directly to your finance ledger',
     ],
   },
   {

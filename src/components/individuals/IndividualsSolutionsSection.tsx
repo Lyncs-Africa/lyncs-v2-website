@@ -8,7 +8,6 @@ import { GoArrowUpRight } from 'react-icons/go'
 import {
   LuZap,
   LuCar,
-  LuFuel,
   LuWrench,
   LuCheck,
   LuCalculator,
@@ -49,22 +48,6 @@ const PILLARS = [
       'Zero surge shocks: pick the most cost-effective provider instantly',
       'Fund a single ride wallet for all trips and avoid failed bank transfers',
       'Track your trip history, receipts, and personal commute analytics',
-    ],
-  },
-  {
-    id: 'vouchers',
-    title: 'Discounted Fuel & EV Charging Vouchers',
-    badge: 'Digital Station Credits',
-    tagColor: 'bg-[#F6EEDD] text-amber-900',
-    icon: LuFuel,
-    href: '/platform/fuel-vouchers',
-    ctaText: 'Get Fuel Vouchers',
-    desc: 'Purchase digital vouchers at discounted rates and redeem them instantly via QR code or SMS at verified stations across Nigeria.',
-    perks: [
-      'Save between 3% to 8% per litre compared to street pump prices',
-      'Redeem seamlessly at verified nationwide filling stations',
-      'Pre-fund your monthly fuel budget so you are never stranded with an empty tank',
-      'EV drivers can buy discounted kilowatt charging credits at dedicated hubs',
     ],
   },
   {

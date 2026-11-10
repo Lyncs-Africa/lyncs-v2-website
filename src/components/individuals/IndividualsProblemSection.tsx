@@ -20,7 +20,7 @@ const LYNC_SOLUTIONS = [
   'EV Swap Program: trade in your petrol car for an EV and slash fuel bills by up to 80%',
   '24/7 on-demand mechanic and tow truck dispatch directly to your live phone location',
   'Vetted, certified mechanics with transparent upfront pricing and genuine parts',
-  'Personal ride wallet & discounted digital fuel vouchers to budget your monthly mobility',
+  'Personal ride wallet to budget and track your monthly mobility spend',
 ]
 
 const STATS = [

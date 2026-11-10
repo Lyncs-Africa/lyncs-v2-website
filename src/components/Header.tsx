@@ -12,7 +12,7 @@ const LOGO_DARK = "/images/logos/dark%20blue%20and%20light%20blue@4x.png";
 const LOGO_WHITE = "/images/logos/logo-white.png";
 
 const APP_URL = "https://app.lyncs.africa";
-const DEMO_URL = "/contact";
+const DEMO_URL = "/book-demo";
 
 type NavLink = { href: string; label: string };
 type NavItem = {
@@ -20,6 +20,7 @@ type NavItem = {
   badge?: string;
   href?: string;
   children?: NavLink[];
+  disabled?: boolean;
 };
 
 const NAV_ITEMS: NavItem[] = [
@@ -35,18 +36,16 @@ const NAV_ITEMS: NavItem[] = [
       },
       { href: "/platform/car-rentals", label: "Car rentals" },
       { href: "/platform/car-tow", label: "Car tow" },
-      { href: "/platform/fuel-vouchers", label: "Fuel & diesel vouchers" },
       { href: "/platform/mechanic", label: "On-demand mechanic" },
     ],
   },
   {
     label: "Cars",
-    badge: "New",
     children: [
-      { href: "/cars/list", label: "Browse all cars" },
-      { href: "/cars/swap", label: "Swap your car for EV" },
-      { href: "/cars/new", label: "Buy new cars" },
-      { href: "/cars/used", label: "Buy used cars " },
+      { href: "/cars", label: "Browse all cars" },
+      { href: "/swap", label: "Swap your car for an EV" },
+      { href: "/cars?condition=new", label: "Buy new cars" },
+      { href: "/cars?condition=used", label: "Buy used cars" },
     ],
   },
   {
@@ -54,6 +53,7 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { href: "/businesses", label: "For businesses" },
       { href: "/individuals", label: "For individuals" },
+      { href: "/drivers", label: "For e-hailing drivers" },
     ],
   },
   {
@@ -121,6 +121,9 @@ export default function Header({ mode = "light" }: HeaderProps) {
     },
   );
 
+  const disabledLinkClass =
+    "flex items-center gap-1 text-[15px] cursor-not-allowed select-none text-slate-300 dark:text-slate-600";
+
   const badge = (text: string) => (
     <span className="rounded-full bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-none text-accent">
       {text}
@@ -135,7 +138,7 @@ export default function Header({ mode = "light" }: HeaderProps) {
           scrolled ? "fixed" : "relative",
         )}
       >
-        <div className="xl:col-span-8 xl:col-start-3 md:col-span-10 md:col-start-2 container mx-auto relative">
+        <div className="md:col-span-10 md:col-start-2 container mx-auto relative">
           <nav
             className={classNames(
               "md:px-8 px-4 h-20 flex flex-col justify-center w-full lg:rounded-lg",
@@ -146,7 +149,7 @@ export default function Header({ mode = "light" }: HeaderProps) {
               },
             )}
           >
-            <div className="flex items-center justify-between">
+            <div className="relative flex items-center justify-between">
               <Link href="/" aria-label="Lyncs home">
                 <img
                   alt="Lyncs logo"
@@ -163,10 +166,21 @@ export default function Header({ mode = "light" }: HeaderProps) {
                 )}
               </Link>
 
-              <div className="hidden lg:flex items-center gap-8">
-                <ul ref={desktopNavRef} className="flex items-center gap-6">
+              <ul
+                ref={desktopNavRef}
+                className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 lg:flex"
+              >
                   {NAV_ITEMS.map((item) =>
-                    item.children ? (
+                    item.disabled ? (
+                      <li key={item.label}>
+                        <span className={disabledLinkClass} aria-disabled="true">
+                          {item.label}
+                          {item.children && (
+                            <FiChevronDown aria-hidden="true" />
+                          )}
+                        </span>
+                      </li>
+                    ) : item.children ? (
                       <li key={item.label} className="relative">
                         <button
                           type="button"
@@ -221,7 +235,7 @@ export default function Header({ mode = "light" }: HeaderProps) {
                   )}
                 </ul>
 
-                <div className="flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4">
                   <ThemeToggle onDarkHero={onDarkHero} />
                   <a
                     href={APP_URL}
@@ -236,7 +250,7 @@ export default function Header({ mode = "light" }: HeaderProps) {
                     className={classNames(
                       "rounded-full px-5 py-2 text-sm font-medium transition duration-150",
                       {
-                        "bg-primary text-white hover:bg-opacity-90 dark:bg-accent":
+                        "bg-primary text-white hover:bg-opacity-90 dark:bg-[#2D419A]":
                           !onDarkHero,
                         "bg-white text-primary hover:bg-slate-100": onDarkHero,
                       },
@@ -245,7 +259,6 @@ export default function Header({ mode = "light" }: HeaderProps) {
                     Book a demo
                   </Link>
                 </div>
-              </div>
 
               <div className="flex lg:hidden items-center gap-2">
               <ThemeToggle onDarkHero={onDarkHero} />
@@ -299,7 +312,20 @@ export default function Header({ mode = "light" }: HeaderProps) {
                 </div>
                 <ul className="space-y-4">
                   {NAV_ITEMS.map((item) =>
-                    item.children ? (
+                    item.disabled ? (
+                      <li key={item.label}>
+                        <span
+                          className="flex w-full items-center justify-between gap-2 cursor-not-allowed select-none text-slate-300 dark:text-slate-600"
+                          aria-disabled="true"
+                        >
+                          <span className="flex items-center gap-2">
+                            {item.label}
+                            {item.badge && badge(item.badge)}
+                          </span>
+                          {item.children && <FiChevronDown aria-hidden="true" />}
+                        </span>
+                      </li>
+                    ) : item.children ? (
                       <li key={item.label}>
                         <button
                           type="button"
@@ -363,7 +389,7 @@ export default function Header({ mode = "light" }: HeaderProps) {
                     </a>
                     <Link
                       href={DEMO_URL}
-                      className="text-white bg-primary dark:bg-accent flex justify-center items-center w-full hover:bg-opacity-80 font-medium rounded-full text-sm px-8 py-2.5"
+                      className="text-white bg-primary dark:bg-[#2D419A] flex justify-center items-center w-full hover:bg-opacity-80 font-medium rounded-full text-sm px-8 py-2.5"
                     >
                       Book a demo
                     </Link>

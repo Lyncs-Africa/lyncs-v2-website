@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { GiBrain, GiLips } from 'react-icons/gi'
 import { LuMouse } from 'react-icons/lu'
 
-// Circular cluster matching ExplainerCircles.tsx exactly:
+// Circular cluster matching BeyondTheFleetSection.tsx exactly:
 // percentages of square stage so it scales down cleanly on small screens.
 const CIRCLES = [
   {
@@ -58,7 +58,7 @@ export default function ContactHero() {
 
   return (
     <section className="relative -mt-20 md:-mt-[130px] overflow-hidden bg-[#FAF8F6] font-Quicksand dark:bg-night pb-16 pt-[120px] md:pt-[190px]">
-      {/* Background grid matching HomeHero */}
+      {/* Background grid matching PlatformShowcase */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 dark:hidden"
@@ -121,7 +121,7 @@ export default function ContactHero() {
           </p>
         </div>
 
-        {/* Right Column: Floating Circle Cluster (ExplainerCircles style, no fuzzy shadows) */}
+        {/* Right Column: Floating Circle Cluster (BeyondTheFleetSection style, no fuzzy shadows) */}
         <div className="relative mx-auto aspect-square w-full max-w-[500px] lg:max-w-[560px]">
           <span
             aria-hidden

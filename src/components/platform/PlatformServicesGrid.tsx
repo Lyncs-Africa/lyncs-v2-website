@@ -34,10 +34,10 @@ const ICON_MAP: Record<string, any> = {
 }
 
 const CATEGORIES = [
-  { id: 'all', label: 'All 8 Mobility Rails', slugs: null },
+  { id: 'all', label: 'All 7 Mobility Rails', slugs: null },
   { id: 'commute', label: 'Daily Commute & Wallets', slugs: ['rides', 'buses', 'ride-wallets'] },
   { id: 'executive', label: 'Flights & Executive Cars', slugs: ['flights', 'car-rentals'] },
-  { id: 'fleet', label: 'Fuel, Towing & Mechanic', slugs: ['fuel-vouchers', 'car-tow', 'mechanic'] },
+  { id: 'fleet', label: 'Towing & Mechanic', slugs: ['car-tow', 'mechanic'] },
 ]
 
 export default function PlatformServicesGrid() {
@@ -57,12 +57,12 @@ export default function PlatformServicesGrid() {
           <div className="max-w-2xl">
             <p className="flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-surface px-3 py-1.5 text-sm text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
               <GiBrain size={14} aria-hidden="true" className="shrink-0 text-emerald-600 dark:text-emerald-400" />
-              The 8 Pillars of Lyncs
+              The 7 Pillars of Lyncs
             </p>
             <h2 className="mt-6 text-3xl font-bold !leading-[1.1] tracking-tight text-primary dark:text-white sm:text-4xl md:text-5xl">
               Pick a single service or{' '}
               <span className={`inline-block -rotate-1 rounded-full bg-[#EF6702] px-3.5 py-0.5 text-white ${outline}`}>
-                plug in all eight.
+                plug in all seven.
               </span>
             </h2>
             <p className="mt-4 text-base text-slate-600 dark:text-slate-300 md:text-lg">

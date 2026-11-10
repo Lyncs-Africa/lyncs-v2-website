@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { GiBrain } from 'react-icons/gi'
 import { LuZap, LuWrench, LuCoins } from 'react-icons/lu'
 
-// Binder layout follows EVSupportSection: page-coloured rings
+// Binder layout follows HowItWorksSection: page-coloured rings
 // hang off each card's right edge across the gap
 const CARDS = [
   {
@@ -40,7 +40,7 @@ const CARDS = [
     title: 'Zero Membership Fees',
     Icon: LuCoins,
     question: 'Do I have to pay any monthly subscription or registration fee to use Lyncs?',
-    answer: 'None at all. Individual accounts are 100% free. You only pay for the rides you take, the fuel vouchers you buy, or the vehicle you choose to swap.',
+    answer: 'None at all. Individual accounts are 100% free. You only pay for the rides you take or the vehicle you choose to swap.',
     reaction: 'Sharp. Exactly how commuter apps should be.',
     avatar: '/images/24.jpg',
     color: 'bg-purple-950 dark:bg-purple-100/10',
