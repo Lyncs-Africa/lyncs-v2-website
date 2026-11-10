@@ -7,6 +7,7 @@ import {IoCheckmarkCircle} from 'react-icons/io5'
 import {LuPaperclip, LuX} from 'react-icons/lu'
 import {useValuationStore} from '@/store/valuationStore'
 import ValuationSelect from './ValuationSelect'
+import {API_BASE} from '@/lib/api/cars'
 
 const FLEET_COUNTS = ['1–5', '6–20', '21–50', '50+']
 
@@ -60,7 +61,7 @@ export default function FleetForm() {
         if (file) fd.set('fleetList', file)
 
         try {
-            const res = await fetch('/api/valuation-leads', {method: 'POST', body: fd})
+            const res = await fetch(`${API_BASE}/cars/valuation-leads`, {method: 'POST', body: fd})
             const data = await res.json().catch(() => null)
             if (!res.ok || !data?.success) {
                 if (data?.errors) setErrors(data.errors)

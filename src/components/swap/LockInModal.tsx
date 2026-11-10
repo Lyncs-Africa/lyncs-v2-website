@@ -9,6 +9,7 @@ import {LuX} from 'react-icons/lu'
 import {useValuationStore} from '@/store/valuationStore'
 import {EV_CONFIG} from '@/lib/valuation/config'
 import {resolveActiveEv} from '@/lib/valuation/evOptions'
+import {API_BASE} from '@/lib/api/cars'
 
 const labelCls = 'block text-[13px] text-slate-500 dark:text-white/50'
 const inputCls =
@@ -68,7 +69,7 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
         fd.set('contactEmail', email)
 
         try {
-            const res = await fetch('/api/valuation-leads', {method: 'POST', body: fd})
+            const res = await fetch(`${API_BASE}/cars/valuation-leads`, {method: 'POST', body: fd})
             const data = await res.json().catch(() => null)
             if (!res.ok || !data?.success) {
                 if (data?.errors) setErrors(data.errors)

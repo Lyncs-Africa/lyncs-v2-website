@@ -1,17 +1,16 @@
 // Valuation logic for the swap estimator.
 //
-// Two code paths share this file:
-//  - rangeFromComparables(): turns LIVE Jiji listings (real asking prices) into
-//    a value range. This is the real pricing source.
-//  - getCarValuation(): the offline, deterministic estimate. It's now only a
-//    FALLBACK, used by the /api/valuation route when Jiji has no comparables
-//    or is unreachable.
+// rangeFromComparables() and getCarValuation() are the pricing algorithm,
+// kept here as the reference implementation for the backend's valuation
+// endpoint (see docs/swap-valuation-api.md). The live site no longer runs
+// them in-process — the browser can't call Jiji directly (CORS), so the
+// lookup lives on the backend.
 //
-// fetchCarValuation() is the client-side seam the UI calls; it hits the server
-// route (/api/valuation) which runs the Jiji lookup — the browser can't call
-// Jiji directly (CORS), so the network call lives on the server.
+// fetchCarValuation() is the client-side seam the UI calls; it hits the
+// backend's GET /cars/valuation endpoint, which runs the Jiji lookup.
 
 import {CAR_VALUES, OLDEST_YEAR, REFERENCE_YEAR, type Condition} from './data'
+import {API_BASE} from '../api/cars'
 import type {Comparable} from './jijiPricing'
 
 export type ValuationInput = {
@@ -162,7 +161,7 @@ export async function fetchCarValuation(input: ValuationInput): Promise<Valuatio
         condition: input.condition,
     })
     try {
-        const res = await fetch(`/api/valuation?${params.toString()}`)
+        const res = await fetch(`${API_BASE}/cars/valuation?${params.toString()}`)
         if (!res.ok) return null
         const data = (await res.json()) as {range?: ValuationRange | null}
         return data.range ?? null

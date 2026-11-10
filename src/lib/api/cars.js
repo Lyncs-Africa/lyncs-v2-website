@@ -19,6 +19,10 @@ const RAW_BASE_URL =
 // The backend endpoints (/cars/catalog, /cars/purchases, etc.) are mounted without /api prefix
 const BASE_URL = RAW_BASE_URL.replace(/\/+$/, "").replace(/\/api$/, "");
 
+// Resolved backend origin, shared with other callers (e.g. the swap valuation
+// tool) so every request targets the same host. No trailing slash.
+export const API_BASE = BASE_URL;
+
 /**
  * Normalizes any vehicle object from Yekauto, Guazi, or backend
  * into a standard unified format required by the UI components.
