@@ -6,10 +6,11 @@ import {AnimatePresence, motion} from 'framer-motion'
 import {PhoneInput} from 'react-international-phone'
 import {IoCheckmarkCircle} from 'react-icons/io5'
 import {LuX} from 'react-icons/lu'
-import {useValuationStore} from '@/store/valuationStore'
-import {EV_CONFIG} from '@/lib/valuation/config'
-import {resolveActiveEv} from '@/lib/valuation/evOptions'
-import {submitValuationLead} from '@/lib/valuation/getCarValuation'
+import {useValuationStore, type OwnerForm} from '@/store/valuationStore'
+import {EV_CONFIG, type Tenor} from '@/lib/valuation/config'
+import {resolveActiveEv, type EvOption} from '@/lib/valuation/evOptions'
+import {submitValuationLead, type ValuationRange} from '@/lib/valuation/getCarValuation'
+import {getBreakdown} from '@/lib/valuation/breakdown'
 import {toNigerianE164} from '@/lib/api/contact'
 
 const labelCls = 'block text-[13px] text-slate-500 dark:text-white/50'
@@ -18,11 +19,31 @@ const inputCls =
 
 type Errors = Record<string, string>
 
-export default function LockInModal({open, onClose}: {open: boolean; onClose: () => void}) {
-    const owner = useValuationStore((s) => s.owner)
-    const result = useValuationStore((s) => s.result)
-    const evs = useValuationStore((s) => s.evs)
-    const selectedEvId = useValuationStore((s) => s.selectedEvId)
+type LockInModalProps = {
+    open: boolean
+    onClose: () => void
+    valuation?: {
+        owner: OwnerForm
+        result: ValuationRange
+        tenor?: Tenor
+        evs: EvOption[]
+        selectedEvId: string | null
+    } | null
+}
+
+export default function LockInModal({open, onClose, valuation}: LockInModalProps) {
+    const storeOwner = useValuationStore((s) => s.owner)
+    const storeResult = useValuationStore((s) => s.result)
+    const storeTenor = useValuationStore((s) => s.tenor)
+    const storeEvs = useValuationStore((s) => s.evs)
+    const storeSelectedEvId = useValuationStore((s) => s.selectedEvId)
+    const resetOwner = useValuationStore((s) => s.resetOwner)
+
+    const owner = valuation?.owner || storeOwner
+    const result = valuation?.result || storeResult
+    const tenor = valuation?.tenor ?? storeTenor ?? 48
+    const evs = valuation?.evs || storeEvs
+    const selectedEvId = valuation?.selectedEvId !== undefined ? valuation.selectedEvId : storeSelectedEvId
 
     const [fullName, setFullName] = useState('')
     const [phone, setPhone] = useState('')
@@ -32,17 +53,28 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
     const [formError, setFormError] = useState<string | null>(null)
     const [errors, setErrors] = useState<Errors>({})
 
+    const handleClose = () => {
+        resetOwner()
+        setDone(false)
+        setFullName('')
+        setPhone('')
+        setEmail('')
+        setErrors({})
+        setFormError(null)
+        onClose()
+    }
+
     // Close on Escape.
     useEffect(() => {
         if (!open) return
-        const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+        const onKey = (e: KeyboardEvent) => e.key === 'Escape' && handleClose()
         document.addEventListener('keydown', onKey)
         document.body.style.overflow = 'hidden'
         return () => {
             document.removeEventListener('keydown', onKey)
             document.body.style.overflow = ''
         }
-    }, [open, onClose])
+    }, [open])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -61,10 +93,26 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
         fd.set('condition', owner.condition)
         fd.set('estimateMin', String(result.min))
         fd.set('estimateMax', String(result.max))
+
+        // Spread over (financing repayment tenor: 36 months / 48 months)
+        fd.set('tenor', `${tenor} months`)
+        fd.set('spreadOver', `${tenor} months`)
+        fd.set('tenorMonths', String(tenor))
+        fd.set('months', String(tenor))
+        fd.set('repaymentTenor', `${tenor} months`)
+        fd.set('installmentMonths', String(tenor))
+
         // The EV they're swapping into (auto-matched or chosen).
         const activeEv = resolveActiveEv(evs, selectedEvId, (result.min + result.max) / 2)
         fd.set('targetEvName', activeEv.name)
         fd.set('targetEvPrice', String(activeEv.price))
+
+        const b = getBreakdown(result, tenor, activeEv)
+        if (b.monthly != null) {
+            fd.set('monthlyPayment', String(Math.round(b.monthly)))
+            fd.set('monthlyEstimate', String(Math.round(b.monthly)))
+        }
+
         fd.set('contactName', fullName)
         fd.set('fullName', fullName)
         const e164Phone = toNigerianE164(phone)
@@ -79,6 +127,7 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
                 if (data?.errors) setErrors(data.errors)
                 throw new Error(data?.message || 'Something went wrong. Try again, or message us on WhatsApp.')
             }
+            resetOwner()
             setDone(true)
         } catch (err) {
             setFormError(err instanceof Error ? err.message : 'Something went wrong. Try again, or message us on WhatsApp.')
@@ -98,7 +147,7 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
                 >
                     <div
                         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                        onClick={onClose}
+                        onClick={handleClose}
                         aria-hidden="true"
                     />
                     <motion.div
@@ -113,7 +162,7 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
                     >
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             aria-label="Close"
                             className="absolute right-4 top-4 rounded-full p-1.5 text-slate-400 transition hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-white/10 dark:hover:text-white"
                         >
@@ -134,6 +183,7 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
                                 </p>
                                 <Link
                                     href="/cars"
+                                    onClick={handleClose}
                                     className="mt-7 rounded-full bg-accent px-7 py-3 text-sm font-semibold text-white transition hover:bg-accent/90 dark:bg-[#2D419A] dark:hover:bg-[#2D419A]/90"
                                 >
                                     See available EVs
@@ -147,6 +197,14 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
                                 <p className="mt-1.5 text-sm text-slate-500 dark:text-white/60">
                                     Leave your details and we&apos;ll book your inspection.
                                 </p>
+
+                                {owner.make && (
+                                    <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-slate-200/70 px-3 py-1 text-[12px] font-medium text-slate-700 dark:bg-white/10 dark:text-white/80">
+                                        <span>{owner.make} {owner.model} ({owner.year})</span>
+                                        <span>•</span>
+                                        <span>Spread over {tenor} months</span>
+                                    </div>
+                                )}
 
                                 <div className="mt-6 space-y-5">
                                     <div>

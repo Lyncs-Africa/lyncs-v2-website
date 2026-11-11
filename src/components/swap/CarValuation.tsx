@@ -2,7 +2,10 @@
 
 import {useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
-import {useValuationStore, type Tab} from '@/store/valuationStore'
+import {useValuationStore, type Tab, type OwnerForm as OwnerFormState} from '@/store/valuationStore'
+import type {ValuationRange} from '@/lib/valuation/getCarValuation'
+import type {EvOption} from '@/lib/valuation/evOptions'
+import type {Tenor} from '@/lib/valuation/config'
 import {useCarValuation} from './useCarValuation'
 import OwnerForm from './OwnerForm'
 import FleetForm from './FleetForm'
@@ -17,10 +20,42 @@ const TABS: {value: Tab; label: string}[] = [
 export default function CarValuation() {
     const tab = useValuationStore((s) => s.tab)
     const setTab = useValuationStore((s) => s.setTab)
+    const owner = useValuationStore((s) => s.owner)
+    const result = useValuationStore((s) => s.result)
+    const tenor = useValuationStore((s) => s.tenor)
+    const evs = useValuationStore((s) => s.evs)
+    const selectedEvId = useValuationStore((s) => s.selectedEvId)
+    const resetOwner = useValuationStore((s) => s.resetOwner)
+
     const [lockOpen, setLockOpen] = useState(false)
+    const [lockedValuation, setLockedValuation] = useState<{
+        owner: OwnerFormState
+        result: ValuationRange
+        tenor: Tenor
+        evs: EvOption[]
+        selectedEvId: string | null
+    } | null>(null)
 
     // Watches the owner form and keeps the result state in sync.
     useCarValuation()
+
+    const handleLockIn = () => {
+        if (!result) return
+        setLockedValuation({
+            owner: {...owner},
+            result,
+            tenor,
+            evs,
+            selectedEvId,
+        })
+        resetOwner()
+        setLockOpen(true)
+    }
+
+    const handleCloseModal = () => {
+        setLockOpen(false)
+        setLockedValuation(null)
+    }
 
     return (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
@@ -72,10 +107,10 @@ export default function CarValuation() {
 
             {/* Right: the live result panel */}
             <div className="lg:sticky lg:top-28 lg:self-start">
-                <ResultPanel onLockIn={() => setLockOpen(true)} />
+                <ResultPanel onLockIn={handleLockIn} />
             </div>
 
-            <LockInModal open={lockOpen} onClose={() => setLockOpen(false)} />
+            <LockInModal open={lockOpen} onClose={handleCloseModal} valuation={lockedValuation} />
         </div>
     )
 }
