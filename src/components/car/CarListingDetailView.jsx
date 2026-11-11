@@ -188,9 +188,9 @@ export default function CarListingDetailView({ carId }) {
   const [purchaseStep, setPurchaseStep] = useState(
     startPurchaseParam ? "payment-mode" : null
   );
-  const [paymentMode, setPaymentMode] = useState(null);
+  const [paymentMode, setPaymentMode] = useState("outright");
   const [months, setMonths] = useState(null);
-  const [deliveryMethod, setDeliveryMethod] = useState(null);
+  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
   const [contactInfo, setContactInfo] = useState({
     firstName: "",
     lastName: "",
@@ -388,8 +388,8 @@ export default function CarListingDetailView({ carId }) {
   }, [car, paymentMode, months]);
 
   const deliveryFeeInfo = useMemo(
-    () => getDeliveryFeeInfo({ price: car?.price || 0, paymentMode }),
-    [car?.price, paymentMode]
+    () => getDeliveryFeeInfo(car?.price || 0),
+    [car?.price]
   );
 
   // Purchase handlers
@@ -483,8 +483,7 @@ export default function CarListingDetailView({ carId }) {
   };
 
   const handleContinueFromDelivery = async (incomingContact) => {
-    const method = deliveryFeeInfo.qualifiesForFreeDrive ? "delivery" : deliveryMethod;
-    if (!method) return;
+    const method = deliveryMethod || (deliveryFeeInfo?.qualifiesForFreeDrive ? "delivery" : "pickup");
     setDeliveryMethod(method);
     const activeContact = incomingContact || contactInfo;
     if (incomingContact) {
@@ -588,14 +587,6 @@ export default function CarListingDetailView({ carId }) {
           >
             {isBrandNew ? "Brand New Cars" : "Used Cars"}
           </Link>
-          {car.make && (
-            <>
-              <span>›</span>
-              <span className="text-slate-700 dark:text-slate-300 font-medium">
-                {titleCase(car.make)}
-              </span>
-            </>
-          )}
           <span>›</span>
           <span className="text-slate-900 dark:text-white font-semibold truncate max-w-[220px] sm:max-w-xs">
             {car.name}
@@ -1086,13 +1077,12 @@ export default function CarListingDetailView({ carId }) {
       <div className="relative z-[80]">
         <div
           onClick={() => setPurchaseStep(null)}
-          className={`main-overlay ${
-            purchaseStep === "payment-mode" ||
+          className={`main-overlay ${purchaseStep === "payment-mode" ||
             purchaseStep === "installment-term" ||
             purchaseStep === "delivery"
-              ? "block"
-              : "hidden"
-          }`}
+            ? "block"
+            : "hidden"
+            }`}
         />
         <div
           style={{ overscrollBehavior: "contain" }}
@@ -1113,15 +1103,15 @@ export default function CarListingDetailView({ carId }) {
           {(purchaseStep === "payment-mode" ||
             purchaseStep === "installment-term" ||
             purchaseStep === "delivery") && (
-            <PurchasePaymentModeModal
-              car={car}
-              paymentMode={paymentMode}
-              onSelectPaymentMode={handleSelectPaymentMode}
-              onContinuePaymentMode={handleContinueFromPaymentMode}
-              onBack={() => setPurchaseStep(null)}
-              onClose={() => setPurchaseStep(null)}
-            />
-          )}
+              <PurchasePaymentModeModal
+                car={car}
+                paymentMode={paymentMode}
+                onSelectPaymentMode={handleSelectPaymentMode}
+                onContinuePaymentMode={handleContinueFromPaymentMode}
+                onBack={() => setPurchaseStep(null)}
+                onClose={() => setPurchaseStep(null)}
+              />
+            )}
         </div>
       </div>
 

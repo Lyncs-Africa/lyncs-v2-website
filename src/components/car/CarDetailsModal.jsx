@@ -500,9 +500,9 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const carouselRef = useRef(null);
 
   const [purchaseStep, setPurchaseStep] = useState(startPurchase ? "payment-mode" : null);
-  const [paymentMode, setPaymentMode] = useState(null);
+  const [paymentMode, setPaymentMode] = useState("outright");
   const [months, setMonths] = useState(null);
-  const [deliveryMethod, setDeliveryMethod] = useState(null);
+  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
 
   const [contactInfo, setContactInfo] = useState({
     firstName: "",
@@ -587,8 +587,7 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const handleSelectDelivery = (method) => setDeliveryMethod(method);
 
   const handleContinueFromDelivery = async (incomingContact) => {
-    const method = deliveryFeeInfo.qualifiesForFreeDrive ? "delivery" : deliveryMethod;
-    if (!method) return;
+    const method = deliveryMethod || (deliveryFeeInfo?.qualifiesForFreeDrive ? "delivery" : "pickup");
     setDeliveryMethod(method);
     const activeContact = incomingContact || contactInfo;
     if (incomingContact) {
@@ -685,6 +684,10 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
       const res = await createCarPurchase(payload);
       const d = res?.data || res;
       if (d) {
+        toast.success(
+          res?.message ||
+          "Quote request submitted! Our sourcing team will contact you via WhatsApp."
+        );
         createdOrder = {
           id: d.id || d.orderId || `car-purchase-${Date.now()}`,
           orderNumber: d.orderNumber || d.reference || null,

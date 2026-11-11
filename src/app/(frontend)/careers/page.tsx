@@ -4,9 +4,9 @@ import CareersRolesSection from '../../../components/careers/CareersRolesSection
 import CareersFaqSection from '../../../components/careers/CareersFaqSection'
 
 export const metadata: Metadata = {
-  title: 'Careers & Open Roles | Lyncs',
+  title: 'Careers | Lyncs',
   description:
-    'Join Lyncs in building the corporate mobility operating system for Africa. Explore open engineering, operations, and growth roles in Lagos and across Africa.',
+    'Lyncs builds the corporate mobility operating system for Africa. Currently focused on vehicle sales, EV swaps, and fleet deliveries.',
 }
 
 export default function CareersPage() {

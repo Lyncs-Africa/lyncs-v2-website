@@ -121,11 +121,10 @@ function SelectField<T extends string>({
                                             onChange(opt.value)
                                             setOpen(false)
                                         }}
-                                        className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-[14px] transition ${
-                                            active
+                                        className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-[14px] transition ${active
                                                 ? 'bg-accent font-medium text-white dark:bg-[#2D419A]'
                                                 : 'text-slate-700 hover:bg-slate-100 dark:text-white/80 dark:hover:bg-white/10'
-                                        }`}
+                                            }`}
                                     >
                                         <span>{opt.label}</span>
                                         {active && <LuCheck size={15} className="shrink-0" aria-hidden="true" />}
@@ -334,11 +333,6 @@ export default function RequestVehicle() {
                                     </span>{' '}
                                     and will reach out via WhatsApp and {form.email || 'email'} within 24–48 hours.
                                 </p>
-                                {referenceCode && (
-                                    <p className="mt-4 rounded-full bg-slate-200/80 px-4 py-1.5 text-xs font-semibold text-slate-700 dark:bg-white/10 dark:text-white/80">
-                                        Reference ID: {referenceCode}
-                                    </p>
-                                )}
                                 <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
                                     <button
                                         type="button"

@@ -9,6 +9,8 @@ import {LuX} from 'react-icons/lu'
 import {useValuationStore} from '@/store/valuationStore'
 import {EV_CONFIG} from '@/lib/valuation/config'
 import {resolveActiveEv} from '@/lib/valuation/evOptions'
+import {submitValuationLead} from '@/lib/valuation/getCarValuation'
+import {toNigerianE164} from '@/lib/api/contact'
 
 const labelCls = 'block text-[13px] text-slate-500 dark:text-white/50'
 const inputCls =
@@ -64,13 +66,16 @@ export default function LockInModal({open, onClose}: {open: boolean; onClose: ()
         fd.set('targetEvName', activeEv.name)
         fd.set('targetEvPrice', String(activeEv.price))
         fd.set('contactName', fullName)
-        fd.set('contactPhone', phone)
-        fd.set('contactEmail', email)
+        fd.set('fullName', fullName)
+        const e164Phone = toNigerianE164(phone)
+        fd.set('contactPhone', e164Phone)
+        fd.set('phone', e164Phone)
+        fd.set('contactEmail', email.trim().toLowerCase())
+        fd.set('email', email.trim().toLowerCase())
 
         try {
-            const res = await fetch('/api/valuation-leads', {method: 'POST', body: fd})
-            const data = await res.json().catch(() => null)
-            if (!res.ok || !data?.success) {
+            const data = await submitValuationLead(fd)
+            if (!data?.success) {
                 if (data?.errors) setErrors(data.errors)
                 throw new Error(data?.message || 'Something went wrong. Try again, or message us on WhatsApp.')
             }
