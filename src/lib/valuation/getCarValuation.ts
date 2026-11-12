@@ -147,26 +147,89 @@ export function getCarValuation(input: ValuationInput): ValuationRange | null {
     }
 }
 
+// Central backend API base host (no trailing slash or /api)
+const RAW_BASE_URL =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_API_ORIGIN ||
+    'https://staging.lyncs.africa'
+
+export const VALUATION_API_BASE = RAW_BASE_URL.replace(/\/+$/, '').replace(/\/api$/, '')
+export const API_ORIGIN = VALUATION_API_BASE
+
+export type ValuationLeadResponse = {
+    success: boolean
+    id?: string
+    message?: string
+    errors?: Record<string, string>
+}
+
 /**
- * Async seam the UI calls (client-side). It hits the server route, which does
- * the live Jiji lookup and falls back to the offline estimate. Returns null
- * when nothing could be valued, which the UI shows as the "couldn't value"
- * state. Any network/parse error also resolves to null (never throws).
+ * Async seam the UI calls (client-side).
+ * Targets the backend endpoint GET /cars/valuation?make=...&model=...&year=...&km=...&condition=...
+ * If the backend is unreachable or returns an error, it falls back to the deterministic
+ * offline estimate from CAR_VALUES.
+ * Returns null when the car cannot be valued. Never throws.
  */
 export async function fetchCarValuation(input: ValuationInput): Promise<ValuationRange | null> {
-    const params = new URLSearchParams({
-        make: input.make,
-        model: input.model,
-        year: String(input.year),
-        km: String(input.km || ''),
-        condition: input.condition,
-    })
+    const params = new URLSearchParams()
+    if (input.make) params.set('make', input.make)
+    if (input.model) params.set('model', input.model)
+    if (input.year) params.set('year', String(input.year))
+    if (input.km !== '' && input.km !== undefined && input.km !== null) {
+        params.set('km', String(input.km))
+    }
+    if (input.condition) params.set('condition', input.condition)
+
+    const queryString = params.toString()
+
+    // 1) Query live backend endpoint: GET /cars/valuation
     try {
-        const res = await fetch(`/api/valuation?${params.toString()}`)
-        if (!res.ok) return null
-        const data = (await res.json()) as {range?: ValuationRange | null}
-        return data.range ?? null
-    } catch {
-        return null
+        const res = await fetch(`${VALUATION_API_BASE}/cars/valuation?${queryString}`, {
+            headers: {
+                Accept: 'application/json',
+            },
+        })
+        if (res.ok) {
+            const data = (await res.json()) as {range?: ValuationRange | null}
+            if ('range' in data) {
+                return data.range ?? null
+            }
+        }
+    } catch (err) {
+        console.warn('Backend /cars/valuation error, using fallback:', err)
+    }
+
+    // 2) Deterministic offline fallback
+    return getCarValuation(input)
+}
+
+/**
+ * Captures a swap or fleet valuation lead.
+ * Targets the backend endpoint POST /cars/valuation-leads with multipart/form-data.
+ */
+export async function submitValuationLead(fd: FormData): Promise<ValuationLeadResponse> {
+    try {
+        const res = await fetch(`${VALUATION_API_BASE}/cars/valuation-leads`, {
+            method: 'POST',
+            body: fd,
+        })
+        const data = (await res.json().catch(() => null)) as ValuationLeadResponse | null
+        if (res.ok && data?.success) {
+            return data
+        }
+        if (res.status === 400 && data) {
+            return data
+        }
+        if (data?.message) {
+            return data
+        }
+    } catch (err) {
+        console.error('Backend /cars/valuation-leads error:', err)
+    }
+
+    return {
+        success: false,
+        message: 'Could not connect to the valuation server. Please try again or reach out on WhatsApp.',
     }
 }

@@ -1,8 +1,8 @@
-export const INSTALLMENT_DOWN_PAYMENT_PERCENT = 0.3; // 30% upfront down payment
+export const INSTALLMENT_DOWN_PAYMENT_PERCENT = 0.2; // 30% upfront down payment
 
 export const INSTALLMENT_TERM_OPTIONS = {
-  "brand-new": [3, 6, 12, 18, 24],
-  used: [3, 6, 12],
+  "brand-new": [3, 6, 12, 18, 24, 36, 48], // up to 48 months
+  used: [3, 6, 12, 18, 24, 36], // up to 36 months
 };
 
 // Default interest applied to financed amount (7.5% corporate / 15% retail)

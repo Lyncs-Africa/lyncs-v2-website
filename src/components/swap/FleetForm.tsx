@@ -6,6 +6,8 @@ import {PhoneInput} from 'react-international-phone'
 import {IoCheckmarkCircle} from 'react-icons/io5'
 import {LuPaperclip, LuX} from 'react-icons/lu'
 import {useValuationStore} from '@/store/valuationStore'
+import {submitValuationLead} from '@/lib/valuation/getCarValuation'
+import {toNigerianE164} from '@/lib/api/contact'
 import ValuationSelect from './ValuationSelect'
 
 const FLEET_COUNTS = ['1–5', '6–20', '21–50', '50+']
@@ -51,18 +53,21 @@ export default function FleetForm() {
         const fd = new FormData()
         fd.set('type', 'fleet')
         fd.set('count', fleet.count)
-        fd.set('rough', fleet.showRough ? fleet.rough : '')
+        fd.set('rough', (fleet.showRough && fleet.rough.trim()) ? fleet.rough.trim() : 'Fleet valuation inquiry')
         fd.set('contactName', fleet.fullName)
+        fd.set('fullName', fleet.fullName)
         fd.set('contactCompany', fleet.company)
         fd.set('contactRole', fleet.role)
-        fd.set('contactPhone', fleet.phone)
-        fd.set('contactEmail', fleet.email)
+        const e164Phone = toNigerianE164(fleet.phone)
+        fd.set('contactPhone', e164Phone)
+        fd.set('phone', e164Phone)
+        fd.set('contactEmail', fleet.email.trim().toLowerCase())
+        fd.set('email', fleet.email.trim().toLowerCase())
         if (file) fd.set('fleetList', file)
 
         try {
-            const res = await fetch('/api/valuation-leads', {method: 'POST', body: fd})
-            const data = await res.json().catch(() => null)
-            if (!res.ok || !data?.success) {
+            const data = await submitValuationLead(fd)
+            if (!data?.success) {
                 if (data?.errors) setErrors(data.errors)
                 throw new Error(data?.message || 'Something went wrong. Try again, or message us on WhatsApp.')
             }

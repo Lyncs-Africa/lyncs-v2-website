@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input, Checkbox } from "../../ui/HeroUI.jsx";
-import { FiMapPin, FiTruck } from "react-icons/fi";
 import { PhoneInput } from "react-international-phone";
+import { toast } from "react-toastify";
 import cn from "classnames";
 import { numberWithCommas, toInternationalFormat, normalizePhoneInput } from "../../../lib/utils.js";
 import { getDeliveryFeeInfo } from "../../../lib/carPurchase.js";
@@ -31,6 +31,19 @@ const PurchaseDeliveryModal = ({
     isSameAsPhone: contactInfo.isSameAsPhone ?? true,
   });
 
+  useEffect(() => {
+    if (contactInfo && Object.keys(contactInfo).length > 0) {
+      setForm((prev) => ({
+        firstName: contactInfo.firstName ?? prev.firstName,
+        lastName: contactInfo.lastName ?? prev.lastName,
+        email: contactInfo.email ?? prev.email,
+        phone: contactInfo.phone ?? prev.phone,
+        whatsapp: contactInfo.whatsapp ?? prev.whatsapp,
+        isSameAsPhone: contactInfo.isSameAsPhone ?? prev.isSameAsPhone,
+      }));
+    }
+  }, [contactInfo]);
+
   const [errors, setErrors] = useState({});
 
   const validate = () => {
@@ -51,15 +64,15 @@ const PurchaseDeliveryModal = ({
       }
     }
 
-    if (deliveryMethod === "delivery" && !address?.line?.trim()) {
-      errs.address = "Street address is required for doorstep delivery";
-    }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
   const handleContinue = () => {
-    if (!validate()) return;
+    if (!validate()) {
+      toast.error("Please fill in all required contact details.");
+      return;
+    }
     const formattedPhone = toInternationalFormat(form.phone);
     const targetWhatsapp = form.isSameAsPhone ? form.phone : form.whatsapp;
     const formattedWhatsapp = toInternationalFormat(targetWhatsapp);
@@ -182,7 +195,7 @@ const PurchaseDeliveryModal = ({
       </div>
 
       {/* Buttons */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-light dark:border-slate-800">
+      <div className="flex items-center justify-center gap-3 pt-4 border-t border-light dark:border-slate-800">
         <Button
           variant="bordered"
           radius="full"

@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import classNames from "classnames";
 import { useCarStore } from "../../../store/carStore.js";
 import CarDetailsModal from "../CarDetailsModal.jsx";
-import RequestVehicleModal from "../RequestVehicleModal.jsx";
 
 const SlideUpModal = () => {
   const { slideUpOpen, modal, closeAllModals } = useCarStore();
@@ -33,7 +32,7 @@ const SlideUpModal = () => {
   }, [slideUpOpen]);
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-[80]">
       {/* Backdrop overlay */}
       <div
         onClick={closeAllModals}
@@ -44,7 +43,7 @@ const SlideUpModal = () => {
       <div
         style={{ overscrollBehavior: "contain" }}
         className={classNames(
-          "slideUp bg-white dark:bg-slate-900 border-l border-transparent dark:border-white/10 max-h-full rounded-t-lg md:rounded-r-none md:rounded-tl-[24px] md:rounded-bl-[24px] block transition duration-300 ease-in-out overflow-hidden overscroll-contain",
+          "slideUp no-scrollbar bg-white dark:bg-slate-900 border-l border-transparent dark:border-white/10 max-h-full rounded-t-lg md:rounded-r-none md:rounded-tl-[24px] md:rounded-bl-[24px] block transition duration-300 ease-in-out overflow-hidden overscroll-contain",
           {
             "h-full": true,
             "translate-y-0 md:translate-x-0": slideUpOpen,
@@ -53,7 +52,6 @@ const SlideUpModal = () => {
         )}
       >
         {modal === "car-details" && <CarDetailsModal onClose={closeAllModals} />}
-        {modal === "request-a-vehicle" && <RequestVehicleModal onClose={closeAllModals} />}
       </div>
     </div>
   );

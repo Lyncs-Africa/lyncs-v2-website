@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Input } from "../ui/HeroUI.jsx";
 import { FaCar, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -212,7 +213,7 @@ const QuoteSummaryStep = ({
 
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b border-light dark:border-white/10 text-15px">
-            <span className="text-slate-600 dark:text-slate-300">Estimated Price</span>
+            <span className="text-slate-600 dark:text-slate-300">Starting from</span>
             <span className="font-semibold text-black dark:text-white">₦{numberWithCommas(car.price || 0)}</span>
           </div>
 
@@ -416,7 +417,8 @@ const PurchaseSuccessStep = ({ car, order, contactInfo }) => {
 };
 
 const CarDetailsModal = ({ onClose: propOnClose }) => {
-  const { selectedCar, startPurchase, openRequestVehicle, closeAllModals } = useCarStore();
+  const router = useRouter();
+  const { selectedCar, startPurchase, closeAllModals } = useCarStore();
   const initialCar = selectedCar || {};
   const carPlatform =
     initialCar.platform ||
@@ -498,9 +500,9 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const carouselRef = useRef(null);
 
   const [purchaseStep, setPurchaseStep] = useState(startPurchase ? "payment-mode" : null);
-  const [paymentMode, setPaymentMode] = useState(null);
+  const [paymentMode, setPaymentMode] = useState("outright");
   const [months, setMonths] = useState(null);
-  const [deliveryMethod, setDeliveryMethod] = useState(null);
+  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
 
   const [contactInfo, setContactInfo] = useState({
     firstName: "",
@@ -585,8 +587,7 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const handleSelectDelivery = (method) => setDeliveryMethod(method);
 
   const handleContinueFromDelivery = async (incomingContact) => {
-    const method = deliveryFeeInfo.qualifiesForFreeDrive ? "delivery" : deliveryMethod;
-    if (!method) return;
+    const method = deliveryMethod || (deliveryFeeInfo?.qualifiesForFreeDrive ? "delivery" : "pickup");
     setDeliveryMethod(method);
     const activeContact = incomingContact || contactInfo;
     if (incomingContact) {
@@ -683,6 +684,10 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
       const res = await createCarPurchase(payload);
       const d = res?.data || res;
       if (d) {
+        toast.success(
+          res?.message ||
+          "Quote request submitted! Our sourcing team will contact you via WhatsApp."
+        );
         createdOrder = {
           id: d.id || d.orderId || `car-purchase-${Date.now()}`,
           orderNumber: d.orderNumber || d.reference || null,
@@ -746,14 +751,77 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const handlePurchase = () => setPurchaseStep("payment-mode");
 
   const handleSwap = () => {
-    openRequestVehicle(car);
+    closeAllModals();
+    router.push("/swap");
   };
 
   const isFullStepView =
+    purchaseStep === "payment-mode" ||
     purchaseStep === "address" ||
     purchaseStep === "success";
 
-  // When address or success step is active, render inside the full drawer
+  // When payment-mode, installment-term, or delivery is active, keep Select Payment Mode open in the full drawer and stack SmallerModal on top
+  if (
+    purchaseStep === "payment-mode" ||
+    purchaseStep === "installment-term" ||
+    purchaseStep === "delivery"
+  ) {
+    return (
+      <div className="relative h-full overflow-hidden">
+        <PurchasePaymentModeModal
+          car={car}
+          paymentMode={paymentMode}
+          onSelectPaymentMode={handleSelectPaymentMode}
+          onContinuePaymentMode={handleContinueFromPaymentMode}
+          onBack={() => setPurchaseStep(null)}
+          onClose={handleClose}
+        />
+
+        <SmallerModal
+          isOpen={
+            purchaseStep === "installment-term" ||
+            purchaseStep === "delivery"
+          }
+          onClose={() => setPurchaseStep("payment-mode")}
+        >
+          {purchaseStep === "installment-term" && (
+            <PurchaseInstallmentTermModal
+              car={car}
+              months={months}
+              onChangeMonths={setMonths}
+              onContinueInstallmentTerm={handleContinueFromInstallmentTerm}
+              contactInfo={contactInfo}
+              onChangeContactInfo={setContactInfo}
+              isSubmitting={isSubmitting}
+              onBack={() => setPurchaseStep("payment-mode")}
+              onClose={() => setPurchaseStep("payment-mode")}
+            />
+          )}
+
+          {purchaseStep === "delivery" && (
+            <PurchaseDeliveryModal
+              car={car}
+              deliveryFeeInfo={deliveryFeeInfo}
+              deliveryMethod={deliveryMethod}
+              onSelectDelivery={handleSelectDelivery}
+              address={address}
+              onChangeAddress={setAddress}
+              contactInfo={contactInfo}
+              onChangeContactInfo={setContactInfo}
+              onContinueDelivery={handleContinueFromDelivery}
+              isSubmitting={isSubmitting}
+              onBack={() =>
+                setPurchaseStep(
+                  paymentMode === "installment" ? "installment-term" : "payment-mode"
+                )
+              }
+            />
+          )}
+        </SmallerModal>
+      </div>
+    );
+  }
+
   if (isFullStepView) {
     const stepTitles = {
       address: "Delivery Address",
@@ -761,7 +829,7 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
     };
 
     return (
-      <div className="relative h-full overflow-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+      <div className="relative h-full overflow-auto no-scrollbar bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
         <div className="w-full md:p-6 p-4 space-y-6 mb-[6rem]">
           <PurchaseHeader title={stepTitles[purchaseStep]} onClose={handleClose} />
 
@@ -835,7 +903,7 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   }
 
   return (
-    <div className="relative h-full overflow-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="relative h-full overflow-auto no-scrollbar bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       <div className="mb-[6rem]">
         {/* Main Image Carousel */}
         <div className="relative h-72 bg-slate-100 dark:bg-slate-800">
@@ -916,7 +984,7 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
           </div>
 
           <div>
-            <p className="text-12px text-slate-400 dark:text-slate-500">Estimated Price</p>
+            <p className="text-12px text-slate-400 dark:text-slate-500">Starting from</p>
             <div className="flex items-center gap-2">
               <p className="text-18px font-semibold text-slate-800 dark:text-white">
                 ₦{numberWithCommas(car.price || 0)}
@@ -1013,22 +1081,11 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
       {/* Stepped Purchase Flow in SmallerModal */}
       <SmallerModal
         isOpen={
-          purchaseStep === "payment-mode" ||
           purchaseStep === "installment-term" ||
           purchaseStep === "delivery"
         }
         onClose={() => setPurchaseStep(null)}
       >
-        {purchaseStep === "payment-mode" && (
-          <PurchasePaymentModeModal
-            car={car}
-            paymentMode={paymentMode}
-            onSelectPaymentMode={handleSelectPaymentMode}
-            onContinuePaymentMode={handleContinueFromPaymentMode}
-            onBack={() => setPurchaseStep(null)}
-          />
-        )}
-
         {purchaseStep === "installment-term" && (
           <PurchaseInstallmentTermModal
             car={car}

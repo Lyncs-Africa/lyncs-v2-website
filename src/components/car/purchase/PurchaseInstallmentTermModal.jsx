@@ -27,102 +27,69 @@ const PurchaseInstallmentTermModal = ({
 }) => {
   if (!car) return null;
 
-  const defaultFirstName =
-    contactInfo?.firstName ||
-    (contactInfo?.name ? contactInfo.name.split(" ")[0] : "") ||
-    "";
-  const defaultLastName =
-    contactInfo?.lastName ||
-    (contactInfo?.name ? contactInfo.name.split(" ").slice(1).join(" ") : "") ||
-    "";
-  const defaultEmail = contactInfo?.email || "";
-  const defaultPhone =
-    toInternationalFormat(contactInfo?.phone) || "+234";
+  const [form, setForm] = useState({
+    firstName:
+      contactInfo?.firstName ||
+      (contactInfo?.name ? contactInfo.name.split(" ")[0] : "") ||
+      "",
+    lastName:
+      contactInfo?.lastName ||
+      (contactInfo?.name ? contactInfo.name.split(" ").slice(1).join(" ") : "") ||
+      "",
+    email: contactInfo?.email || "",
+    phone: contactInfo?.phone || "",
+    whatsapp: contactInfo?.whatsapp || contactInfo?.phone || "",
+    isSameAsPhone: contactInfo?.isSameAsPhone ?? true,
+  });
 
-  const [firstName, setFirstName] = useState(contactInfo?.firstName ?? defaultFirstName);
-  const [lastName, setLastName] = useState(contactInfo?.lastName ?? defaultLastName);
-  const [email, setEmail] = useState(contactInfo?.email || defaultEmail);
-  const [phone, setPhone] = useState(
-    contactInfo?.phone ? toInternationalFormat(contactInfo.phone) : defaultPhone
-  );
-  const [whatsapp, setWhatsapp] = useState(
-    contactInfo?.whatsapp ? toInternationalFormat(contactInfo.whatsapp) : defaultPhone
-  );
-  const [isSameAsPhone, setIsSameAsPhone] = useState(
-    contactInfo?.isSameAsPhone ??
-    (contactInfo?.phone && contactInfo?.whatsapp ? contactInfo.phone === contactInfo.whatsapp : true)
-  );
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (contactInfo) {
-      if (contactInfo.firstName !== undefined) setFirstName(contactInfo.firstName || defaultFirstName);
-      if (contactInfo.lastName !== undefined) setLastName(contactInfo.lastName || defaultLastName);
-      if (contactInfo.email !== undefined) setEmail(contactInfo.email || defaultEmail);
-      if (contactInfo.phone !== undefined)
-        setPhone(contactInfo.phone ? toInternationalFormat(contactInfo.phone) : defaultPhone);
-      if (contactInfo.whatsapp !== undefined)
-        setWhatsapp(contactInfo.whatsapp ? toInternationalFormat(contactInfo.whatsapp) : defaultPhone);
-      if (contactInfo.isSameAsPhone !== undefined) setIsSameAsPhone(contactInfo.isSameAsPhone);
+    if (contactInfo && Object.keys(contactInfo).length > 0) {
+      setForm((prev) => ({
+        firstName: contactInfo.firstName ?? prev.firstName,
+        lastName: contactInfo.lastName ?? prev.lastName,
+        email: contactInfo.email ?? prev.email,
+        phone: contactInfo.phone ?? prev.phone,
+        whatsapp: contactInfo.whatsapp ?? prev.whatsapp,
+        isSameAsPhone: contactInfo.isSameAsPhone ?? prev.isSameAsPhone,
+      }));
     }
-  }, [contactInfo, defaultEmail, defaultFirstName, defaultLastName, defaultPhone]);
+  }, [contactInfo]);
 
-  const notifyChange = (next = {}) => {
-    const fName = next.firstName !== undefined ? next.firstName : firstName;
-    const lName = next.lastName !== undefined ? next.lastName : lastName;
-    const em = next.email !== undefined ? next.email : email;
-    const ph = next.phone !== undefined ? next.phone : phone;
-    const same = next.isSameAsPhone !== undefined ? next.isSameAsPhone : isSameAsPhone;
-    const wa = next.whatsapp !== undefined ? next.whatsapp : same ? ph : whatsapp;
-    const fullName = [fName, lName].filter(Boolean).join(" ").trim();
+  const notifyChange = (updatedForm) => {
+    const fullName = [updatedForm.firstName, updatedForm.lastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
 
     onChangeContactInfo?.({
-      firstName: fName,
-      lastName: lName,
+      ...updatedForm,
       name: fullName,
       recipientName: fullName,
-      email: em,
-      phone: ph,
-      whatsapp: wa,
-      isSameAsPhone: same,
     });
   };
 
-  const handleFirstNameChange = (val) => {
-    setFirstName(val);
-    notifyChange({ firstName: val });
-  };
+  const validate = () => {
+    const errs = {};
+    if (!form.firstName.trim()) errs.firstName = "First name is required";
+    if (!form.lastName.trim()) errs.lastName = "Last name is required";
+    if (!form.email.trim() || !form.email.includes("@")) errs.email = "Valid email is required";
 
-  const handleLastNameChange = (val) => {
-    setLastName(val);
-    notifyChange({ lastName: val });
-  };
-
-  const handlePhoneChange = (val) => {
-    const normalized = normalizePhoneInput(val);
-    setPhone(normalized);
-    const newWhatsapp = isSameAsPhone ? normalized : whatsapp;
-    if (isSameAsPhone) {
-      setWhatsapp(normalized);
+    const formattedPhone = toInternationalFormat(form.phone);
+    if (!formattedPhone) {
+      errs.phone = "Valid phone number (E.164) is required, e.g. +2348012345678";
     }
-    notifyChange({ phone: normalized, whatsapp: newWhatsapp });
-  };
 
-  const handleWhatsappChange = (val) => {
-    const normalized = normalizePhoneInput(val);
-    setWhatsapp(normalized);
-    notifyChange({ whatsapp: normalized });
-  };
+    if (!form.isSameAsPhone) {
+      const formattedWhatsapp = toInternationalFormat(form.whatsapp);
+      if (!formattedWhatsapp) {
+        errs.whatsapp = "Valid WhatsApp number (E.164) is required, e.g. +2348012345678";
+      }
+    }
 
-  const handleEmailChange = (val) => {
-    setEmail(val);
-    notifyChange({ email: val });
-  };
-
-  const handleCheckboxChange = (checked) => {
-    setIsSameAsPhone(checked);
-    const newWhatsapp = checked ? phone : whatsapp;
-    if (checked) setWhatsapp(phone);
-    notifyChange({ isSameAsPhone: checked, whatsapp: newWhatsapp });
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   };
 
   const handleContinue = () => {
@@ -130,37 +97,25 @@ const PurchaseInstallmentTermModal = ({
       toast.error("Please choose a financing term duration.");
       return;
     }
-    if (!firstName?.trim() || !lastName?.trim()) {
-      toast.error("Please provide your first and last name.");
-      return;
-    }
-    if (!email?.trim() || !email.includes("@")) {
-      toast.error("Please provide a valid email address.");
-      return;
-    }
-    const formattedPhone = toInternationalFormat(phone);
-    if (!formattedPhone) {
-      toast.error("Please provide a valid phone number (e.g. +2348012345678).");
+    if (!validate()) {
+      toast.error("Please fill in all required contact details.");
       return;
     }
 
-    const targetWhatsapp = isSameAsPhone ? phone : whatsapp;
+    const formattedPhone = toInternationalFormat(form.phone);
+    const targetWhatsapp = form.isSameAsPhone ? form.phone : form.whatsapp;
     const formattedWhatsapp = toInternationalFormat(targetWhatsapp);
-    if (!formattedWhatsapp) {
-      toast.error("Please provide a valid WhatsApp number (e.g. +2348012345678).");
-      return;
-    }
 
-    const fullName = [firstName, lastName].filter(Boolean).join(" ").trim();
+    const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
     onContinueInstallmentTerm?.({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
       name: fullName,
       recipientName: fullName,
-      email: email.trim(),
+      email: form.email.trim(),
       phone: formattedPhone,
       whatsapp: formattedWhatsapp,
-      isSameAsPhone,
+      isSameAsPhone: form.isSameAsPhone,
     });
   };
 
@@ -169,7 +124,7 @@ const PurchaseInstallmentTermModal = ({
   const downPaymentPercent = Math.round(INSTALLMENT_DOWN_PAYMENT_PERCENT * 100);
 
   return (
-    <div className="space-y-4 max-h-[80vh] overflow-y-auto px-1 slim-scroll">
+    <div className="space-y-4 px-1 no-scrollbar">
       <div className="flex items-start justify-between pb-2 border-b border-light dark:border-slate-800">
         <div>
           <h2 className="text-18px font-semibold text-black dark:text-white">Installment Plan</h2>
@@ -223,103 +178,151 @@ const PurchaseInstallmentTermModal = ({
         </div>
       )}
 
-      {/* Contact Details Form */}
+      {/* Contact Details Form (matching Pay Once model) */}
       <div className="pt-3 border-t border-light dark:border-slate-800 space-y-4">
-        <p className="text-16px font-semibold text-black dark:text-white">Contact Information</p>
+        <div>
+          <h3 className="text-16px font-bold text-slate-900 dark:text-slate-100">Your Contact Details</h3>
+          <p className="text-12px text-slate-500 dark:text-slate-400 mt-0.5">
+            Our sourcing team will verify vehicle inspection data and send the complete quote to your WhatsApp.
+          </p>
+        </div>
+
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              value={firstName}
-              onChange={(e) => handleFirstNameChange(e.target.value)}
-              className="w-full"
-              type="text"
-              label="First name"
-              placeholder="e.g. Babatunde"
+              label="First Name"
+              placeholder="e.g. Tunde"
+              value={form.firstName}
+              onChange={(e) => {
+                const next = { ...form, firstName: e.target.value };
+                setForm(next);
+                if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: undefined }));
+                notifyChange(next);
+              }}
+              errorMessage={errors.firstName}
+              isInvalid={!!errors.firstName}
+              size="md"
+              required
             />
-
             <Input
-              value={lastName}
-              onChange={(e) => handleLastNameChange(e.target.value)}
-              className="w-full"
-              type="text"
-              label="Last name"
+              label="Last Name"
               placeholder="e.g. Adeleke"
+              value={form.lastName}
+              onChange={(e) => {
+                const next = { ...form, lastName: e.target.value };
+                setForm(next);
+                if (errors.lastName) setErrors((prev) => ({ ...prev, lastName: undefined }));
+                notifyChange(next);
+              }}
+              errorMessage={errors.lastName}
+              isInvalid={!!errors.lastName}
+              size="md"
+              required
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              value={email}
-              onChange={(e) => handleEmailChange(e.target.value)}
+          <Input
+            label="Email Address"
+            placeholder="e.g. tunde@company.com"
+            type="email"
+            value={form.email}
+            onChange={(e) => {
+              const next = { ...form, email: e.target.value };
+              setForm(next);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+              notifyChange(next);
+            }}
+            errorMessage={errors.email}
+            isInvalid={!!errors.email}
+            size="md"
+            required
+          />
+
+          {/* International Phone Input */}
+          <div className="space-y-1">
+            <label className="text-12px font-medium text-slate-700 dark:text-slate-300 block">
+              Phone Number <span className="text-red-500">*</span>
+            </label>
+            <PhoneInput
+              defaultCountry="ng"
+              value={form.phone}
+              onChange={(val) => {
+                const normalized = normalizePhoneInput(val);
+                const next = {
+                  ...form,
+                  phone: normalized,
+                  whatsapp: form.isSameAsPhone ? normalized : form.whatsapp,
+                };
+                setForm(next);
+                if (errors.phone) setErrors((prev) => ({ ...prev, phone: undefined }));
+                notifyChange(next);
+              }}
               className="w-full"
-              type="email"
-              label="Email"
-              placeholder="e.g. babatunde@company.ng"
             />
-
-            <div id="phone-input-wrapper" className="space-y-1">
-              <label className="text-12px font-medium text-slate-700 dark:text-slate-300 block">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <PhoneInput
-                defaultCountry="ng"
-                value={phone}
-                onChange={handlePhoneChange}
-                className="w-full"
-              />
-            </div>
+            {errors.phone && <p className="text-11px text-red-500 mt-1">{errors.phone}</p>}
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center px-1 pt-1">
-              <Checkbox
-                isSelected={isSameAsPhone}
-                onValueChange={handleCheckboxChange}
-                size="sm"
-              >
-                <span className="text-sm font-medium text-black dark:text-white select-none">
-                  Use WhatsApp number as phone number
-                </span>
-              </Checkbox>
-            </div>
+          {/* WhatsApp Checkbox & Number */}
+          <div className="space-y-2 pt-1">
+            <Checkbox
+              isSelected={form.isSameAsPhone}
+              onValueChange={(val) => {
+                const next = {
+                  ...form,
+                  isSameAsPhone: val,
+                  whatsapp: val ? form.phone : form.whatsapp,
+                };
+                setForm(next);
+                notifyChange(next);
+              }}
+              size="sm"
+            >
+              WhatsApp number is the same as phone number
+            </Checkbox>
 
-            {!isSameAsPhone && (
-              <div id="phone-input-wrapper" className="space-y-1">
+            {!form.isSameAsPhone && (
+              <div className="space-y-1 pl-2">
                 <label className="text-12px font-medium text-slate-700 dark:text-slate-300 block">
                   WhatsApp Number <span className="text-red-500">*</span>
                 </label>
                 <PhoneInput
                   defaultCountry="ng"
-                  value={whatsapp}
-                  onChange={handleWhatsappChange}
+                  value={form.whatsapp}
+                  onChange={(val) => {
+                    const normalized = normalizePhoneInput(val);
+                    const next = { ...form, whatsapp: normalized };
+                    setForm(next);
+                    if (errors.whatsapp) setErrors((prev) => ({ ...prev, whatsapp: undefined }));
+                    notifyChange(next);
+                  }}
                   className="w-full"
                 />
+                {errors.whatsapp && <p className="text-11px text-red-500 mt-1">{errors.whatsapp}</p>}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-4 pt-4 border-t border-light dark:border-slate-800">
+      <div className="flex items-center justify-center gap-3 pt-4 border-t border-light dark:border-slate-800">
         <Button
+          variant="bordered"
+          radius="full"
           onPress={onBack}
           isDisabled={isSubmitting}
-          className="uppercase px-8 font-[500]"
-          size="md"
-          color="danger"
-          variant="bordered"
+          className="border-slate-300 dark:border-slate-700 font-medium"
         >
           Back
         </Button>
         <Button
+          color="primary"
+          radius="full"
           onPress={handleContinue}
           isDisabled={!months || isSubmitting}
           isLoading={isSubmitting}
-          className="disabled:opacity-50 disabled:pointer-events-none uppercase text-white font-[500] px-8"
-          size="md"
-          color="primary"
+          className="px-8 font-semibold text-white cursor-pointer"
         >
-          {isSubmitting ? "Submitting Quote..." : "Get a quote"}
+          {isSubmitting ? "Submitting Quote..." : "Request a quote"}
         </Button>
       </div>
     </div>

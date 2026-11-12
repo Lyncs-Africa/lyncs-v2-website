@@ -10,6 +10,7 @@ import {
 } from "../carPurchase.js";
 import { numberWithCommas, toInternationalFormat } from "../utils.js";
 import { LOCAL_CARS_RAW } from "../localCarsCatalog.js";
+import { submitContactLead, toNigerianE164 } from "./contact.ts";
 
 const RAW_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -555,6 +556,16 @@ export async function createCarPurchase(payload) {
           : undefined
         : undefined,
     paymentSource: "quote",
+    firstName,
+    lastName,
+    name: fullName,
+    email: payload.contact?.email || payload.email,
+    phone,
+    whatsapp,
+    contactPhone: phone,
+    contactWhatsapp: whatsapp,
+    contactEmail: payload.contact?.email || payload.email,
+    isSameAsPhone,
     contact: {
       firstName,
       lastName,
@@ -584,7 +595,72 @@ export async function createCarPurchase(payload) {
     });
     return res;
   } catch (err) {
+    if (err?.status === 404) {
+      try {
+        const fallbackRes = await apiRequest("cars/purchases/quote", {
+          method: "POST",
+          body: JSON.stringify(cleanPayload),
+        });
+        return fallbackRes;
+      } catch (fallbackErr) {
+        console.error("API /cars/purchases/quote fallback error:", fallbackErr);
+        throw fallbackErr;
+      }
+    }
     console.error("API /cars/purchases error:", err);
     throw err;
   }
 }
+
+/**
+ * 4. Value a Used Car (from swap-valuation-api.md)
+ * Endpoint: GET /cars/valuation
+ * Query params: make, model, year, km, condition
+ */
+export async function fetchCarValuationApi({ make, model, year, km, condition }) {
+  const params = new URLSearchParams();
+  if (make) params.set("make", make);
+  if (model) params.set("model", model);
+  if (year) params.set("year", String(year));
+  if (km !== undefined && km !== null && km !== "") params.set("km", String(km));
+  if (condition) params.set("condition", condition);
+
+  try {
+    const res = await fetch(`${BASE_URL}/cars/valuation?${params.toString()}`);
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+    return { range: null };
+  } catch (err) {
+    console.error("API /cars/valuation error:", err);
+    return { range: null };
+  }
+}
+
+/**
+ * 5. Submit Valuation Lead (from swap-valuation-api.md)
+ * Endpoint: POST /cars/valuation-leads
+ * Accepts multipart/form-data (FormData)
+ */
+export async function submitValuationLeadApi(formData) {
+  try {
+    const res = await fetch(`${BASE_URL}/cars/valuation-leads`, {
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      const err = new Error(data?.message || `HTTP ${res.status}`);
+      err.status = res.status;
+      err.errors = data?.errors;
+      throw err;
+    }
+    return data;
+  } catch (err) {
+    console.error("API /cars/valuation-leads error:", err);
+    throw err;
+  }
+}
+
+export { submitContactLead, toNigerianE164 };

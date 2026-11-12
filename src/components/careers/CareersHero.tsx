@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { GiBrain, GiLips } from 'react-icons/gi'
 import { LuMouse, LuSparkles, LuLaptop, LuHeartHandshake, LuZap } from 'react-icons/lu'
@@ -34,8 +35,8 @@ export default function CareersHero() {
         {/* Top pill badge */}
         <div className="flex justify-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-surface px-4 py-1.5 text-sm text-primary dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            We’re hiring across Lagos & Africa • 5 open roles
+            <span className="h-2 w-2 rounded-full bg-amber-500" />
+            No open positions right now • Looking to buy or swap a car?
           </span>
         </div>
 
@@ -94,19 +95,19 @@ export default function CareersHero() {
         </div>
 
         {/* Jump CTA */}
-        <div className="mt-10 flex items-center justify-center gap-4">
-          <a
-            href="#open-roles"
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/cars"
             className="inline-flex rounded bg-accent px-7 py-3 text-[15px] font-medium text-white transition hover:bg-opacity-90 dark:bg-white dark:text-primary dark:hover:bg-slate-200"
           >
-            Explore open roles
-          </a>
-          <a
-            href="#culture"
+            Browse car catalog
+          </Link>
+          <Link
+            href="/swap"
             className="inline-flex rounded border border-accent px-6 py-3 text-[15px] font-medium text-accent transition hover:bg-accent/5 dark:border-white/20 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/5"
           >
-            Read how we work
-          </a>
+            Swap / Trade in your car
+          </Link>
         </div>
       </div>
     </section>
