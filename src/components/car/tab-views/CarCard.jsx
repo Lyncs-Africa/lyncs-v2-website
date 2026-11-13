@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaCar } from "react-icons/fa";
 import { IoFlash } from "react-icons/io5";
@@ -8,6 +8,7 @@ import { BsFuelPumpFill } from "react-icons/bs";
 import { FaLeaf } from "react-icons/fa";
 import cn from "classnames";
 import { numberWithCommas } from "../../../lib/utils.js";
+import { getCarImageCandidates } from "../../../lib/carImageUtils.js";
 import { useCarStore } from "../../../store/carStore.js";
 
 export const FUEL_TYPE_BADGE = {
@@ -19,6 +20,15 @@ export const FUEL_TYPE_BADGE = {
 export const CarCard = ({ car }) => {
   const router = useRouter();
   const fuelBadge = FUEL_TYPE_BADGE[car.type] || FUEL_TYPE_BADGE.petrol;
+  const imageCandidates = useMemo(() => getCarImageCandidates(car), [car]);
+  const [imageIndex, setImageIndex] = useState(0);
+
+  useEffect(() => {
+    setImageIndex(0);
+  }, [imageCandidates]);
+
+  const activeImageSrc = imageCandidates[imageIndex] || null;
+  const displayName = car.name || car.title || "Vehicle";
 
   const navigateToCarListing = (startPurchase = false) => {
     const carId = car.productId || car.id;
@@ -63,11 +73,13 @@ export const CarCard = ({ car }) => {
     >
       {/* Top Hero Image Area */}
       <div className="relative bg-slate-100 dark:bg-slate-800 h-[11.5rem] flex items-center justify-center overflow-hidden">
-        {car.image ? (
+        {activeImageSrc ? (
           <img
-            src={car.image}
-            alt={car.name}
+            src={activeImageSrc}
+            alt={displayName}
             loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setImageIndex((prev) => prev + 1)}
             className="w-full h-full object-cover"
           />
         ) : (

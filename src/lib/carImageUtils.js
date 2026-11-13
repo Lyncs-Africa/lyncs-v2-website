@@ -6,8 +6,12 @@ export const getCarImageCandidates = (car) => {
     if (!val) return;
     if (typeof val === "string") {
       let trimmed = val.trim();
-      if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("//")) {
-        if (trimmed.startsWith("http://")) trimmed = trimmed.replace(/^http:\/\//i, "https://");
+      if (trimmed.startsWith("//")) {
+        trimmed = `https:${trimmed}`;
+      } else if (trimmed.startsWith("http://")) {
+        trimmed = trimmed.replace(/^http:\/\//i, "https://");
+      }
+      if (trimmed.startsWith("https://") || trimmed.startsWith("/")) {
         rawList.push(trimmed);
       }
     } else if (typeof val === "object") {

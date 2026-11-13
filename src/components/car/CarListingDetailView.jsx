@@ -22,6 +22,7 @@ import { toast, ToastContainer } from "react-toastify";
 import cn from "classnames";
 import { useCarStore } from "../../store/carStore.js";
 import { numberWithCommas, toInternationalFormat, titleCase } from "../../lib/utils.js";
+import { getCarImageCandidates } from "../../lib/carImageUtils.js";
 import {
   computeInstallmentBreakdown,
   getDeliveryFeeInfo,
@@ -329,18 +330,26 @@ export default function CarListingDetailView({ carId }) {
     };
   }, [car?.id, car?.usage]);
 
+  const [failedImages, setFailedImages] = useState({});
+
   const images = useMemo(() => {
-    if (!car) return [];
-    if (Array.isArray(car.images) && car.images.length > 0) {
-      const extracted = car.images
-        .map((img) => (typeof img === "string" ? img : img?.url))
-        .filter(Boolean);
-      if (extracted.length > 0) return extracted;
+    return getCarImageCandidates(car).filter((src) => !failedImages[src]);
+  }, [car, failedImages]);
+
+  useEffect(() => {
+    setFailedImages({});
+  }, [carId]);
+
+  useEffect(() => {
+    if (activeImage >= images.length && images.length > 0) {
+      setActiveImage(0);
     }
-    if (car.headImage) return [car.headImage];
-    if (car.image) return [car.image];
-    return [];
-  }, [car]);
+  }, [activeImage, images.length]);
+
+  const markImageFailed = (src) => {
+    if (!src) return;
+    setFailedImages((prev) => (prev[src] ? prev : { ...prev, [src]: true }));
+  };
 
   // Keyboard navigation for Full-Screen Lightbox
   useEffect(() => {
@@ -609,6 +618,8 @@ export default function CarListingDetailView({ carId }) {
                   <img
                     src={images[activeImage] || images[0]}
                     alt={`${car.name} - photo ${activeImage + 1}`}
+                    referrerPolicy="no-referrer"
+                    onError={() => markImageFailed(images[activeImage] || images[0])}
                     onClick={() => {
                       setLightboxOpen(true);
                       setIsZoomed(false);
@@ -706,6 +717,8 @@ export default function CarListingDetailView({ carId }) {
                       <img
                         src={src}
                         alt={`Thumbnail ${idx + 1}`}
+                        referrerPolicy="no-referrer"
+                        onError={() => markImageFailed(src)}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -1013,6 +1026,8 @@ export default function CarListingDetailView({ carId }) {
               <img
                 src={images[activeImage] || images[0]}
                 alt={`${car.name} full view ${activeImage + 1}`}
+                referrerPolicy="no-referrer"
+                onError={() => markImageFailed(images[activeImage] || images[0])}
                 className={cn(
                   "max-h-[76vh] max-w-[92vw] object-contain transition-transform duration-200",
                   isZoomed ? "scale-150 cursor-zoom-out" : "scale-100 cursor-zoom-in"
@@ -1067,7 +1082,13 @@ export default function CarListingDetailView({ carId }) {
                         : "border-transparent opacity-50 hover:opacity-80"
                     )}
                   >
-                    <img src={src} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img
+                      src={src}
+                      alt={`Thumb ${idx + 1}`}
+                      referrerPolicy="no-referrer"
+                      onError={() => markImageFailed(src)}
+                      className="w-full h-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
