@@ -638,6 +638,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
                       <img
                         src={option.image}
                         alt={option.name}
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-contain p-1"
                       />
                     </span>

@@ -1,10 +1,10 @@
 'use client'
 
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {AnimatePresence, motion} from 'framer-motion'
 import {useValuationStore, type Tab, type OwnerForm as OwnerFormState} from '@/store/valuationStore'
 import type {ValuationRange} from '@/lib/valuation/getCarValuation'
-import type {EvOption} from '@/lib/valuation/evOptions'
+import {fetchEvOptions, type EvOption} from '@/lib/valuation/evOptions'
 import type {Tenor} from '@/lib/valuation/config'
 import {useCarValuation} from './useCarValuation'
 import OwnerForm from './OwnerForm'
@@ -17,14 +17,21 @@ const TABS: {value: Tab; label: string}[] = [
     {value: 'fleet', label: 'Company fleet'},
 ]
 
-export default function CarValuation() {
+type CarValuationProps = {
+    targetCar?: EvOption | null
+    inModal?: boolean
+}
+
+export default function CarValuation({targetCar = null, inModal = false}: CarValuationProps = {}) {
     const tab = useValuationStore((s) => s.tab)
     const setTab = useValuationStore((s) => s.setTab)
     const owner = useValuationStore((s) => s.owner)
     const result = useValuationStore((s) => s.result)
     const tenor = useValuationStore((s) => s.tenor)
     const evs = useValuationStore((s) => s.evs)
+    const setEvs = useValuationStore((s) => s.setEvs)
     const selectedEvId = useValuationStore((s) => s.selectedEvId)
+    const setSelectedEv = useValuationStore((s) => s.setSelectedEv)
     const resetOwner = useValuationStore((s) => s.resetOwner)
 
     const [lockOpen, setLockOpen] = useState(false)
@@ -35,6 +42,30 @@ export default function CarValuation() {
         evs: EvOption[]
         selectedEvId: string | null
     } | null>(null)
+
+    // Pre-select target vehicle when opened from a specific car listing modal
+    useEffect(() => {
+        if (!targetCar?.id || !targetCar.price) return
+        let active = true
+        const ensureTarget = (list: EvOption[]) => {
+            const exists = list.some((e) => e.id === targetCar.id)
+            return exists ? list : [targetCar, ...list]
+        }
+
+        setEvs(ensureTarget(useValuationStore.getState().evs))
+        setSelectedEv(targetCar.id)
+
+        fetchEvOptions()
+            .then((fetched) => {
+                if (!active) return
+                setEvs(ensureTarget(fetched))
+            })
+            .catch(() => {})
+
+        return () => {
+            active = false
+        }
+    }, [targetCar?.id, targetCar?.price, targetCar?.name, setEvs, setSelectedEv])
 
     // Watches the owner form and keeps the result state in sync.
     useCarValuation()
@@ -58,7 +89,7 @@ export default function CarValuation() {
     }
 
     return (
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10">
+        <div className={inModal ? 'grid grid-cols-1 gap-6' : 'grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-10'}>
             {/* Left: the form */}
             <div className="rounded-[28px] border border-slate-200 bg-gray-100 p-6 text-slate-900 shadow-2xl sm:p-9 dark:border-transparent dark:bg-[#0E131F] dark:text-white dark:ring-1 dark:ring-white/10">
                 <h2 className="text-lg font-bold tracking-tight">Who are you?</h2>
@@ -106,7 +137,7 @@ export default function CarValuation() {
             </div>
 
             {/* Right: the live result panel */}
-            <div className="lg:sticky lg:top-28 lg:self-start">
+            <div className={inModal ? '' : 'lg:sticky lg:top-28 lg:self-start'}>
                 <ResultPanel onLockIn={handleLockIn} />
             </div>
 

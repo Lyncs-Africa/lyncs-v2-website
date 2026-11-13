@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import cn from "classnames";
 import { useCarStore } from "../../store/carStore.js";
 import { numberWithCommas, toInternationalFormat } from "../../lib/utils.js";
+import { getCarImageCandidates } from "../../lib/carImageUtils.js";
 import {
   computeInstallmentBreakdown,
   getDeliveryFeeInfo,
@@ -175,7 +176,7 @@ const QuoteSummaryStep = ({
         <div className="flex items-center gap-4">
           <div className="w-20 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 border border-light dark:border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
             {car.image ? (
-              <img src={car.image} alt={car.name} className="w-full h-full object-cover" />
+              <img src={car.image} alt={car.name} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
             ) : (
               <FaCar className="text-slate-400 text-2xl" />
             )}
@@ -484,17 +485,10 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
   const specs = useMemo(() => getVehicleSpecs(car, apiCar), [car, apiCar]);
 
   // Extract all high-res photos from images array or headImage
+  const [failedImages, setFailedImages] = useState({});
   const images = useMemo(() => {
-    if (Array.isArray(car.images) && car.images.length > 0) {
-      const extracted = car.images
-        .map((img) => (typeof img === "string" ? img : img?.url))
-        .filter(Boolean);
-      if (extracted.length > 0) return extracted;
-    }
-    if (car.headImage) return [car.headImage];
-    if (car.image) return [car.image];
-    return [];
-  }, [car]);
+    return getCarImageCandidates(car).filter((src) => !failedImages[src]);
+  }, [car, failedImages]);
 
   const [activeImage, setActiveImage] = useState(0);
   const carouselRef = useRef(null);
@@ -941,6 +935,10 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
                     <img
                       src={src}
                       alt={`${car.name} ${index + 1}`}
+                      referrerPolicy="no-referrer"
+                      onError={() =>
+                        setFailedImages((prev) => (prev[src] ? prev : { ...prev, [src]: true }))
+                      }
                       className="w-full h-full object-cover"
                     />
                   </div>
