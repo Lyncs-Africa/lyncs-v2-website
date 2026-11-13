@@ -36,6 +36,7 @@ import PurchasePaymentModeModal from "./purchase/PurchasePaymentModeModal.jsx";
 import PurchaseInstallmentTermModal from "./purchase/PurchaseInstallmentTermModal.jsx";
 import PurchaseDeliveryModal from "./purchase/PurchaseDeliveryModal.jsx";
 import SmallerModal from "./shared/SmallerModal.jsx";
+import SwapCarModal from "./SwapCarModal.tsx";
 import CarCard from "./tab-views/CarCard.jsx";
 
 const FUEL_TYPE_LABEL = {
@@ -183,6 +184,7 @@ export default function CarListingDetailView({ carId }) {
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
 
   // Purchase state
   const [purchaseStep, setPurchaseStep] = useState(
@@ -879,12 +881,13 @@ export default function CarListingDetailView({ carId }) {
                 Purchase car
               </button>
 
-              <Link
-                href="/swap"
-                className="w-full inline-flex items-center justify-center text-primary dark:text-white text-14px font-semibold rounded-full py-3 px-5 border border-primary dark:border-white/20 hover:bg-primary/5 dark:hover:bg-white/5 transition"
+              <button
+                type="button"
+                onClick={() => setIsSwapModalOpen(true)}
+                className="w-full inline-flex items-center justify-center text-primary dark:text-white text-14px font-semibold rounded-full py-3 px-5 border border-primary dark:border-white/20 hover:bg-primary/5 dark:hover:bg-white/5 transition cursor-pointer"
               >
                 Swap with your car
-              </Link>
+              </button>
 
               <a
                 href={whatsappUrl}
@@ -1157,6 +1160,12 @@ export default function CarListingDetailView({ carId }) {
           />
         )}
       </SmallerModal>
+
+      <SwapCarModal
+        isOpen={isSwapModalOpen}
+        onClose={() => setIsSwapModalOpen(false)}
+        targetCar={car}
+      />
     </div>
   );
 }
