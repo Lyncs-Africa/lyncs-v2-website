@@ -5,6 +5,7 @@ import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import ScrollToTop from '../../components/ui/ScrollToTop'
 import ThemeProvider, { themeScript } from '../../components/theme/ThemeProvider'
+import QueryProvider from '../../components/providers/QueryProvider'
 import 'react-international-phone/style.css'
 import 'react-toastify/dist/ReactToastify.css'
 import '../globals.css'
@@ -37,10 +38,12 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
       </head>
       <body className="bg-white text-primary dark:bg-night dark:text-slate-100 font-Quicksand antialiased">
         <ThemeProvider>
-          <Header />
-          <main id="top">{children}</main>
-          <Footer />
-          <ScrollToTop />
+          <QueryProvider>
+            <Header />
+            <main id="top">{children}</main>
+            <Footer />
+            <ScrollToTop />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -10,8 +10,8 @@ import cn from "classnames";
 import { numberWithCommas, titleCase } from "../../../lib/utils.js";
 import { useCarStore } from "../../../store/carStore.js";
 import { TOP_MAKES } from "../../../lib/vehicleBrands.js";
-import { fetchCarsCatalog, normalizeCar } from "../../../lib/api/cars.js";
 import { CAR_TABS, getTab, USE_CASE_OPTIONS } from "../../../lib/carSegments.js";
+import { useCarsCatalogQuery } from "../../../hooks/useCarsCatalog";
 import CarCard from "./CarCard.jsx";
 
 export const MAKES = TOP_MAKES;
@@ -60,9 +60,6 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   const [useCase, setUseCase] = useState("all");
   const [sort, setSort] = useState("newest");
   const [page, setPage] = useState(1);
-  const [serverPagination, setServerPagination] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [cars, setCars] = useState([]);
   const catalogGridRef = useRef(null);
 
   const isUsedTab = usage === "used" || usage === "used-cars";
@@ -78,43 +75,21 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Fetch cars directly from backend API (/cars/catalog)
-  useEffect(() => {
-    let active = true;
-    setIsLoading(true);
+  // Fetch & cache cars via React Query (/cars/catalog)
+  const { data: catalogData, isLoading } = useCarsCatalogQuery({
+    condition: normalizedUsage === "used" ? "USED" : "NEW",
+    fuelType: type !== "all" ? type : undefined,
+    origin: isUsedTab && origin !== "all" ? origin : undefined,
+    make: make || undefined,
+    keyword: debouncedSearch || undefined,
+    segment: useCase !== "all" ? useCase : undefined,
+    sort: sort || undefined,
+    page,
+    limit: PAGE_SIZE,
+  });
 
-    fetchCarsCatalog({
-      condition: normalizedUsage === "used" ? "USED" : "NEW",
-      fuelType: type !== "all" ? type : undefined,
-      origin: isUsedTab && origin !== "all" ? origin : undefined,
-      make: make || undefined,
-      keyword: debouncedSearch || undefined,
-      segment: useCase !== "all" ? useCase : undefined,
-      sort: sort || undefined,
-      page,
-      limit: PAGE_SIZE,
-    })
-      .then((res) => {
-        if (!active) return;
-        const fetchedList = res?.data?.cars || [];
-        setCars(fetchedList);
-        if (res?.data?.pagination) {
-          setServerPagination(res.data.pagination);
-        }
-      })
-      .catch((err) => {
-        if (!active) return;
-        console.error("Failed to fetch catalog:", err);
-        setCars([]);
-      })
-      .finally(() => {
-        if (active) setIsLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [normalizedUsage, type, origin, make, debouncedSearch, isUsedTab, sort, useCase, page]);
+  const cars = useMemo(() => catalogData?.data?.cars || [], [catalogData]);
+  const serverPagination = catalogData?.data?.pagination || null;
 
   const filteredCars = useMemo(() => {
     const list = cars.filter((car) => {

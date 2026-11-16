@@ -9,13 +9,18 @@ import { FiCheckCircle, FiInfo } from "react-icons/fi";
 import { toast } from "react-toastify";
 import cn from "classnames";
 import { useCarStore } from "../../store/carStore.js";
-import { numberWithCommas, toInternationalFormat } from "../../lib/utils.js";
+import {
+  numberWithCommas,
+  toInternationalFormat,
+  getPhoneValidationError,
+} from "../../lib/utils.js";
 import { getCarImageCandidates } from "../../lib/carImageUtils.js";
 import {
   computeInstallmentBreakdown,
   getDeliveryFeeInfo,
 } from "../../lib/carPurchase.js";
-import { createCarPurchase, fetchCarDetail } from "../../lib/api/cars.js";
+import { createCarPurchase } from "../../lib/api/cars.js";
+import { useCarDetailQuery } from "../../hooks/useCarsCatalog";
 import PurchasePaymentModeModal from "./purchase/PurchasePaymentModeModal.jsx";
 import PurchaseInstallmentTermModal from "./purchase/PurchaseInstallmentTermModal.jsx";
 import PurchaseDeliveryModal from "./purchase/PurchaseDeliveryModal.jsx";
@@ -427,21 +432,8 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
     (String(initialCar.productId || initialCar.id || "").includes("-") ? "yekauto" : "guazi");
   const carId = initialCar.productId || initialCar.id;
 
-  const [apiCar, setApiCar] = useState(null);
-
-  // Fetch full details directly from Guazi or Yekauto endpoint
-  useEffect(() => {
-    if (!carId) return;
-    let active = true;
-    fetchCarDetail(carId, carPlatform).then((res) => {
-      if (active && res) {
-        setApiCar(res);
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [carId, carPlatform]);
+  // Fetch full details directly from Guazi or Yekauto endpoint via React Query
+  const { data: apiCar = null } = useCarDetailQuery(carId, carPlatform);
 
   // Merge initial catalog card data with full single-car API response
   const car = useMemo(() => {
@@ -615,13 +607,16 @@ const CarDetailsModal = ({ onClose: propOnClose }) => {
     );
     const resolvedEmail = activeContact?.email || "";
 
-    if (!resolvedPhone) {
-      toast.error("Phone number must use E.164 format, for example +2348012345678");
+    const phoneErr = getPhoneValidationError(activeContact?.phone || "", "phone number");
+    if (!resolvedPhone || phoneErr) {
+      toast.error(phoneErr || "Please enter a valid phone number (e.g. +2348012345678).");
       setIsSubmitting(false);
       return null;
     }
-    if (!resolvedWhatsapp) {
-      toast.error("WhatsApp number must use E.164 format, for example +2348012345678");
+    const waTarget = activeContact?.whatsapp || activeContact?.phone || "";
+    const waErr = getPhoneValidationError(waTarget, "WhatsApp number");
+    if (!resolvedWhatsapp || waErr) {
+      toast.error(waErr || "Please enter a valid WhatsApp number (e.g. +2348012345678).");
       setIsSubmitting(false);
       return null;
     }

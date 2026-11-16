@@ -40,6 +40,7 @@ export default function SwapValuationStepModal({
   onContinueToLockIn,
   onBack,
   onClose,
+  hideClose = false,
 }) {
   useCarValuation();
 
@@ -101,14 +102,16 @@ export default function SwapValuationStepModal({
             </span>
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-gray-400 hover:text-red-600 rounded-full transition-colors cursor-pointer p-1"
-          aria-label="Close"
-        >
-          <IoMdClose size={22} />
-        </button>
+        {!hideClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-gray-400 hover:text-red-600 rounded-full transition-colors cursor-pointer p-1"
+            aria-label="Close"
+          >
+            <IoMdClose size={22} />
+          </button>
+        )}
       </div>
 
       {/* Vehicle Fields using HeroUI Controls */}
@@ -182,7 +185,7 @@ export default function SwapValuationStepModal({
           className="[&_input]:h-10 [&_input]:rounded-xl [&_input]:px-3.5 [&_input]:text-13px"
         />
 
-        <div className="sm:col-span-2">
+        {/* <div className="sm:col-span-2">
           <Select
             label="Vehicle Condition"
             placeholder="Select condition"
@@ -198,7 +201,7 @@ export default function SwapValuationStepModal({
               </SelectItem>
             ))}
           </Select>
-        </div>
+        </div> */}
       </div>
 
       {/* Live Breakdown Card matching PurchaseInstallmentTermModal */}

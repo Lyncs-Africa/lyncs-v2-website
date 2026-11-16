@@ -27,11 +27,8 @@ import {
   computeInstallmentBreakdown,
   getDeliveryFeeInfo,
 } from "../../lib/carPurchase.js";
-import {
-  createCarPurchase,
-  fetchCarDetail,
-  fetchCarsCatalog,
-} from "../../lib/api/cars.js";
+import { createCarPurchase } from "../../lib/api/cars.js";
+import { useCarDetailQuery, useCarsCatalogQuery } from "../../hooks/useCarsCatalog";
 import { WHATSAPP_NUMBER } from "../../lib/valuation/config.ts";
 import PurchasePaymentModeModal from "./purchase/PurchasePaymentModeModal.jsx";
 import PurchaseInstallmentTermModal from "./purchase/PurchaseInstallmentTermModal.jsx";
@@ -177,10 +174,6 @@ export default function CarListingDetailView({ carId }) {
     return null;
   });
 
-  const [apiCar, setApiCar] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [similarCars, setSimilarCars] = useState([]);
-
   // Gallery state
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -230,27 +223,12 @@ export default function CarListingDetailView({ carId }) {
     return String(carId || "").includes("-") ? "yekauto" : "guazi";
   }, [queryPlatform, cachedCar, carId]);
 
-  // Fetch single car detail from API / local catalog
+  // Fetch single car detail via React Query (cached & Strict-Mode deduplicated)
+  const { data: apiCar = null, isLoading } = useCarDetailQuery(carId, carPlatform);
+
   useEffect(() => {
-    if (!carId) return;
-    let active = true;
-    setIsLoading(true);
     setActiveImage(0);
-
-    fetchCarDetail(carId, carPlatform)
-      .then((res) => {
-        if (active && res) {
-          setApiCar(res);
-        }
-      })
-      .finally(() => {
-        if (active) setIsLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [carId, carPlatform]);
+  }, [carId]);
 
   // Merge cachedCar and apiCar
   const car = useMemo(() => {
@@ -308,27 +286,23 @@ export default function CarListingDetailView({ carId }) {
     };
   }, [cachedCar, apiCar, carPlatform, carId]);
 
-  // Fetch similar vehicles
-  useEffect(() => {
-    if (!car) return;
-    let active = true;
-    fetchCarsCatalog({
-      usage: car.usage || "brand-new",
+  // Fetch similar vehicles via React Query (cached across listings)
+  const similarCondition =
+    car?.usage === "used" || car?.condition === "USED" ? "USED" : "NEW";
+  const { data: similarCatalogData } = useCarsCatalogQuery(
+    {
+      condition: similarCondition,
       limit: 8,
-    })
-      .then((res) => {
-        if (!active) return;
-        const list = res?.data?.cars || [];
-        const filtered = list
-          .filter((c) => String(c.id || c.productId) !== String(car.id))
-          .slice(0, 4);
-        setSimilarCars(filtered);
-      })
-      .catch(() => { });
-    return () => {
-      active = false;
-    };
-  }, [car?.id, car?.usage]);
+    },
+    { enabled: Boolean(car) }
+  );
+
+  const similarCars = useMemo(() => {
+    const list = similarCatalogData?.data?.cars || [];
+    return list
+      .filter((c) => String(c.id || c.productId) !== String(car?.id))
+      .slice(0, 4);
+  }, [similarCatalogData, car?.id]);
 
   const [failedImages, setFailedImages] = useState({});
 

@@ -12,7 +12,11 @@ import { EV_CONFIG } from "../../../lib/valuation/config";
 import { resolveActiveEv } from "../../../lib/valuation/evOptions";
 import { submitValuationLead } from "../../../lib/valuation/getCarValuation";
 import { getBreakdown, monthlyLabel, nairaM } from "../../../lib/valuation/breakdown";
-import { toInternationalFormat, normalizePhoneInput } from "../../../lib/utils.js";
+import {
+  toInternationalFormat,
+  normalizePhoneInput,
+  getPhoneValidationError,
+} from "../../../lib/utils.js";
 import { toNigerianE164 } from "../../../lib/api/contact";
 
 /**
@@ -61,30 +65,27 @@ export default function SwapLockInStepModal({
       errs.email = "Valid email is required";
     }
 
-    const formattedPhone =
-      toInternationalFormat(form.phone) || toNigerianE164(form.phone);
-    if (!formattedPhone || formattedPhone.length < 8) {
-      errs.phone =
-        "Valid phone number (E.164) is required, e.g. +2348012345678";
+    const phoneErr = getPhoneValidationError(form.phone, "phone number");
+    if (phoneErr) {
+      errs.phone = phoneErr;
     }
 
     if (!form.isSameAsPhone) {
-      const formattedWhatsapp =
-        toInternationalFormat(form.whatsapp) || toNigerianE164(form.whatsapp);
-      if (!formattedWhatsapp || formattedWhatsapp.length < 8) {
-        errs.whatsapp =
-          "Valid WhatsApp number (E.164) is required, e.g. +2348012345678";
+      const waErr = getPhoneValidationError(form.whatsapp, "WhatsApp number");
+      if (waErr) {
+        errs.whatsapp = waErr;
       }
     }
 
     setErrors(errs);
-    return Object.keys(errs).length === 0;
+    return errs;
   };
 
   const handleSubmit = async () => {
     if (isSubmitting || !result) return;
-    if (!validate()) {
-      toast.error("Please fill in all required contact details.");
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      toast.error(Object.values(errs)[0] || "Please fill in all required contact details.");
       return;
     }
 
@@ -316,7 +317,7 @@ export default function SwapLockInStepModal({
             className="w-full"
           />
           {(errors.phone || errors.contactPhone) && (
-            <p className="text-11px text-red-500 mt-1">
+            <p role="alert" className="text-12px font-medium text-red-500 mt-1">
               {errors.phone || errors.contactPhone}
             </p>
           )}
@@ -355,7 +356,7 @@ export default function SwapLockInStepModal({
                 className="w-full"
               />
               {errors.whatsapp && (
-                <p className="text-11px text-red-500 mt-1">
+                <p role="alert" className="text-12px font-medium text-red-500 mt-1">
                   {errors.whatsapp}
                 </p>
               )}
