@@ -69,8 +69,8 @@ const IMG_W = 2014
 const IMG_H = 780
 const WHEEL_R = 150
 const WHEELS = [
-  { src: '/images/ev-wheel-front.png', cx: 398, cy: 565 },
-  { src: '/images/ev-wheel-rear.png', cx: 1597, cy: 566 },
+  { src: '/images/ev-wheel-front.png', webpSrc: '/images/ev-wheel-front.webp', cx: 398, cy: 565 },
+  { src: '/images/ev-wheel-rear.png', webpSrc: '/images/ev-wheel-rear.webp', cx: 1597, cy: 566 },
 ]
 const DEG_PER_PCT = (IMG_W / WHEEL_R / 100) * (180 / Math.PI)
 const PULL_AWAY = 0.2
@@ -107,24 +107,34 @@ function DrivingCar() {
           style={still ? undefined : { rotate: pitch, transformOrigin: '50% 72%' }}
           className="relative"
         >
-          <img
-            src="/images/26.png"
-            alt="Executive chauffeur-driven saloon"
-            loading="lazy"
-            className="w-full dark:hidden"
-          />
-          <img
-            src="/images/26-dark.png"
-            alt="Executive chauffeur-driven saloon"
-            loading="lazy"
-            className="hidden w-full dark:block"
-          />
+          <picture className="w-full dark:hidden">
+            <source srcSet="/images/26.webp" type="image/webp" />
+            <img
+              src="/images/26.png"
+              alt="Executive chauffeur-driven saloon"
+              loading="eager"
+              decoding="async"
+              // @ts-ignore
+              fetchPriority="high"
+              className="w-full"
+            />
+          </picture>
+          <picture className="hidden w-full dark:block">
+            <source srcSet="/images/26-dark.webp" type="image/webp" />
+            <img
+              src="/images/26-dark.png"
+              alt="Executive chauffeur-driven saloon"
+              loading="eager"
+              decoding="async"
+              // @ts-ignore
+              fetchPriority="high"
+              className="w-full"
+            />
+          </picture>
         </motion.div>
-        {WHEELS.map(({ src, cx, cy }) => (
-          <motion.img
+        {WHEELS.map(({ src, webpSrc, cx, cy }) => (
+          <motion.div
             key={src}
-            src={src}
-            alt=""
             aria-hidden
             style={{
               rotate: still ? 0 : spin,
@@ -133,7 +143,21 @@ function DrivingCar() {
               width: `${((WHEEL_R * 2) / IMG_W) * 100}%`,
             }}
             className="absolute aspect-square"
-          />
+          >
+            <picture className="w-full h-full block">
+              <source srcSet={webpSrc} type="image/webp" />
+              <img
+                src={src}
+                alt=""
+                aria-hidden
+                loading="eager"
+                decoding="async"
+                // @ts-ignore
+                fetchPriority="high"
+                className="w-full h-full object-contain pointer-events-none select-none"
+              />
+            </picture>
+          </motion.div>
         ))}
       </motion.div>
     </div>

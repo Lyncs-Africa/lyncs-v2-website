@@ -67,12 +67,13 @@ export default function LockInModal({open, onClose, valuation}: LockInModalProps
     // Close on Escape.
     useEffect(() => {
         if (!open) return
+        const prevOverflow = document.body.style.overflow
         const onKey = (e: KeyboardEvent) => e.key === 'Escape' && handleClose()
         document.addEventListener('keydown', onKey)
         document.body.style.overflow = 'hidden'
         return () => {
             document.removeEventListener('keydown', onKey)
-            document.body.style.overflow = ''
+            document.body.style.overflow = prevOverflow
         }
     }, [open])
 

@@ -3,6 +3,8 @@
 // This list only feeds the selects. Prices live in the valuation data source.
 // "Other" is handled in the UI: picking it routes to the "couldn't value" state.
 
+import carsCatalog from "../../../cars.json";
+
 export type CarMake = {
   make: string;
   models: string[];
@@ -116,4 +118,36 @@ export function getModels(make: string): string[] {
 export function getYears(from = 2005): number[] {
   const current = new Date().getFullYear();
   return Array.from({ length: current - from + 1 }, (_, i) => current - i);
+}
+
+const MAKE_ALIASES: Record<string, string> = {
+  "Mercedes Benz": "Mercedes-Benz",
+};
+
+const CATALOG_MODEL_MAP: Record<string, string[]> = (() => {
+  const map: Record<string, string[]> = {};
+  for (const entry of CAR_LIST) {
+    map[entry.make] = [...entry.models];
+  }
+  for (const item of carsCatalog as Array<{ make?: string; model?: string }>) {
+    const rawMake = item.make?.trim();
+    const rawModel = item.model?.trim();
+    if (!rawMake || !rawModel) continue;
+    const make = MAKE_ALIASES[rawMake] || rawMake;
+    if (!map[make]) map[make] = [];
+    if (!map[make].includes(rawModel)) {
+      map[make].push(rawModel);
+    }
+  }
+  return map;
+})();
+
+export function getCatalogMakes(): string[] {
+  return [...Object.keys(CATALOG_MODEL_MAP), OTHER_OPTION];
+}
+
+export function getCatalogModels(make: string): string[] {
+  if (!make) return [OTHER_OPTION];
+  const models = CATALOG_MODEL_MAP[make];
+  return models ? [...models, OTHER_OPTION] : [OTHER_OPTION];
 }

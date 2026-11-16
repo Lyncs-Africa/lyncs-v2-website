@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -15,6 +15,7 @@ import { LuArrowRight, LuCar, LuCheck, LuChevronDown, LuSparkles, LuTruck } from
 import { PhoneInput } from 'react-international-phone'
 import { formatThousands } from '@/lib/valuation/breakdown'
 import { submitCarRequest } from '@/lib/api/cars'
+import { getCatalogMakes, getCatalogModels, OTHER_OPTION } from '@/lib/valuation/carList'
 
 const POWERTRAIN_OPTIONS = [
     { label: 'Petrol', value: 'petrol' },
@@ -56,11 +57,15 @@ function SelectField<T extends string>({
     label,
     value,
     options,
+    placeholder = 'Select an option',
+    disabled = false,
     onChange,
 }: {
     label: string
     value: T
     options: readonly { label: string; value: T }[]
+    placeholder?: string
+    disabled?: boolean
     onChange: (v: T) => void
 }) {
     const [open, setOpen] = useState(false)
@@ -82,6 +87,10 @@ function SelectField<T extends string>({
         }
     }, [open])
 
+    useEffect(() => {
+        if (disabled && open) setOpen(false)
+    }, [disabled, open])
+
     const selectedLabel = options.find((o) => o.value === value)?.label || ''
 
     return (
@@ -89,12 +98,20 @@ function SelectField<T extends string>({
             <label className="block text-[13px] text-slate-500 dark:text-white/50">{label}</label>
             <button
                 type="button"
+                disabled={disabled}
                 aria-haspopup="listbox"
                 aria-expanded={open}
-                onClick={() => setOpen((o) => !o)}
-                className="mt-1.5 flex w-full items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-left text-[15px] text-slate-900 shadow-sm transition focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                onClick={() => {
+                    if (!disabled) setOpen((o) => !o)
+                }}
+                className={`mt-1.5 flex w-full items-center justify-between gap-2 rounded-xl border border-slate-200 px-4 py-3.5 text-left text-[15px] shadow-sm transition focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 dark:border-white/10 ${disabled
+                    ? 'cursor-not-allowed bg-slate-100 text-slate-400 opacity-70 dark:bg-white/[0.03] dark:text-white/30'
+                    : 'bg-white text-slate-900 dark:bg-white/5 dark:text-white'
+                    }`}
             >
-                <span className="truncate">{selectedLabel}</span>
+                <span className={`truncate ${!selectedLabel ? 'text-slate-400 dark:text-white/30' : ''}`}>
+                    {selectedLabel || placeholder}
+                </span>
                 <LuChevronDown
                     size={16}
                     aria-hidden="true"
@@ -103,7 +120,7 @@ function SelectField<T extends string>({
             </button>
 
             <AnimatePresence>
-                {open && (
+                {open && !disabled && (
                     <motion.ul
                         role="listbox"
                         initial={{ opacity: 0, y: 6 }}
@@ -122,8 +139,8 @@ function SelectField<T extends string>({
                                             setOpen(false)
                                         }}
                                         className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-[14px] transition ${active
-                                                ? 'bg-accent font-medium text-white dark:bg-[#2D419A]'
-                                                : 'text-slate-700 hover:bg-slate-100 dark:text-white/80 dark:hover:bg-white/10'
+                                            ? 'bg-accent font-medium text-white dark:bg-[#2D419A]'
+                                            : 'text-slate-700 hover:bg-slate-100 dark:text-white/80 dark:hover:bg-white/10'
                                             }`}
                                     >
                                         <span>{opt.label}</span>
@@ -147,6 +164,8 @@ export default function RequestVehicle() {
     const [referenceCode, setReferenceCode] = useState<string | null>(null)
     const [formError, setFormError] = useState<string | null>(null)
     const [isWhatsapp, setIsWhatsapp] = useState(true)
+    const [isCustomMake, setIsCustomMake] = useState(false)
+    const [isCustomModel, setIsCustomModel] = useState(false)
 
     const [form, setForm] = useState({
         make: '',
@@ -162,17 +181,47 @@ export default function RequestVehicle() {
         details: '',
     })
 
+    const catalogMakes = useMemo(() => getCatalogMakes(), [])
+    const makeOptions = useMemo(
+        () => catalogMakes.map((m) => ({ label: m, value: m })),
+        [catalogMakes],
+    )
+    const catalogModels = useMemo(() => getCatalogModels(form.make), [form.make])
+    const modelOptions = useMemo(
+        () => catalogModels.map((m) => ({ label: m, value: m })),
+        [catalogModels],
+    )
+
+    const selectedMakeValue = isCustomMake
+        ? OTHER_OPTION
+        : catalogMakes.includes(form.make)
+        ? form.make
+        : ''
+
+    const selectedModelValue =
+        isCustomMake || isCustomModel
+            ? OTHER_OPTION
+            : catalogModels.includes(form.model)
+            ? form.model
+            : ''
+
     useEffect(() => {
         const qMake = searchParams.get('make')
         const qModel = searchParams.get('model')
         if (qMake || qModel) {
+            if (qMake && !catalogMakes.includes(qMake)) {
+                setIsCustomMake(true)
+                setIsCustomModel(true)
+            } else if (qMake && qModel && !getCatalogModels(qMake).includes(qModel)) {
+                setIsCustomModel(true)
+            }
             setForm((prev) => ({
                 ...prev,
                 make: qMake || prev.make,
                 model: qModel || prev.model,
             }))
         }
-    }, [searchParams])
+    }, [searchParams, catalogMakes])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -229,6 +278,8 @@ export default function RequestVehicle() {
         setReferenceCode(null)
         setFormError(null)
         setIsWhatsapp(true)
+        setIsCustomMake(false)
+        setIsCustomModel(false)
         setForm({
             make: '',
             model: '',
@@ -353,29 +404,73 @@ export default function RequestVehicle() {
                             <form key="form" onSubmit={handleSubmit} className="space-y-5">
                                 {/* Make & Model */}
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <div>
-                                        <label className={labelCls}>Vehicle Make</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={form.make}
-                                            onChange={(e) => setForm({ ...form, make: e.target.value })}
-                                            placeholder="e.g. Toyota, BYD, Mercedes-Benz"
-                                            className={fieldCls}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className={labelCls}>Vehicle Model</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={form.model}
-                                            onChange={(e) => setForm({ ...form, model: e.target.value })}
-                                            placeholder="e.g. Land Cruiser Prado, Song Plus"
-                                            className={fieldCls}
-                                        />
-                                    </div>
+                                    <SelectField
+                                        label="Vehicle Make"
+                                        value={selectedMakeValue}
+                                        options={makeOptions}
+                                        placeholder="Select vehicle make"
+                                        onChange={(val) => {
+                                            if (val === OTHER_OPTION) {
+                                                setIsCustomMake(true)
+                                                setIsCustomModel(true)
+                                                setForm({ ...form, make: '', model: '' })
+                                                return
+                                            }
+                                            setIsCustomMake(false)
+                                            setIsCustomModel(false)
+                                            setForm({ ...form, make: val, model: '' })
+                                        }}
+                                    />
+                                    <SelectField
+                                        label="Vehicle Model"
+                                        value={selectedModelValue}
+                                        options={modelOptions}
+                                        placeholder={
+                                            form.make || isCustomMake
+                                                ? 'Select vehicle model'
+                                                : 'Select make first'
+                                        }
+                                        disabled={!form.make && !isCustomMake}
+                                        onChange={(val) => {
+                                            if (val === OTHER_OPTION) {
+                                                setIsCustomModel(true)
+                                                setForm({ ...form, model: '' })
+                                                return
+                                            }
+                                            setIsCustomModel(false)
+                                            setForm({ ...form, model: val })
+                                        }}
+                                    />
                                 </div>
+
+                                {(isCustomMake || isCustomModel) && (
+                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                        {isCustomMake && (
+                                            <div>
+                                                <label className={labelCls}>Specify Vehicle Make</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={form.make}
+                                                    onChange={(e) => setForm({ ...form, make: e.target.value })}
+                                                    placeholder="e.g. Toyota, BYD, Mercedes-Benz"
+                                                    className={fieldCls}
+                                                />
+                                            </div>
+                                        )}
+                                        <div className={!isCustomMake ? 'sm:col-span-2' : undefined}>
+                                            <label className={labelCls}>Specify Vehicle Model</label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={form.model}
+                                                onChange={(e) => setForm({ ...form, model: e.target.value })}
+                                                placeholder="e.g. Land Cruiser Prado, Song Plus"
+                                                className={fieldCls}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Powertrain & Condition */}
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

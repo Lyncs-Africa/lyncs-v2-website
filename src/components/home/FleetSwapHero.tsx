@@ -2,11 +2,20 @@
 
 import Link from 'next/link'
 import {useRef} from 'react'
+import {preload} from 'react-dom'
 import HeroCollage from './HeroCollage'
 import {easeOut, motion, useReducedMotion, useScroll, useSpring, useTransform, useVelocity} from 'framer-motion'
 import {LuBus, LuCar, LuKey, LuPlane, LuTruck, LuWallet, LuWrench} from 'react-icons/lu'
 import {MdElectricCar} from "react-icons/md";
 import {FaChargingStation} from "react-icons/fa"
+
+// Preload the car images in the browser immediately to eliminate loading delay
+if (typeof window !== 'undefined') {
+    ['/images/26.webp', '/images/ev-wheel-front.webp', '/images/ev-wheel-rear.webp', '/images/26-dark.webp'].forEach((src) => {
+        const img = new Image()
+        img.src = src
+    })
+}
 
 const OPTIONS = [
     {label: 'EVs', Icon: MdElectricCar},
@@ -26,8 +35,8 @@ const IMG_W = 2014
 const IMG_H = 780
 const WHEEL_R = 150
 const WHEELS = [
-    {src: '/images/ev-wheel-front.png', cx: 398, cy: 565},
-    {src: '/images/ev-wheel-rear.png', cx: 1597, cy: 566},
+    {src: '/images/ev-wheel-front.png', webpSrc: '/images/ev-wheel-front.webp', cx: 398, cy: 565},
+    {src: '/images/ev-wheel-rear.png', webpSrc: '/images/ev-wheel-rear.webp', cx: 1597, cy: 566},
 ]
 
 // Degrees a wheel turns per 1% of car-width travelled (distance / radius)
@@ -43,6 +52,12 @@ const pullAway = (t: number) =>
 // Drives in from the right, parks while in view, drives off to the left.
 // Everything is tied to scroll, so scrolling back up reverses it.
 function DrivingCar() {
+    // Hint to the browser's preload scanner during SSR
+    preload('/images/26.webp', {as: 'image', type: 'image/webp', fetchPriority: 'high'})
+    preload('/images/26-dark.webp', {as: 'image', type: 'image/webp', fetchPriority: 'high'})
+    preload('/images/ev-wheel-front.webp', {as: 'image', type: 'image/webp', fetchPriority: 'high'})
+    preload('/images/ev-wheel-rear.webp', {as: 'image', type: 'image/webp', fetchPriority: 'high'})
+
     const ref = useRef<HTMLDivElement>(null)
     const still = useReducedMotion()
     const {scrollYProgress} = useScroll({target: ref, offset: ['start end', 'end start']})
@@ -70,20 +85,37 @@ function DrivingCar() {
             <motion.div style={still ? undefined : {x, opacity}} className="relative">
                 <span aria-hidden
                       className="absolute inset-x-[6%] -bottom-[3%] h-[10%] rounded-[50%] bg-slate-900/25 blur-xl dark:bg-black/60"/>
-                {/* Pearl-white paint in dark mode (same photo, repainted). Lazy so
-                    the hidden version isn't downloaded. */}
+                {/* Fast-loading WebP with PNG fallback. Eager + high priority for instant hero rendering */}
                 <motion.div style={still ? undefined : {rotate: pitch, transformOrigin: '50% 72%'}}
                             className="relative">
-                    <img src="/images/26.png" alt="A light-blue electric saloon" loading="lazy"
-                         className="w-full dark:hidden"/>
-                    <img src="/images/26-dark.png" alt="A pearl-white electric saloon" loading="lazy"
-                         className="hidden w-full dark:block"/>
+                    <picture className="w-full dark:hidden">
+                        <source srcSet="/images/26.webp" type="image/webp" />
+                        <img
+                            src="/images/26.png"
+                            alt="A light-blue electric saloon"
+                            loading="eager"
+                            decoding="async"
+                            // @ts-ignore
+                            fetchPriority="high"
+                            className="w-full"
+                        />
+                    </picture>
+                    <picture className="hidden w-full dark:block">
+                        <source srcSet="/images/26-dark.webp" type="image/webp" />
+                        <img
+                            src="/images/26-dark.png"
+                            alt="A pearl-white electric saloon"
+                            loading="eager"
+                            decoding="async"
+                            // @ts-ignore
+                            fetchPriority="high"
+                            className="w-full"
+                        />
+                    </picture>
                 </motion.div>
-                {WHEELS.map(({src, cx, cy}) => (
-                    <motion.img
+                {WHEELS.map(({src, webpSrc, cx, cy}) => (
+                    <motion.div
                         key={src}
-                        src={src}
-                        alt=""
                         aria-hidden
                         style={{
                             rotate: still ? 0 : spin,
@@ -92,7 +124,21 @@ function DrivingCar() {
                             width: `${((WHEEL_R * 2) / IMG_W) * 100}%`,
                         }}
                         className="absolute aspect-square"
-                    />
+                    >
+                        <picture className="w-full h-full block">
+                            <source srcSet={webpSrc} type="image/webp" />
+                            <img
+                                src={src}
+                                alt=""
+                                aria-hidden
+                                loading="eager"
+                                decoding="async"
+                                // @ts-ignore
+                                fetchPriority="high"
+                                className="w-full h-full object-contain pointer-events-none select-none"
+                            />
+                        </picture>
+                    </motion.div>
                 ))}
             </motion.div>
         </div>

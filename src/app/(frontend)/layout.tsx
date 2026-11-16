@@ -30,6 +30,10 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
     <html lang="en" className={`${quicksand.variable} ${geist.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Preload critical hero car animation assets for instant rendering */}
+        <link rel="preload" as="image" type="image/webp" href="/images/26.webp" fetchPriority="high" />
+        <link rel="preload" as="image" type="image/webp" href="/images/ev-wheel-front.webp" fetchPriority="high" />
+        <link rel="preload" as="image" type="image/webp" href="/images/ev-wheel-rear.webp" fetchPriority="high" />
       </head>
       <body className="bg-white text-primary dark:bg-night dark:text-slate-100 font-Quicksand antialiased">
         <ThemeProvider>
