@@ -713,11 +713,11 @@ export default function CarListingDetailView({ carId }) {
                       <FiMapPin size={14} className="text-primary dark:text-accent" />
                       Lagos, Nigeria (Nationwide Delivery)
                     </span>
-                    <span>•</span>
+                    {/* <span>•</span>
                     <span className="inline-flex items-center gap-1">
                       <FiClock size={14} />
                       Est. fulfillment: {timeline.label}
-                    </span>
+                    </span> */}
                   </div>
                 </div>
 
