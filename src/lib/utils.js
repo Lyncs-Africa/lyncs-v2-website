@@ -80,3 +80,25 @@ export function isValidE164(phone) {
   return Boolean(formatted && /^\+[1-9]\d{7,14}$/.test(formatted));
 }
 
+/**
+ * Returns a user-friendly phone validation message, or null when valid.
+ * Distinguishes empty input, incomplete Nigerian numbers, and invalid country-code formats.
+ */
+export function getPhoneValidationError(phone, label = "phone number") {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits || digits === "234") {
+    return `Please enter your ${label} (e.g. 0801 234 5678 or +2348012345678).`;
+  }
+
+  const formatted = toInternationalFormat(phone);
+  if (!formatted) {
+    return `Please enter a valid ${label} with its country code (e.g. +2348012345678).`;
+  }
+
+  if (formatted.startsWith("+234") && formatted.length !== 14) {
+    return `Nigerian ${label}s must have 10 digits after +234 (e.g. +2348012345678).`;
+  }
+
+  return null;
+}
+

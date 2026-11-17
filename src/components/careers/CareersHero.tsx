@@ -1,113 +1,106 @@
 'use client'
 
-import Link from 'next/link'
-import { motion, useReducedMotion } from 'framer-motion'
-import { GiBrain, GiLips } from 'react-icons/gi'
-import { LuMouse, LuSparkles, LuLaptop, LuHeartHandshake, LuZap } from 'react-icons/lu'
-import { GoArrowUpRight } from 'react-icons/go'
-
-const outline = 'border-2 border-[#111]'
-
-const PERKS = [
-  { title: 'MacBook Pro & Setup', desc: 'Latest M-series hardware + monitor of your choice', icon: LuLaptop, color: 'bg-[#E6F0DC]' },
-  { title: 'Lyncs Ride & EV Credits', desc: 'Monthly mobility allowance to move across Lagos freely', icon: LuZap, color: 'bg-[#F6EEDD]' },
-  { title: 'Top-tier Health & HMO', desc: 'Comprehensive medical coverage including dental & optical', icon: LuHeartHandshake, color: 'bg-[#DCE5EA]' },
-  { title: 'High Autonomy & Equity', desc: 'Meaningful ownership, zero micromanagement, real responsibility', icon: LuSparkles, color: 'bg-[#ECE8F1]' },
-]
+import { LuArrowRight, LuBriefcase, LuMail } from 'react-icons/lu'
 
 export default function CareersHero() {
-  const still = useReducedMotion()
-
   return (
-    <section className="relative -mt-20 md:-mt-[130px] overflow-hidden bg-[#FAF8F6] font-Quicksand dark:bg-night pb-16 pt-[120px] md:pt-[190px]">
-      {/* Background subtle grid matching PlatformShowcase */}
+    <section className="relative -mt-20 md:-mt-[130px] overflow-hidden bg-[#FAF8F6] font-Quicksand dark:bg-night pb-20 pt-[124px] md:pb-28 md:pt-[196px]">
+      {/* Background subtle grid matching ContactHero / AboutHero */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 dark:hidden"
         style={{
           backgroundImage:
             'linear-gradient(rgba(26,39,71,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(26,39,71,0.06) 1px, transparent 1px)',
-          backgroundSize: '64px 64px, 64px 64px',
+          backgroundSize: '64px 64px',
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden dark:block"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
         }}
       />
 
-      <div className="relative mx-auto max-w-5xl px-4 text-center">
-        {/* Top pill badge */}
-        <div className="flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-surface px-4 py-1.5 text-sm text-primary dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-            <span className="h-2 w-2 rounded-full bg-amber-500" />
-            No open positions right now • Looking to buy or swap a car?
-          </span>
-        </div>
+      <div className="relative mx-auto max-w-7xl px-4">
+        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-14">
+          {/* Left: Editorial narrative */}
+          <div className="lg:col-span-6">
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
+              Careers
+            </p>
 
-        {/* Main Heading */}
-        <h1 className="mx-auto mt-6 max-w-4xl text-4xl sm:text-5xl md:text-[56px] font-bold !leading-[1.1] tracking-tight text-primary dark:text-white">
-          Build the mobility rails for Africa.{' '}
-          <span className="block mt-1 text-accent">High ownership.</span>
-          <span className="block mt-1 text-2xl sm:text-3xl md:text-4xl text-slate-400 dark:text-slate-500 font-semibold">
-            Zero corporate politics.
-          </span>
-        </h1>
+            <h1 className="mt-3 text-4xl font-bold tracking-tight text-primary dark:text-white sm:text-5xl">
+              Why Join Lyncs
+            </h1>
 
-        {/* Conversational banter with GiBrain & GiLips */}
-        <div className="mx-auto mt-7 flex w-fit max-w-xl flex-col items-start gap-3 text-left text-base md:text-lg">
-          <p className="flex items-center gap-3 text-slate-600 dark:text-slate-300">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-400">
-              <GiBrain size={18} aria-hidden="true" />
-            </span>
-            <span className="text-[15px]">Is this in-person in Victoria Island or fully remote?</span>
-          </p>
-          <p className="flex items-center gap-3 font-medium text-primary dark:text-white">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent dark:bg-accent/20">
-              <GiLips size={18} aria-hidden="true" />
-            </span>
-            <span className="text-[15px]">
-              Hybrid in our Victoria Island HQ (with unlimited chef meals & zero power cuts) + remote-friendly across Africa.
-            </span>
-          </p>
-        </div>
-
-        {/* 4 Flat Perk Cards with up-and-down micro-animations (NO blurry shadows) */}
-        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-          {PERKS.map(({ title, desc, icon: Icon, color }, i) => (
-            <motion.div
-              key={title}
-              animate={still ? undefined : { y: [0, -6, 0] }}
-              transition={{
-                duration: 5 + i * 0.4,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: i * 0.2,
-              }}
-              className={`rounded-2xl bg-white p-5 ${outline} dark:bg-[#141A2B]`}
-            >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl border border-slate-300 dark:border-white/10 ${color} text-[#111]`}>
-                <Icon size={20} />
-              </div>
-              <h3 className="mt-4 text-sm font-bold text-primary dark:text-white">
-                {title}
-              </h3>
-              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                {desc}
+            <div className="mt-6 max-w-lg space-y-4 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
+              <p>
+                Lyncs is building the mobility infrastructure for Africa — making EV swaps, verified vehicle sourcing, and corporate fleet deliveries seamless from end to end.
               </p>
-            </motion.div>
-          ))}
-        </div>
+              <p>
+                We hire builders, operators, and problem-solvers who want to go deep on hard operational and engineering challenges. People who&apos;d rather ship something tangible than sit through another status meeting.
+              </p>
+              <p>
+                We&apos;re a focused, high-ownership team based in Lagos. Your work gets seen, your judgment carries weight, and you&apos;ll learn and move faster here than you would at most other places.
+              </p>
+            </div>
 
-        {/* Jump CTA */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/cars"
-            className="inline-flex rounded bg-accent px-7 py-3 text-[15px] font-medium text-white transition hover:bg-opacity-90 dark:bg-white dark:text-primary dark:hover:bg-slate-200"
-          >
-            Browse car catalog
-          </Link>
-          <Link
-            href="/swap"
-            className="inline-flex rounded border border-accent px-6 py-3 text-[15px] font-medium text-accent transition hover:bg-accent/5 dark:border-white/20 dark:text-white dark:hover:border-white/40 dark:hover:bg-white/5"
-          >
-            Swap / Trade in your car
-          </Link>
+            <div className="mt-8">
+              <a
+                href="mailto:support@lyncs.africa?subject=Careers%20at%20Lyncs%20Africa"
+                className="inline-flex items-center gap-2.5 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent/90 dark:bg-[#2D419A] dark:hover:bg-[#2D419A]/90"
+              >
+                <LuMail size={16} aria-hidden="true" />
+                <span>Send us a note</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Right: Open Roles card */}
+          <div className="lg:col-span-6">
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_14px_40px_-14px_rgba(29,41,61,0.08)] dark:border-white/10 dark:bg-[#0E131F] dark:shadow-none sm:p-8">
+              <div className="flex items-start justify-between border-b border-slate-100 pb-5 dark:border-white/10">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">
+                    Open Roles
+                  </p>
+                  <h2 className="mt-1 text-lg font-bold text-primary dark:text-white">
+                    No positions available
+                  </h2>
+                </div>
+                <span
+                  aria-hidden="true"
+                  className="mt-1.5 h-2.5 w-2.5 rounded-full bg-slate-300 dark:bg-white/25"
+                />
+              </div>
+
+              <div className="px-2 py-10 text-center sm:py-12">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-surface text-accent dark:bg-white/10">
+                  <LuBriefcase size={20} aria-hidden="true" />
+                </div>
+
+                <h3 className="mt-4 text-base font-bold text-primary dark:text-white">
+                  No open roles right now
+                </h3>
+
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                  We&apos;re not actively hiring right now, but we&apos;re always interested in hearing from exceptional engineers, operators, and mobility specialists. Send us a note and tell us what you&apos;d bring to the team.
+                </p>
+
+                <a
+                  href="mailto:support@lyncs.africa?subject=Future%20Role%20Inquiry%20-%20Lyncs%20Africa"
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent transition hover:opacity-80"
+                >
+                  <span>support@lyncs.africa</span>
+                  <LuArrowRight size={15} aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

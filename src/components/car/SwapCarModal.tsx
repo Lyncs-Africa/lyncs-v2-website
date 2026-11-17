@@ -2,13 +2,13 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { useValuationStore, type Tab } from "@/store/valuationStore";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { useValuationStore } from "@/store/valuationStore";
 import type { EvOption } from "@/lib/valuation/evOptions";
+import { numberWithCommas } from "@/lib/utils.js";
 import SmallerModal from "@/components/car/shared/SmallerModal.jsx";
-import SwapModeModal from "@/components/car/swap/SwapModeModal.jsx";
 import SwapValuationStepModal from "@/components/car/swap/SwapValuationStepModal.jsx";
 import SwapLockInStepModal from "@/components/car/swap/SwapLockInStepModal.jsx";
-import SwapFleetStepModal from "@/components/car/swap/SwapFleetStepModal.jsx";
 
 type SwapTargetInput = {
   id?: string | number;
@@ -20,7 +20,7 @@ type SwapTargetInput = {
   year?: string | number;
 };
 
-type SwapStep = "mode" | "owner-valuation" | "owner-lockin" | "fleet";
+type SwapStep = "owner-valuation" | "owner-lockin";
 
 type SwapCarModalProps = {
   isOpen: boolean;
@@ -29,17 +29,16 @@ type SwapCarModalProps = {
 };
 
 /**
- * Side-drawer + stepped modal host for the "Swap with your car" flow on vehicle detail pages.
- * Follows the exact same `.slideUp` drawer + `SmallerModal` architecture as the Purchase Car flow,
- * leaving the standalone `/swap` page untouched.
+ * Side-drawer (`.slideUp`) + stepped `SmallerModal` host for the "Swap with your car" flow
+ * on vehicle detail pages. Opens directly into the valuation step in the side drawer,
+ * then stacks `SwapLockInStepModal` in `SmallerModal` when locking in a quote.
  */
 export default function SwapCarModal({
   isOpen,
   onClose,
   targetCar = null,
 }: SwapCarModalProps) {
-  const [swapType, setSwapType] = useState<Tab>("owner");
-  const [swapStep, setSwapStep] = useState<SwapStep>("mode");
+  const [swapStep, setSwapStep] = useState<SwapStep>("owner-valuation");
   const setTab = useValuationStore((s) => s.setTab);
 
   const normalizedTargetCar = useMemo<EvOption | null>(() => {
@@ -56,12 +55,14 @@ export default function SwapCarModal({
     };
   }, [targetCar]);
 
-  // Reset step cleanly whenever modal opens/closes.
+  // Reset step cleanly and ensure owner tab is active whenever modal opens/closes.
   useEffect(() => {
-    if (!isOpen) {
-      setSwapStep("mode");
+    if (isOpen) {
+      setTab("owner");
+    } else {
+      setSwapStep("owner-valuation");
     }
-  }, [isOpen]);
+  }, [isOpen, setTab]);
 
   // Lock background page scroll while the side drawer is open, and handle Escape on step 1.
   useEffect(() => {
@@ -71,8 +72,8 @@ export default function SwapCarModal({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
-      // SmallerModal handles Escape itself when stepped sub-modals are active.
-      if (swapStep !== "mode") return;
+      // SmallerModal handles Escape itself when the lock-in step is active.
+      if (swapStep !== "owner-valuation") return;
       onClose();
     };
 
@@ -83,23 +84,14 @@ export default function SwapCarModal({
     };
   }, [isOpen, swapStep, onClose]);
 
-  const handleContinueFromMode = () => {
-    setTab(swapType);
-    if (swapType === "fleet") {
-      setSwapStep("fleet");
-    } else {
-      setSwapStep("owner-valuation");
-    }
-  };
-
   const handleCloseAll = () => {
-    setSwapStep("mode");
+    setSwapStep("owner-valuation");
     onClose();
   };
 
   return (
     <>
-      {/* Main Side Drawer matching PurchasePaymentModeModal */}
+      {/* Main Side Drawer (.slideUp) showing Your Current Vehicle valuation directly */}
       <div className="relative z-[80]">
         <div
           onClick={handleCloseAll}
@@ -122,49 +114,74 @@ export default function SwapCarModal({
           )}
         >
           {isOpen && (
-            <SwapModeModal
-              targetCar={normalizedTargetCar}
-              swapType={swapType}
-              onSelectSwapType={setSwapType}
-              onContinue={handleContinueFromMode}
-              onClose={handleCloseAll}
-            />
+            <div className="h-full overflow-y-auto no-scrollbar md:p-6 p-4 space-y-6 font-Quicksand">
+              {/* Top Banner Header (matching PurchasePaymentModeModal) */}
+              <div className="flex items-center gap-2 justify-center rounded-[24px] bg-eminence dark:bg-slate-800/60 border border-light dark:border-white/10 text-center md:p-6 p-4 relative">
+                <button
+                  onClick={handleCloseAll}
+                  style={{ marginBottom: "0px" }}
+                  className="x text-black dark:text-white md:top-5 md:left-4 absolute left-4 cursor-pointer"
+                  type="button"
+                  aria-label="Close"
+                >
+                  <IoIosCloseCircleOutline
+                    className="text-black dark:text-white"
+                    size="30px"
+                  />
+                </button>
+                <div className="space-y-1">
+                  <p
+                    id="swap-car-modal-title"
+                    className="md:text-28px text-22px leading-tight font-semibold text-black dark:text-white"
+                  >
+                    Swap With Your Car
+                  </p>
+                </div>
+              </div>
+
+              {/* Target Vehicle Summary */}
+              {normalizedTargetCar && (
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-12px font-medium text-slate-500 dark:text-slate-400">
+                      Swapping toward
+                    </p>
+                    <p className="text-16px font-bold text-black dark:text-white truncate">
+                      {normalizedTargetCar.name}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-12px font-medium text-slate-500 dark:text-slate-400">
+                      Vehicle Price
+                    </p>
+                    <p className="text-16px font-bold text-primary dark:text-accent">
+                      ₦{numberWithCommas(normalizedTargetCar.price)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <SwapValuationStepModal
+                targetCar={normalizedTargetCar}
+                onContinueToLockIn={() => setSwapStep("owner-lockin")}
+                onBack={handleCloseAll}
+                onClose={handleCloseAll}
+                hideClose
+              />
+            </div>
           )}
         </div>
       </div>
 
-      {/* Stepped Swap Valuation / Lock-In / Fleet Flow stacked in SmallerModal */}
+      {/* Stepped Lock-In Modal stacked in SmallerModal */}
       <SmallerModal
-        isOpen={isOpen && swapStep !== "mode"}
-        onClose={() => {
-          if (swapStep === "owner-lockin") {
-            setSwapStep("owner-valuation");
-          } else {
-            setSwapStep("mode");
-          }
-        }}
+        isOpen={isOpen && swapStep === "owner-lockin"}
+        onClose={() => setSwapStep("owner-valuation")}
       >
-        {swapStep === "owner-valuation" && (
-          <SwapValuationStepModal
-            targetCar={normalizedTargetCar}
-            onContinueToLockIn={() => setSwapStep("owner-lockin")}
-            onBack={() => setSwapStep("mode")}
-            onClose={() => setSwapStep("mode")}
-          />
-        )}
-
         {swapStep === "owner-lockin" && (
           <SwapLockInStepModal
             targetCar={normalizedTargetCar}
             onBack={() => setSwapStep("owner-valuation")}
-            onCloseAll={handleCloseAll}
-          />
-        )}
-
-        {swapStep === "fleet" && (
-          <SwapFleetStepModal
-            targetCar={normalizedTargetCar}
-            onBack={() => setSwapStep("mode")}
             onCloseAll={handleCloseAll}
           />
         )}

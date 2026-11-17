@@ -327,7 +327,7 @@ function localCatalog(params = {}) {
   };
 }
 
-export async function fetchCarsCatalog(params = {}) {
+export async function fetchCarsCatalog(params = {}, requestOptions = {}) {
   const query = buildQueryString({
     page: params.page,
     limit: params.limit,
@@ -341,7 +341,10 @@ export async function fetchCarsCatalog(params = {}) {
   });
 
   try {
-    const res = await apiRequest(`cars/catalog${query}`, { method: "GET" });
+    const res = await apiRequest(`cars/catalog${query}`, {
+      method: "GET",
+      signal: requestOptions.signal,
+    });
 
     // Tolerate the common response shapes.
     const rawCars =
@@ -373,6 +376,9 @@ export async function fetchCarsCatalog(params = {}) {
       source: "api",
     };
   } catch (err) {
+    if (requestOptions.signal?.aborted || err?.name === "AbortError") {
+      throw err;
+    }
     // Backend down / unreachable — fall back to the local catalog.
     console.error("fetchCarsCatalog: live /cars/catalog failed, using local fallback.", err?.message || err);
     return localCatalog(params);
@@ -382,6 +388,8 @@ export async function fetchCarsCatalog(params = {}) {
 /**
  * Single Car Detail Query
  * Tries platform-specific /cars/catalog/:id, /guazi/cars/:id, or /yekauto/cars/:id
+ * @param {string | number | null | undefined} id
+ * @param {string | null} [platform]
  */
 export async function fetchCarDetail(id, platform = null) {
   if (!id) return null;

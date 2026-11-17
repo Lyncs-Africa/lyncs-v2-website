@@ -4,7 +4,12 @@ import React, { useState, useEffect } from "react";
 import { Button, Input, Checkbox } from "../../ui/HeroUI.jsx";
 import { IoMdClose } from "react-icons/io";
 import classNames from "classnames";
-import { numberWithCommas, toInternationalFormat, normalizePhoneInput } from "../../../lib/utils.js";
+import {
+  numberWithCommas,
+  toInternationalFormat,
+  normalizePhoneInput,
+  getPhoneValidationError,
+} from "../../../lib/utils.js";
 import {
   computeInstallmentBreakdown,
   getInstallmentTermOptions,
@@ -76,15 +81,15 @@ const PurchaseInstallmentTermModal = ({
     if (!form.lastName.trim()) errs.lastName = "Last name is required";
     if (!form.email.trim() || !form.email.includes("@")) errs.email = "Valid email is required";
 
-    const formattedPhone = toInternationalFormat(form.phone);
-    if (!formattedPhone) {
-      errs.phone = "Valid phone number (E.164) is required, e.g. +2348012345678";
+    const phoneErr = getPhoneValidationError(form.phone, "phone number");
+    if (phoneErr) {
+      errs.phone = phoneErr;
     }
 
     if (!form.isSameAsPhone) {
-      const formattedWhatsapp = toInternationalFormat(form.whatsapp);
-      if (!formattedWhatsapp) {
-        errs.whatsapp = "Valid WhatsApp number (E.164) is required, e.g. +2348012345678";
+      const waErr = getPhoneValidationError(form.whatsapp, "WhatsApp number");
+      if (waErr) {
+        errs.whatsapp = waErr;
       }
     }
 

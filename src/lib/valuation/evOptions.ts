@@ -9,6 +9,8 @@
 // in one place.
 
 import {fetchCarsCatalog} from '@/lib/api/cars'
+import {carsCatalogQueryKey} from '@/hooks/useCarsCatalog'
+import {CATALOG_GC_TIME_MS, CATALOG_STALE_TIME_MS, getQueryClient} from '@/lib/queryClient'
 import {EV_CONFIG} from './config'
 
 export type EvOption = {
@@ -24,10 +26,19 @@ const FALLBACK_EV: EvOption = {id: '__fallback__', name: EV_CONFIG.evModel, pric
 
 type RawCar = {id?: unknown; name?: string; title?: string; price?: unknown; image?: string; year?: string | number}
 
-// Electric stock, cheapest first. Resolves to [] on any failure.
+// Electric stock, cheapest first. Shares the React Query catalog cache in the browser.
 export async function fetchEvOptions(): Promise<EvOption[]> {
     try {
-        const res = await fetchCarsCatalog({fuelType: 'electric'})
+        const params = {fuelType: 'electric'}
+        const res =
+            typeof window !== 'undefined'
+                ? await getQueryClient().fetchQuery({
+                      queryKey: carsCatalogQueryKey(params),
+                      queryFn: () => fetchCarsCatalog(params),
+                      staleTime: CATALOG_STALE_TIME_MS,
+                      gcTime: CATALOG_GC_TIME_MS,
+                  })
+                : await fetchCarsCatalog(params)
         const cars: RawCar[] = res?.data?.cars ?? []
         return cars
             .map((c) => ({

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import CareersHero from '../../../components/careers/CareersHero'
-import CareersRolesSection from '../../../components/careers/CareersRolesSection'
 import CareersFaqSection from '../../../components/careers/CareersFaqSection'
 
 export const metadata: Metadata = {
@@ -13,7 +12,6 @@ export default function CareersPage() {
   return (
     <>
       <CareersHero />
-      <CareersRolesSection />
       <CareersFaqSection />
     </>
   )

@@ -102,7 +102,7 @@ const RequestVehicleContactModal = ({
               {!contactData.isSameAsPhone && (
                 <div className="space-y-1 pl-2">
                   <label className="text-12px font-medium text-slate-700 dark:text-slate-300 block">
-                    WhatsApp Number (E.164) <span className="text-red-500">*</span>
+                    WhatsApp Number <span className="text-red-500">*</span>
                   </label>
                   <PhoneInput
                     defaultCountry="ng"
