@@ -1,18 +1,19 @@
 export const INSTALLMENT_DOWN_PAYMENT_PERCENT = 0.2; // 30% upfront down payment
 
+// Supported terms per backend handoff: 3, 6, 12, and 18 months
 export const INSTALLMENT_TERM_OPTIONS = {
   "brand-new": [3, 6, 12, 18, 24, 36, 48], // up to 48 months
   used: [3, 6, 12, 18, 24, 36], // up to 36 months
 };
 
-// Default interest applied to financed amount (7.5% corporate / 15% retail)
-export const INSTALLMENT_INTEREST_RATE = 0.10; // Flat 10% for public quote estimation
+// Default interest applied to financed amount (7.5% flat interest on financed amount)
+export const INSTALLMENT_INTEREST_RATE = 0.075;
 
-export const FREE_DOORSTEP_DELIVERY_MIN_PRICE = 15000000; // Free delivery threshold
-export const BELOW_THRESHOLD_DELIVERY_FEE = 500000;       // Lagos flat delivery fee
+export const FREE_DOORSTEP_DELIVERY_MIN_PRICE = 15000000; // Free delivery threshold (₦15m)
+export const BELOW_THRESHOLD_DELIVERY_FEE = 500000;       // Lagos flat delivery fee below ₦15m (₦500k)
 
 export function getInstallmentInterestRate(isAdmin = false) {
-  return isAdmin ? 0.075 : INSTALLMENT_INTEREST_RATE;
+  return INSTALLMENT_INTEREST_RATE;
 }
 
 export function getInstallmentTermOptions(usage) {

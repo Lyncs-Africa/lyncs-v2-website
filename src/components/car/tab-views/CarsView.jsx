@@ -5,13 +5,12 @@ import Link from "next/link";
 import { Button, Select, SelectItem } from "../../ui/HeroUI.jsx";
 import { CiSearch } from "react-icons/ci";
 import { IoClose } from "react-icons/io5";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import cn from "classnames";
 import { numberWithCommas, titleCase } from "../../../lib/utils.js";
 import { useCarStore } from "../../../store/carStore.js";
 import { TOP_MAKES } from "../../../lib/vehicleBrands.js";
 import { CAR_TABS, getTab, USE_CASE_OPTIONS } from "../../../lib/carSegments.js";
-import { useCarsCatalogQuery } from "../../../hooks/useCarsCatalog";
+import { useCarsCatalogInfiniteQuery } from "../../../hooks/useCarsCatalog";
 import CarCard from "./CarCard.jsx";
 
 export const MAKES = TOP_MAKES;
@@ -35,19 +34,6 @@ export const SORT_OPTIONS = [
   { value: "price_desc", label: "Price: High to Low" },
 ];
 
-function getPageNumbers(currentPage, totalPages) {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-  if (currentPage <= 4) {
-    return [1, 2, 3, 4, 5, "...", totalPages];
-  }
-  if (currentPage >= totalPages - 3) {
-    return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-  }
-  return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
-}
-
 const PAGE_SIZE = 12;
 
 const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
@@ -59,24 +45,26 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   const [origin, setOrigin] = useState("all");
   const [useCase, setUseCase] = useState("all");
   const [sort, setSort] = useState("newest");
-  const [page, setPage] = useState(1);
   const catalogGridRef = useRef(null);
+  const sentinelRef = useRef(null);
 
   const isUsedTab = usage === "used" || usage === "used-cars";
   const normalizedUsage = isUsedTab ? "used" : "brand-new";
-
-  // Reset to page 1 whenever any filter changes
-  useEffect(() => {
-    setPage(1);
-  }, [normalizedUsage, type, origin, make, debouncedSearch, isUsedTab, sort, useCase]);
 
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(search.trim()), 350);
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Fetch & cache cars via React Query (/cars/catalog)
-  const { data: catalogData, isLoading } = useCarsCatalogQuery({
+  // Fetch & infinite cache cars via React Query (/cars/catalog)
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useCarsCatalogInfiniteQuery({
     condition: normalizedUsage === "used" ? "USED" : "NEW",
     fuelType: type !== "all" ? type : undefined,
     origin: isUsedTab && origin !== "all" ? origin : undefined,
@@ -84,81 +72,81 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
     keyword: debouncedSearch || undefined,
     segment: useCase !== "all" ? useCase : undefined,
     sort: sort || undefined,
-    page,
     limit: PAGE_SIZE,
   });
 
-  const cars = useMemo(() => catalogData?.data?.cars || [], [catalogData]);
-  const serverPagination = catalogData?.data?.pagination || null;
+  // Deduplicate loaded cars across pages using platform:id key
+  const { cars, paginationInfo } = useMemo(() => {
+    const pages = data?.pages || [];
+    const carMap = new Map();
+    let latestPagination = null;
 
+    for (const p of pages) {
+      if (p?.data?.pagination) {
+        latestPagination = p.data.pagination;
+      }
+      const pageCars = p?.data?.cars || [];
+      for (const car of pageCars) {
+        const key = `${car.platform || car.source || "guazi"}:${car.id || car.productId}`;
+        if (!carMap.has(key)) {
+          carMap.set(key, car);
+        }
+      }
+    }
+
+    return {
+      cars: Array.from(carMap.values()),
+      paginationInfo: latestPagination,
+    };
+  }, [data]);
+
+  // Light client guard (preserves server sort and server pagination)
   const filteredCars = useMemo(() => {
-    const list = cars.filter((car) => {
+    return cars.filter((car) => {
       const carUsage = car.usage === "used-cars" ? "used" : car.usage;
       if (carUsage && carUsage !== normalizedUsage) return false;
       if (type !== "all" && car.type !== type) return false;
       if (isUsedTab && origin !== "all" && car.origin !== origin) return false;
-      if (make && !car.make?.toLowerCase().includes(make.toLowerCase())) return false;
-      if (debouncedSearch) {
-        const query = debouncedSearch.toLowerCase();
-        const matchesName =
-          car.name?.toLowerCase().includes(query) ||
-          car.title?.toLowerCase().includes(query);
-        const matchesMake =
-          car.make?.toLowerCase().includes(query) ||
-          car.brandName?.toLowerCase().includes(query);
-        const matchesModel = car.model?.toLowerCase().includes(query);
-        if (!matchesName && !matchesMake && !matchesModel) return false;
-      }
       return true;
     });
+  }, [cars, normalizedUsage, type, origin, isUsedTab]);
 
-    if (sort === "price_asc") {
-      list.sort((a, b) => (a.price || 0) - (b.price || 0));
-    } else if (sort === "price_desc") {
-      list.sort((a, b) => (b.price || 0) - (a.price || 0));
-    } else if (sort === "newest") {
-      list.sort((a, b) => (b.year || 0) - (a.year || 0));
+  // Auto-scrolling infinite fetch trigger via IntersectionObserver
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+    const target = sentinelRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      {
+        rootMargin: "350px", // pre-fetch before hitting exact bottom
+      }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // Format count text according to handoff instructions
+  // (avoid presenting totalCount as exact when countIsExact=false or scanTruncated=true)
+  const countText = useMemo(() => {
+    const count = filteredCars.length;
+    if (!count) return null;
+    if (paginationInfo?.totalCount) {
+      const countIsExact =
+        paginationInfo.countIsExact !== false && !paginationInfo.scanTruncated;
+      if (countIsExact) {
+        return `Showing ${count} of ${paginationInfo.totalCount} vehicles`;
+      }
+      return `Showing ${count} vehicles (${paginationInfo.totalCount}+ available)`;
     }
-
-    return list;
-  }, [cars, normalizedUsage, type, make, debouncedSearch, origin, isUsedTab, sort]);
-
-  const isServerPaginated = Boolean(
-    serverPagination &&
-    typeof serverPagination.totalCount === "number" &&
-    serverPagination.totalCount > PAGE_SIZE &&
-    (serverPagination.totalPages ?? 1) > 1
-  );
-
-  const totalItems = isServerPaginated
-    ? (serverPagination?.totalCount ?? filteredCars.length)
-    : filteredCars.length;
-
-  const totalPages = isServerPaginated
-    ? (serverPagination?.totalPages ?? 1)
-    : Math.max(1, Math.ceil(filteredCars.length / PAGE_SIZE));
-
-  const paginatedCars = useMemo(() => {
-    if (isServerPaginated) {
-      return filteredCars;
-    }
-    const startIdx = (page - 1) * PAGE_SIZE;
-    return filteredCars.slice(startIdx, startIdx + PAGE_SIZE);
-  }, [filteredCars, isServerPaginated, page]);
-
-  const handlePageChange = (newPage) => {
-    if (newPage === page || newPage < 1 || newPage > totalPages) return;
-    setPage(newPage);
-    if (catalogGridRef.current && typeof window !== "undefined") {
-      const rect = catalogGridRef.current.getBoundingClientRect();
-      const targetY = rect.top + window.scrollY - 140;
-      window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
-    }
-  };
-
-  const pageNumbers = useMemo(() => getPageNumbers(page, totalPages), [page, totalPages]);
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const endIndex = startIndex + paginatedCars.length;
+    return `Showing ${count} vehicles`;
+  }, [filteredCars.length, paginationInfo]);
 
   const sidebarRef = useRef(null);
 
@@ -492,83 +480,64 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
             </div>
           ) : (
             <div className="space-y-6">
+              {/* Header Count Summary */}
+              {countText && (
+                <div className="flex items-center justify-between pb-1">
+                  <p className="text-13px font-medium text-slate-500 dark:text-slate-400">
+                    {countText}
+                  </p>
+                </div>
+              )}
+
+              {/* Infinite Vehicles Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {paginatedCars.map((car) => (
-                  <CarCard key={car.id || car.productId} car={car} />
-                ))}
+                {filteredCars.map((car) => {
+                  const key = `${car.platform || car.source || "guazi"}:${car.id || car.productId}`;
+                  return <CarCard key={key} car={car} />;
+                })}
               </div>
 
-              {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200 dark:border-white/10">
-                  <p className="text-13px text-slate-500 dark:text-slate-400">
-                    Showing{" "}
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
-                      {startIndex + 1}–{Math.min(endIndex, totalItems)}
-                    </span>{" "}
-                    of{" "}
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
-                      {totalItems}
-                    </span>{" "}
-                    vehicles
-                  </p>
-
-                  <div className="flex items-center gap-1.5 select-none">
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(page - 1)}
-                      disabled={page <= 1}
-                      aria-label="Previous page"
-                      className="inline-flex items-center gap-1 px-3.5 h-9 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-13px font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-35 disabled:cursor-not-allowed transition cursor-pointer"
+              {/* Next Page Auto-loading Skeleton */}
+              {isFetchingNextPage && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                  {Array.from({ length: 2 }).map((_, i) => (
+                    <div
+                      key={`loading-more-${i}`}
+                      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden animate-pulse flex flex-col justify-between"
                     >
-                      <FiChevronLeft size={16} />
-                      <span className="hidden sm:inline">Prev</span>
-                    </button>
-
-                    <div className="flex items-center gap-1">
-                      {pageNumbers.map((p, idx) => {
-                        if (p === "...") {
-                          return (
-                            <span
-                              key={`ellipsis-${idx}`}
-                              className="w-8 text-center text-slate-400 text-13px"
-                            >
-                              …
-                            </span>
-                          );
-                        }
-                        const isCurrent = p === page;
-                        return (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => handlePageChange(p)}
-                            aria-label={`Page ${p}`}
-                            aria-current={isCurrent ? "page" : undefined}
-                            className={cn(
-                              "w-9 h-9 rounded-full text-13px font-semibold flex items-center justify-center transition cursor-pointer",
-                              isCurrent
-                                ? "bg-primary text-white shadow-xs dark:bg-[#2D419A]"
-                                : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-transparent"
-                            )}
-                          >
-                            {p}
-                          </button>
-                        );
-                      })}
+                      <div className="bg-slate-200 dark:bg-slate-800 h-[11.5rem] w-full" />
+                      <div className="p-4 space-y-3">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
+                        <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/2" />
+                        <div className="pt-2 flex justify-between items-center">
+                          <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-24" />
+                        </div>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              )}
 
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(page + 1)}
-                      disabled={page >= totalPages}
-                      aria-label="Next page"
-                      className="inline-flex items-center gap-1 px-3.5 h-9 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-13px font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-35 disabled:cursor-not-allowed transition cursor-pointer"
-                    >
-                      <span className="hidden sm:inline">Next</span>
-                      <FiChevronRight size={16} />
-                    </button>
-                  </div>
+              {/* Infinite Scroll Sentinel */}
+              <div ref={sentinelRef} className="h-8 w-full pointer-events-none" />
+
+              {/* Manual Load More Button fallback */}
+              {hasNextPage && !isFetchingNextPage && (
+                <div className="pt-2 pb-4 text-center">
+                  <button
+                    type="button"
+                    onClick={() => fetchNextPage()}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-13px font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition cursor-pointer shadow-xs"
+                  >
+                    Load more vehicles
+                  </button>
+                </div>
+              )}
+
+              {/* End of catalog indicator */}
+              {!hasNextPage && filteredCars.length > 0 && (
+                <div className="text-center py-6 text-13px text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-white/10 mt-6">
+                  You have viewed all available vehicles ({filteredCars.length} loaded)
                 </div>
               )}
             </div>

@@ -171,8 +171,8 @@ const PurchaseInstallmentTermModal = ({
       </div>
 
       {breakdown && (
-        <div className="rounded-medium border border-light dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3 rounded-lg">
-          <div className="flex justify-between items-center py-1 text-15px">
+        <div className="rounded-xl border border-light dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-4 space-y-2.5">
+          <div className="flex justify-between items-center text-14px">
             <span className="text-slate-600 dark:text-slate-400">
               Down payment ({downPaymentPercent}%)
             </span>
@@ -180,6 +180,27 @@ const PurchaseInstallmentTermModal = ({
               ₦{numberWithCommas(breakdown.downPayment)}
             </span>
           </div>
+
+          <div className="flex justify-between items-center text-14px">
+            <span className="text-slate-600 dark:text-slate-400">Financed amount</span>
+            <span className="font-medium text-slate-800 dark:text-slate-200">
+              ₦{numberWithCommas(breakdown.financedAmount)}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center text-14px border-t border-slate-200 dark:border-slate-800 pt-2">
+            <span className="font-semibold text-slate-800 dark:text-slate-200">
+              Monthly installment ({months} mos)
+            </span>
+            <span className="text-16px font-bold text-primary dark:text-accent">
+              ₦{numberWithCommas(breakdown.monthlyInstallment)}
+              <span className="text-12px font-normal text-slate-500">/mo</span>
+            </span>
+          </div>
+
+          <p className="text-11px text-slate-400 dark:text-slate-500 pt-1">
+            40% upfront deposit and 7.5% interest applied to financed amount.
+          </p>
         </div>
       )}
 

@@ -74,8 +74,14 @@ export function normalizeCar(raw) {
     type = raw.type;
   }
 
-  // Price (NGN)
-  const price = Number(raw.priceNgn ?? raw.price ?? 0);
+  // Price (NGN) - Landed total from backend. When null, checkout must be disabled.
+  const priceNgn =
+    raw.priceNgn !== undefined && raw.priceNgn !== null
+      ? Number(raw.priceNgn)
+      : raw.price !== undefined && raw.price !== null
+      ? Number(raw.price)
+      : null;
+  const price = priceNgn;
   const originalPrice = raw.linePriceNgn || raw.originalPrice || null;
 
   // Images: extract array of strings
@@ -92,8 +98,8 @@ export function normalizeCar(raw) {
   }
   const cleanImages = Array.from(new Set(imageList.filter(Boolean)));
   const primaryImage =
-    cleanImages[0] ||
     raw.headImage ||
+    cleanImages[0] ||
     raw.image ||
     "";
 
@@ -155,12 +161,16 @@ export function normalizeCar(raw) {
     fuelType: raw.fuelType || type.toUpperCase(),
     platform,
     price,
-    priceNgn: price,
+    priceNgn,
+    pricing: raw.pricing || null,
+    basePriceNgn: raw.basePriceNgn != null ? Number(raw.basePriceNgn) : null,
+    shippingFeeNgn: raw.shippingFeeNgn != null ? Number(raw.shippingFeeNgn) : null,
+    clearingFeeNgn: raw.clearingFeeNgn != null ? Number(raw.clearingFeeNgn) : null,
     priceUsd: raw.priceUsd || null,
     priceCny: raw.priceCny || null,
     originalPrice,
     image: primaryImage,
-    headImage: primaryImage,
+    headImage: raw.headImage || primaryImage,
     images: cleanImages,
     mileage,
     mileageKm: raw.mileageKm ?? 0,
@@ -329,15 +339,18 @@ function localCatalog(params = {}) {
 
 export async function fetchCarsCatalog(params = {}, requestOptions = {}) {
   const query = buildQueryString({
+    format: "compact",
+    enrichImages: "0",
+    source: params.source || "all",
+    condition: params.condition, // 'NEW' | 'USED'
     page: params.page,
     limit: params.limit,
-    condition: params.condition, // 'NEW' | 'USED'
     fuelType: params.fuelType,
+    bodyType: params.bodyType,
     origin: params.origin,
     make: params.make,
     keyword: params.keyword || params.q || params.keyWord,
     sort: params.sort,
-    source: params.source,
   });
 
   try {
@@ -372,7 +385,7 @@ export async function fetchCarsCatalog(params = {}, requestOptions = {}) {
     return {
       success: true,
       message: res?.message || "Live car catalog",
-      data: { cars, pagination },
+      data: { cars, pagination, meta: res?.data?.meta || res?.meta || null },
       source: "api",
     };
   } catch (err) {
