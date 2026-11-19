@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button, Input } from "../ui/HeroUI.jsx";
 import {
@@ -155,9 +155,39 @@ function getFulfillmentTimeline(car) {
   };
 }
 
-export default function CarListingDetailView({ carId }) {
+export default function CarListingDetailView({ carId: propCarId }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = useParams();
+
+  const carId = useMemo(() => {
+    // 1. In browser, check window.location.pathname for the true URL /cars/:id
+    if (typeof window !== "undefined") {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      // Expected structure: /cars/:id
+      if (parts[0] === "cars" && parts[1]) {
+        const urlId = decodeURIComponent(parts[1]);
+        if (!["new", "used", "swap", "request", "view", "[id]"].includes(urlId) && !urlId.startsWith("%5B")) {
+          return urlId;
+        }
+      }
+    }
+    // 2. Next.js router params
+    const routeId = params?.id
+      ? Array.isArray(params.id)
+        ? params.id[0]
+        : params.id
+      : null;
+    if (routeId && !["[id]", "view"].includes(routeId) && !routeId.startsWith("%5B")) {
+      return routeId;
+    }
+    // 3. Fallback to prop
+    if (propCarId && !["[id]", "view"].includes(propCarId) && !propCarId.startsWith("%5B")) {
+      return propCarId;
+    }
+    return "";
+  }, [propCarId, params]);
+
   const queryPlatform = searchParams.get("platform");
   const startPurchaseParam = searchParams.get("purchase") === "1";
 

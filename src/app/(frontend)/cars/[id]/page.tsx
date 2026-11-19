@@ -1,6 +1,14 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import CarListingDetailView from "../../../../components/car/CarListingDetailView.jsx";
+import { LOCAL_CARS_RAW } from "../../../../lib/localCarsCatalog.js";
+
+export async function generateStaticParams() {
+  const staticIds = (LOCAL_CARS_RAW || []).map((car: any) => ({
+    id: String(car.id || car.productId),
+  }));
+  return [{ id: "view" }, ...staticIds];
+}
 
 export const metadata: Metadata = {
   title: "Vehicle Details | Lyncs Africa",

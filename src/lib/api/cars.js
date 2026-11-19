@@ -25,7 +25,11 @@ const BASE_URL = RAW_BASE_URL.replace(/\/+$/, "").replace(/\/api$/, "");
  * into a standard unified format required by the UI components.
  */
 export function normalizeCar(raw) {
-  if (!raw) return null;
+  if (!raw || raw.success === false) return null;
+  // Guard against non-car objects (e.g., error responses or empty envelopes)
+  if (!raw.id && !raw.productId && !raw.carId && !raw.title && !raw.make && !raw.name) {
+    return null;
+  }
 
   const id = String(raw.id || raw.productId || raw._id || Math.random());
   const productId = String(raw.productId || raw.id || id);
@@ -50,7 +54,7 @@ export function normalizeCar(raw) {
   const condition = isBrandNew ? "NEW" : "USED";
 
   // Fuel Type / Powertrain: "electric" | "hybrid" | "petrol"
-  const rawFuel = String(raw.fuelType || raw.type || "").toUpperCase();
+  const rawFuel = String(raw.fuelTypeName || raw.fuelType || raw.type || "").toUpperCase();
   let type = "petrol";
   if (
     rawFuel.includes("EV") ||
@@ -400,9 +404,11 @@ export async function fetchCarsCatalog(params = {}, requestOptions = {}) {
 
 /**
  * Single Car Detail Query
- * Tries platform-specific /cars/catalog/:id, /guazi/cars/:id, or /yekauto/cars/:id
- * @param {string | number | null | undefined} id
- * @param {string | null} [platform]
+ * Endpoints:
+ *   GET /guazi/cars/:productId
+ *   GET /yekauto/cars/:id
+ * @param {string | number | null | undefined} id - productId (Guazi) or id (Yekauto)
+ * @param {string | null} [platform] - "guazi" | "yekauto" | null
  */
 export async function fetchCarDetail(id, platform = null) {
   if (!id) return null;
@@ -411,17 +417,41 @@ export async function fetchCarDetail(id, platform = null) {
   const local = LOCAL_NORMALIZED.find((c) => String(c.id) === String(id));
   if (local) return local;
 
-  try {
-    const endpoint =
-      platform === "guazi"
-        ? `guazi/cars/${id}`
-        : platform === "yekauto"
-        ? `yekauto/cars/${id}`
-        : `cars/catalog/${id}`;
+  const fetchEndpoint = async (endpoint) => {
+    try {
+      const res = await apiRequest(endpoint, { method: "GET" });
+      if (!res || res.success === false) return null;
+      const rawCar = res.car || res.data?.car || res.data || (res.id || res.productId ? res : null);
+      if (!rawCar || rawCar.success === false) return null;
+      return normalizeCar(rawCar);
+    } catch {
+      return null;
+    }
+  };
 
-    const res = await apiRequest(endpoint, { method: "GET" });
-    const rawCar = res?.data?.car || res?.car || res?.data || res;
-    return normalizeCar(rawCar);
+  try {
+    const cleanId = encodeURIComponent(String(id).trim());
+
+    if (platform === "guazi") {
+      const car = await fetchEndpoint(`guazi/cars/${cleanId}`);
+      if (car) return car;
+    } else if (platform === "yekauto") {
+      const car = await fetchEndpoint(`yekauto/cars/${cleanId}`);
+      if (car) return car;
+    } else {
+      // Platform unspecified: check if ID is UUID (Yekauto) or alphanumeric (Guazi)
+      const isUuid = String(id).includes("-");
+      const first = isUuid ? `yekauto/cars/${cleanId}` : `guazi/cars/${cleanId}`;
+      const second = isUuid ? `guazi/cars/${cleanId}` : `yekauto/cars/${cleanId}`;
+
+      let car = await fetchEndpoint(first);
+      if (!car) {
+        car = await fetchEndpoint(second);
+      }
+      if (car) return car;
+    }
+
+    return null;
   } catch (err) {
     console.error(`API detail fetch for car ${id} error:`, err?.message || err);
     return null;
