@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button, Input } from "../ui/HeroUI.jsx";
 import {
@@ -155,9 +155,39 @@ function getFulfillmentTimeline(car) {
   };
 }
 
-export default function CarListingDetailView({ carId }) {
+export default function CarListingDetailView({ carId: propCarId }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = useParams();
+
+  const carId = useMemo(() => {
+    // 1. In browser, check window.location.pathname for the true URL /cars/:id
+    if (typeof window !== "undefined") {
+      const parts = window.location.pathname.split("/").filter(Boolean);
+      // Expected structure: /cars/:id
+      if (parts[0] === "cars" && parts[1]) {
+        const urlId = decodeURIComponent(parts[1]);
+        if (!["new", "used", "swap", "request", "view", "[id]"].includes(urlId) && !urlId.startsWith("%5B")) {
+          return urlId;
+        }
+      }
+    }
+    // 2. Next.js router params
+    const routeId = params?.id
+      ? Array.isArray(params.id)
+        ? params.id[0]
+        : params.id
+      : null;
+    if (routeId && !["[id]", "view"].includes(routeId) && !routeId.startsWith("%5B")) {
+      return routeId;
+    }
+    // 3. Fallback to prop
+    if (propCarId && !["[id]", "view"].includes(propCarId) && !propCarId.startsWith("%5B")) {
+      return propCarId;
+    }
+    return "";
+  }, [propCarId, params]);
+
   const queryPlatform = searchParams.get("platform");
   const startPurchaseParam = searchParams.get("purchase") === "1";
 
@@ -254,6 +284,17 @@ export default function CarListingDetailView({ carId }) {
       ? `${numberWithCommas(apiCar.mileageKm)} km`
       : apiCar.mileage || initialCar.mileage || "0 km";
 
+    const resolvedPriceNgn =
+      apiCar.priceNgn !== undefined && apiCar.priceNgn !== null
+        ? Number(apiCar.priceNgn)
+        : initialCar.priceNgn !== undefined && initialCar.priceNgn !== null
+          ? Number(initialCar.priceNgn)
+          : apiCar.price !== undefined && apiCar.price !== null
+            ? Number(apiCar.price)
+            : initialCar.price !== undefined && initialCar.price !== null
+              ? Number(initialCar.price)
+              : null;
+
     return {
       ...initialCar,
       ...apiCar,
@@ -268,7 +309,12 @@ export default function CarListingDetailView({ carId }) {
         2024,
       mileage: mileageStr,
       type,
-      price: Number(apiCar.priceNgn ?? apiCar.price ?? initialCar.price ?? 0),
+      price: resolvedPriceNgn,
+      priceNgn: resolvedPriceNgn,
+      pricing: apiCar.pricing || initialCar.pricing || null,
+      basePriceNgn: apiCar.basePriceNgn ?? initialCar.basePriceNgn ?? null,
+      shippingFeeNgn: apiCar.shippingFeeNgn ?? initialCar.shippingFeeNgn ?? null,
+      clearingFeeNgn: apiCar.clearingFeeNgn ?? initialCar.clearingFeeNgn ?? null,
       originalPrice: apiCar.linePriceNgn || apiCar.originalPrice || initialCar.originalPrice,
       platform: carPlatform,
       source: carPlatform,
@@ -368,15 +414,17 @@ export default function CarListingDetailView({ carId }) {
   const timeline = useMemo(() => getFulfillmentTimeline(car), [car]);
 
   const installmentBreakdown = useMemo(() => {
-    if (!car || paymentMode !== "installment" || !months) return null;
-    return computeInstallmentBreakdown({ price: car.price, months });
+    if (!car || paymentMode !== "installment" || !months || !car.priceNgn) return null;
+    return computeInstallmentBreakdown(car.priceNgn, months);
   }, [car, paymentMode, months]);
 
   const deliveryFeeInfo = useMemo(
-    () => getDeliveryFeeInfo(car?.price || 0),
-    [car?.price]
+    () => getDeliveryFeeInfo(car?.priceNgn || 0),
+    [car?.priceNgn]
   );
 
+  const hasPrice = car?.priceNgn !== null && car?.priceNgn !== undefined;
+  const isProvisional = car?.pricing?.status === "provisional";
   // Purchase handlers
   const handleSelectPaymentMode = (mode) => {
     setPaymentMode(mode);
@@ -724,10 +772,14 @@ export default function CarListingDetailView({ carId }) {
                 {/* Mobile Price Display */}
                 <div className="lg:hidden pt-2 sm:pt-0 sm:text-right">
                   <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
-                    Starting from
+                    {hasPrice
+                      ? isProvisional
+                        ? "Estimated total"
+                        : "Total landed price"
+                      : "Price unavailable"}
                   </p>
                   <p className="text-24px font-bold text-primary dark:text-white">
-                    ₦{numberWithCommas(car.price || 0)}
+                    {hasPrice ? `₦${numberWithCommas(car.priceNgn)}` : "Contact for pricing"}
                   </p>
                 </div>
               </div>
@@ -842,22 +894,65 @@ export default function CarListingDetailView({ carId }) {
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5">
             <div>
               <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
-                Starting from
+                {hasPrice
+                  ? isProvisional
+                    ? "Estimated total"
+                    : "Total landed price"
+                  : "Price unavailable"}
               </p>
               <div className="flex items-baseline gap-2.5 mt-1 flex-wrap">
                 <span className="text-28px sm:text-32px font-bold text-slate-900 dark:text-white tracking-tight">
-                  ₦{numberWithCommas(car.price || 0)}
+                  {hasPrice ? `₦${numberWithCommas(car.priceNgn)}` : "Contact for pricing"}
                 </span>
-                {car.originalPrice && car.originalPrice > car.price && (
+                {car.originalPrice && car.originalPrice > (car.priceNgn || 0) && (
                   <span className="text-14px text-slate-400 dark:text-slate-500 line-through">
                     ₦{numberWithCommas(car.originalPrice)}
                   </span>
                 )}
               </div>
-              <p className="text-12px text-emerald-600 dark:text-emerald-400 font-medium mt-1">
-                Outright purchase & flexible installment plans available
-              </p>
+              {isProvisional ? (
+                <p className="text-12px text-amber-600 dark:text-amber-400 font-medium mt-1">
+                  Estimated total; final clearing or vehicle classification may change the price.
+                </p>
+              ) : (
+                <p className="text-12px text-emerald-600 dark:text-emerald-400 font-medium mt-1">
+                  Total landed price for Lagos port delivery. Outright & installment plans available.
+                </p>
+              )}
             </div>
+
+            {/* Landed Pricing Breakdown Rows */}
+            {(car.basePriceNgn || car.shippingFeeNgn || car.pricing) && (
+              <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-3.5 space-y-2 text-12px border border-slate-100 dark:border-white/5">
+                <p className="font-semibold text-slate-700 dark:text-slate-300 text-11px uppercase tracking-wider">
+                  Landed Price Breakdown
+                </p>
+                {(car.basePriceNgn || car.pricing?.basePriceNgn) && (
+                  <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                    <span>Base vehicle price</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-200">
+                      ₦{numberWithCommas(car.basePriceNgn || car.pricing?.basePriceNgn)}
+                    </span>
+                  </div>
+                )}
+                {(car.shippingFeeNgn || car.pricing?.shippingFeeNgn) && (
+                  <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                    <span>Import shipping</span>
+                    <span className="font-medium text-slate-900 dark:text-slate-200">
+                      ₦{numberWithCommas(car.shippingFeeNgn || car.pricing?.shippingFeeNgn)}
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                  <span>Port clearing</span>
+                  <span className="font-medium text-slate-900 dark:text-slate-200">
+                    {(car.clearingFeeNgn || car.pricing?.clearingFeeNgn)
+                      ? `₦${numberWithCommas(car.clearingFeeNgn || car.pricing?.clearingFeeNgn)}`
+                      : "₦0 (Provisional)"}
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-white/10">
               <button

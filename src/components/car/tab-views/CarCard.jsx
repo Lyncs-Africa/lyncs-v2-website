@@ -20,15 +20,30 @@ export const FUEL_TYPE_BADGE = {
 export const CarCard = ({ car }) => {
   const router = useRouter();
   const fuelBadge = FUEL_TYPE_BADGE[car.type] || FUEL_TYPE_BADGE.petrol;
-  const imageCandidates = useMemo(() => getCarImageCandidates(car), [car]);
+
+  // Image list following handoff guidelines: headImage first, then returned images, then placeholder
+  const imageCandidates = useMemo(() => {
+    const rawList = [
+      car.headImage,
+      ...(car.images || []).map((img) => (typeof img === "string" ? img : img?.url || img?.src)),
+      car.image,
+    ].filter(Boolean);
+    return Array.from(new Set(rawList));
+  }, [car]);
+
   const [imageIndex, setImageIndex] = useState(0);
 
   useEffect(() => {
     setImageIndex(0);
-  }, [imageCandidates]);
+  }, [car.platform, car.id, car.productId, imageCandidates]);
 
   const activeImageSrc = imageCandidates[imageIndex] || null;
-  const displayName = car.name || car.title || "Vehicle";
+  const displayName = car.title || car.name || "Vehicle";
+
+  const hasPrice = car.priceNgn !== null && car.priceNgn !== undefined;
+  const isProvisional = car.pricing?.status === "provisional";
+  const canStartCheckout =
+    hasPrice && (!car.pricing || ["complete", "provisional"].includes(car.pricing.status));
 
   const navigateToCarListing = (startPurchase = false) => {
     const carId = car.productId || car.id;
@@ -43,14 +58,16 @@ export const CarCard = ({ car }) => {
     }
     const params = new URLSearchParams();
     if (platform) params.set("platform", platform);
-    if (startPurchase) params.set("purchase", "1");
+    if (startPurchase && canStartCheckout) params.set("purchase", "1");
     const qs = params.toString();
     router.push(`/cars/${encodeURIComponent(carId)}${qs ? `?${qs}` : ""}`);
   };
 
   const handlePurchase = (e) => {
     e.stopPropagation();
-    navigateToCarListing(true);
+    if (canStartCheckout) {
+      navigateToCarListing(true);
+    }
   };
 
   const handleSwap = (e) => {
@@ -107,7 +124,7 @@ export const CarCard = ({ car }) => {
       <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
         <div className="space-y-1.5">
           <h3 className="text-15px font-bold text-slate-900 dark:text-slate-100 line-clamp-1 leading-snug">
-            {car.name}
+            {displayName}
           </h3>
 
           {/* Specs Row */}
@@ -120,46 +137,33 @@ export const CarCard = ({ car }) => {
             {car.origin && (
               <>
                 <span className="text-slate-300 dark:text-slate-600">•</span>
-                <span>{car.condition !== "NEW" ? "Nigerian Used" : "Brand new"}</span>
+                <span>{car.condition !== "NEW" ? "Foreign Used" : "Brand new"}</span>
               </>
             )}
           </div>
         </div>
 
-        {/* Pricing & Actions */}
-        <div className="pt-2 border-t border-slate-100 dark:border-white/10 space-y-3">
-          <div>
-            <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
-              Starting from
-            </p>
-            <div className="flex items-baseline gap-2">
+        {/* Pricing & Landed Total */}
+        <div className="pt-2 border-t border-slate-100 dark:border-white/10 space-y-1">
+          <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
+            {hasPrice ? (isProvisional ? "Estimated total" : "Total landed price") : "Price unavailable"}
+          </p>
+          <div className="flex items-baseline gap-2">
+            {hasPrice ? (
               <span className="text-18px font-bold text-slate-900 dark:text-white">
-                ₦{numberWithCommas(car.price || 0)}
+                ₦{numberWithCommas(car.priceNgn)}
               </span>
-              {car.originalPrice && car.originalPrice > car.price && (
-                <span className="text-12px text-slate-400 dark:text-slate-500 line-through">
-                  ₦{numberWithCommas(car.originalPrice)}
-                </span>
-              )}
-            </div>
+            ) : (
+              <span className="text-14px font-medium text-slate-500 dark:text-slate-400">
+                Contact for pricing
+              </span>
+            )}
+            {car.originalPrice && car.originalPrice > (car.priceNgn || car.price || 0) && (
+              <span className="text-12px text-slate-400 dark:text-slate-500 line-through">
+                ₦{numberWithCommas(car.originalPrice)}
+              </span>
+            )}
           </div>
-
-          {/* <div className="flex items-center gap-2 pt-1">
-            <button
-              type="button"
-              onClick={handlePurchase}
-              className="flex-1 bg-primary text-white text-13px font-semibold rounded-full py-2 border border-primary hover:bg-primary/90 dark:bg-[#2D419A] dark:border-[#2D419A] dark:hover:bg-[#2D419A]/90 transition-colors cursor-pointer"
-            >
-              Purchase
-            </button>
-            <button
-              type="button"
-              onClick={handleSwap}
-              className="flex-1 text-primary dark:text-white text-13px font-semibold rounded-full py-2 border border-primary dark:border-white/20 hover:bg-primary/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
-            >
-              Swap
-            </button>
-          </div> */}
         </div>
       </div>
     </div>

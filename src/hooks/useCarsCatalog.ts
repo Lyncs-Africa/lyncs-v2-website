@@ -1,6 +1,6 @@
 'use client'
 
-import {useQuery} from '@tanstack/react-query'
+import {useInfiniteQuery, useQuery} from '@tanstack/react-query'
 import {fetchCarDetail, fetchCarsCatalog} from '@/lib/api/cars'
 import {CATALOG_GC_TIME_MS, CATALOG_STALE_TIME_MS} from '@/lib/queryClient'
 
@@ -9,6 +9,7 @@ export type CarsCatalogParams = {
     limit?: number
     condition?: 'NEW' | 'USED'
     fuelType?: string
+    bodyType?: string
     origin?: string
     make?: string
     keyword?: string
@@ -17,6 +18,8 @@ export type CarsCatalogParams = {
     segment?: string
     sort?: string
     source?: string
+    enrichImages?: string | number
+    format?: string
 }
 
 /**
@@ -46,6 +49,34 @@ export function useCarsCatalogQuery(
         queryKey: carsCatalogQueryKey(normalized),
         // Intentionally omit AbortSignal so React Strict Mode's mount/remount deduplicates onto one in-flight fetch.
         queryFn: () => fetchCarsCatalog(normalized),
+        staleTime: options.staleTime ?? CATALOG_STALE_TIME_MS,
+        gcTime: CATALOG_GC_TIME_MS,
+        enabled: options.enabled ?? true,
+    })
+}
+
+export function carsCatalogInfiniteQueryKey(params: Omit<CarsCatalogParams, 'page'> = {}) {
+    return ['cars-catalog-infinite', normalizeCatalogParams(params)] as const
+}
+
+export function useCarsCatalogInfiniteQuery(
+    params: Omit<CarsCatalogParams, 'page'> = {},
+    options: {enabled?: boolean; staleTime?: number} = {},
+) {
+    const normalized = normalizeCatalogParams(params)
+    return useInfiniteQuery({
+        queryKey: carsCatalogInfiniteQueryKey(normalized),
+        initialPageParam: 1,
+        queryFn: ({pageParam = 1}) =>
+            fetchCarsCatalog({...normalized, page: Number(pageParam)}),
+        getNextPageParam: (lastPage) => {
+            const pagination = lastPage?.data?.pagination
+            if (pagination && pagination.hasNextPage) {
+                const currentPage = Number(pagination.page || pagination.currentPage || 1)
+                return currentPage + 1
+            }
+            return undefined
+        },
         staleTime: options.staleTime ?? CATALOG_STALE_TIME_MS,
         gcTime: CATALOG_GC_TIME_MS,
         enabled: options.enabled ?? true,
