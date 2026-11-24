@@ -119,7 +119,7 @@ export default function SwapValuationStepModal({
       </div>
 
       {/* Accept-list notice: we only swap the makes/models offered below. */}
-      <p className="text-12px text-slate-500 dark:text-slate-400 leading-snug">
+      <p className="text-[13px] text-yellow-600 dark:text-yellow-400 leading-snug md:max-w-[80%]">
         We only accept the makes and models listed below for swap. If your
         vehicle isn&apos;t in the list, we&apos;re unable to take it as a swap at
         this time.
