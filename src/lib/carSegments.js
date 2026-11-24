@@ -21,12 +21,13 @@ export const CAR_TABS = [
 // Use-case filter options for the catalog dropdown. Each value (except "all")
 // matches a car's `segments` tag; filtering activates once cars are tagged.
 export const USE_CASE_OPTIONS = [
-  {value: 'all', label: 'Marketplace'},
-  {value: 'businesses', label: 'For businesses'},
-  {value: 'top-executives', label: 'For top executives'},
-  {value: 'drivers', label: 'For e-hailing drivers'},
-  {value: 'schools', label: 'For schools'},
-  {value: 'individuals', label: 'For individuals'},
+  { value: 'all', label: 'Marketplace' },
+  { value: 'businesses', label: 'For businesses' },
+  { value: 'top-executives', label: 'For top executives' },
+  { value: 'drivers', label: 'For e-hailing drivers' },
+  { value: 'e-hailing', label: 'For e-hailing drivers' },
+  { value: 'schools', label: 'For schools' },
+  { value: 'individuals', label: 'For individuals' },
 ]
 
 export const SEGMENT_KEYS = USE_CASE_OPTIONS.filter((o) => o.value !== 'all').map((o) => o.value)

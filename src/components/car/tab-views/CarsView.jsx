@@ -51,7 +51,13 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [origin, setOrigin] = useState("all");
-  const [useCase, setUseCase] = useState("all");
+  const [useCase, setUseCase] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = getSavedCatalogPreference();
+      if (saved) return saved;
+    }
+    return "all";
+  });
   const [sort, setSort] = useState("newest");
   const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false);
   const [isPrefModalOpen, setIsPrefModalOpen] = useState(false);
