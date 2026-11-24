@@ -354,6 +354,7 @@ export async function fetchCarsCatalog(params = {}, requestOptions = {}) {
     origin: params.origin,
     make: params.make,
     keyword: params.keyword || params.q || params.keyWord,
+    segment: params.segment,
     sort: params.sort,
   });
 
