@@ -1,7 +1,13 @@
-// Car makes and models for the Lyncs valuation dropdowns.
-// Focused on cars common on Nigerian roads (tokunbo and Nigerian used).
+// Car makes and models accepted for swap valuation (the dropdowns).
+// This IS the accept-list: we only swap these makes/models. Anything not here
+// is a car we don't accept for swap, so the swap selects offer no "Other" escape
+// hatch — the UI tells the seller plainly that only the listed vehicles qualify.
+// Trimmed to the fastest-moving, highest-liquidity tokunbo/Nigerian-used models
+// (Toyota/Honda/Lexus/Hyundai/Mercedes/BMW/Ford) so the swap book stays to cars
+// we can resell quickly.
 // This list only feeds the selects. Prices live in the valuation data source.
-// "Other" is handled in the UI: picking it routes to the "couldn't value" state.
+// NOTE: OTHER_OPTION and the getCatalog* helpers below are NOT part of the swap
+// accept-list; they serve the separate "request a vehicle to buy" flow.
 
 import carsCatalog from "../../../cars.json";
 
@@ -22,12 +28,8 @@ export const CAR_LIST: CarMake[] = [
       "Hilux",
       "Land Cruiser",
       "Land Cruiser Prado",
-      "Matrix",
       "RAV4",
-      "Sequoia",
       "Sienna",
-      "Tacoma",
-      "Tundra",
       "Venza",
       "Yaris",
       "4Runner",
@@ -35,84 +37,41 @@ export const CAR_LIST: CarMake[] = [
   },
   {
     make: "Lexus",
-    models: ["ES 330", "ES 350", "GX 460", "GX 470", "IS 250", "LX 570", "NX 300", "RX 330", "RX 350"],
+    models: ["ES 350", "GX 460", "GX 470", "LX 570", "NX 300", "RX 350"],
   },
   {
     make: "Honda",
-    models: ["Accord", "Civic", "CR-V", "Element", "HR-V", "Odyssey", "Pilot"],
+    models: ["Accord", "Civic", "CR-V", "HR-V", "Pilot"],
   },
   {
     make: "Hyundai",
-    models: ["Accent", "Creta", "Elantra", "ix35", "Santa Fe", "Sonata", "Tucson"],
-  },
-  {
-    make: "Kia",
-    models: ["Cerato", "Optima", "Picanto", "Rio", "Sorento", "Soul", "Sportage"],
-  },
-  {
-    make: "Nissan",
-    models: ["Almera", "Altima", "Frontier", "Murano", "Pathfinder", "Patrol", "Rogue", "Sentra", "X-Trail"],
+    models: ["Accent", "Creta", "Elantra", "Santa Fe", "Sonata", "Tucson"],
   },
   {
     make: "Mercedes-Benz",
-    models: ["C-Class", "E-Class", "GLA", "GLC", "GLE", "GLK", "ML", "S-Class", "Sprinter"],
+    models: ["C-Class", "E-Class", "GLA", "GLC", "GLE"],
   },
   {
     make: "BMW",
-    models: ["3 Series", "5 Series", "7 Series", "X3", "X5", "X6"],
+    models: ["3 Series", "5 Series", "X3", "X5"],
   },
   {
     make: "Ford",
-    models: ["Edge", "Escape", "Explorer", "F-150", "Focus", "Fusion", "Ranger", "Transit"],
-  },
-  {
-    make: "Volkswagen",
-    models: ["Golf", "Jetta", "Passat", "Tiguan", "Touareg"],
-  },
-  {
-    make: "Mazda",
-    models: ["CX-5", "CX-7", "CX-9", "Mazda3", "Mazda6"],
-  },
-  {
-    make: "Mitsubishi",
-    models: ["L200", "Lancer", "Outlander", "Pajero"],
-  },
-  {
-    make: "Peugeot",
-    models: ["301", "406", "407", "508", "3008", "Partner"],
-  },
-  {
-    make: "Acura",
-    models: ["MDX", "RDX", "TL", "TSX", "ZDX"],
-  },
-  {
-    make: "Chevrolet",
-    models: ["Cruze", "Equinox", "Malibu", "Tahoe"],
-  },
-  {
-    make: "Land Rover",
-    models: ["Defender", "Discovery", "Range Rover", "Range Rover Evoque", "Range Rover Sport"],
-  },
-  {
-    make: "Suzuki",
-    models: ["Dzire", "Ertiga", "Swift", "Vitara"],
-  },
-  {
-    make: "Innoson",
-    // Verify current model names with Innoson before launch.
-    models: ["IVM Fox", "IVM G5", "IVM Ikenga", "IVM Umu"],
+    models: ["Edge", "Escape", "Explorer"],
   },
 ];
 
 export const OTHER_OPTION = "Other";
 
+// Swap accept-list only — no "Other": a make we don't list is one we don't swap.
 export function getMakes(): string[] {
-  return [...CAR_LIST.map((c) => c.make), OTHER_OPTION];
+  return CAR_LIST.map((c) => c.make);
 }
 
+// Swap accept-list only — no "Other": a model we don't list is one we don't swap.
 export function getModels(make: string): string[] {
   const found = CAR_LIST.find((c) => c.make === make);
-  return found ? [...found.models, OTHER_OPTION] : [OTHER_OPTION];
+  return found ? [...found.models] : [];
 }
 
 export function getYears(from = 2005): number[] {

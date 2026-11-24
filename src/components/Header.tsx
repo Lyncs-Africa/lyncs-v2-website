@@ -30,13 +30,9 @@ const NAV_ITEMS: NavItem[] = [
       { href: "/platform/rides", label: "Rides" },
       { href: "/platform/buses", label: "Buses" },
       { href: "/platform/flights", label: "Flights" },
-      {
-        href: "/platform/ride-wallets",
-        label: "Fund ride wallets",
-      },
       { href: "/platform/car-rentals", label: "Car rentals" },
       { href: "/platform/car-tow", label: "Car tow" },
-      { href: "/platform/mechanic", label: "On-demand mechanic" },
+      { href: "/platform/mechanic", label: "On demand mechanic" },
     ],
   },
   {
@@ -52,14 +48,14 @@ const NAV_ITEMS: NavItem[] = [
     label: "Who it's for",
     children: [
       { href: "/businesses", label: "For businesses" },
-      { href: "/individuals", label: "For individuals" },
+      { href: "/individuals", label: "For staff members" },
       { href: "/drivers", label: "For e-hailing drivers" },
+      { href: "/schools", label: "For schools" },
     ],
   },
   {
     label: "Company",
     children: [
-      { href: "/about", label: "Our story" },
       { href: "/careers", label: "Careers" },
       { href: "/contact", label: "Contact" },
     ],

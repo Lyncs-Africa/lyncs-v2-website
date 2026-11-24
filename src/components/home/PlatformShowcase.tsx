@@ -71,7 +71,7 @@ function ProductMock() {
 
 export default function PlatformShowcase() {
   return (
-    <section className="relative overflow-hidden bg-white dark:bg-night pb-[100px] font-Quicksand">
+    <section className="relative overflow-hidden bg-white dark:bg-night pb-[100px] pt-[50px] font-Quicksand">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 dark:hidden"

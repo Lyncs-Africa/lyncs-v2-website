@@ -224,34 +224,14 @@ function SuccessView({
                     )}
                 </p>
 
-                {/* Tenor toggle */}
-                <div className="mt-5 flex items-center gap-3">
-                    <span className="text-[13px] text-slate-500 dark:text-white/50">Spread over</span>
-                    <div
-                        className="inline-flex rounded-full bg-slate-100 p-1 dark:bg-white/5"
-                        role="radiogroup"
-                        aria-label="Repayment tenor"
-                    >
-                        {EV_CONFIG.tenorOptions.map((t) => {
-                            const active = tenor === t
-                            return (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    role="radio"
-                                    aria-checked={active}
-                                    onClick={() => setTenor(t)}
-                                    className={`rounded-full px-4 py-1.5 text-[13px] font-semibold transition ${
-                                        active
-                                            ? 'bg-accent text-white dark:bg-[#2D419A]'
-                                            : 'text-slate-500 hover:text-slate-800 dark:text-white/50 dark:hover:text-white'
-                                    }`}
-                                >
-                                    {t} months
-                                </button>
-                            )
-                        })}
-                    </div>
+                {/* Tenor dropdown — kept compact so the options never overflow the panel */}
+                <div className="mt-5 max-w-[240px]">
+                    <ValuationSelect
+                        label="Spread over"
+                        value={`${tenor} months`}
+                        options={EV_CONFIG.tenorOptions.map((t) => `${t} months`)}
+                        onChange={(v) => setTenor(Number(v.replace(/\D/g, '')) as Tenor)}
+                    />
                 </div>
 
                 {b.monthly != null && (

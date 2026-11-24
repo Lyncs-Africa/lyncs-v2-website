@@ -4,13 +4,12 @@ import React from "react";
 import { Button } from "../../ui/HeroUI.jsx";
 import { FaWallet, FaCalendarAlt, FaCar } from "react-icons/fa";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { FiInfo } from "react-icons/fi";
 import classNames from "classnames";
 import { numberWithCommas } from "../../../lib/utils.js";
 import {
   INSTALLMENT_DOWN_PAYMENT_PERCENT,
-  getInstallmentInterestRate,
   getInstallmentTermOptions,
+  computeInstallmentBreakdown,
 } from "../../../lib/carPurchase.js";
 
 const PurchasePaymentModeModal = ({
@@ -24,10 +23,11 @@ const PurchasePaymentModeModal = ({
 }) => {
   if (!car) return null;
 
-  const interestRate = getInstallmentInterestRate(isAdmin);
+  // Brand-new cars can spread up to 48 months; used cars up to 36.
   const maxTerm = Math.max(...getInstallmentTermOptions(car.usage));
   const downPaymentPercent = INSTALLMENT_DOWN_PAYMENT_PERCENT * 100;
   const downPaymentAmount = Math.round((car.price || 0) * INSTALLMENT_DOWN_PAYMENT_PERCENT);
+  const installmentBreakdown = computeInstallmentBreakdown(car.price || 0, maxTerm, isAdmin);
   const handleDismiss = onClose || onBack;
 
   return (
@@ -77,7 +77,7 @@ const PurchasePaymentModeModal = ({
               </div>
               <p className="text-17px font-bold text-black dark:text-white">Pay at once</p>
               <p className="text-14px text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                Pay the full ₦{numberWithCommas(car.price)} upfront with zero financing interest.
+                Pay 30% (₦{numberWithCommas(downPaymentAmount)}) upfront before your car is shipped, then settle the balance when it arrives at your doorstep.
               </p>
             </button>
 
@@ -102,17 +102,36 @@ const PurchasePaymentModeModal = ({
               </p>
             </button>
           </div>
-        </div>
 
-        {/* Info Banner */}
-        <div className="rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/40 p-4 flex items-start gap-3">
-          <FiInfo className="text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" size={18} />
-          <div className="text-13px text-amber-900 dark:text-amber-200 leading-relaxed">
-            <p className="font-semibold">No immediate payment required today</p>
-            <p className="mt-0.5 text-amber-800 dark:text-amber-300">
-              Selecting a payment mode prepares your official Lyncs quote. Our team will verify vehicle availability, share the inspection report, and finalize delivery with you on WhatsApp.
-            </p>
-          </div>
+          {/* Breakdown shown once installments is selected */}
+          {paymentMode === "installment" && (
+            <div className="rounded-2xl border border-primary/20 dark:border-accent/20 bg-primary/5 dark:bg-accent/10 p-4 space-y-2.5">
+              <p className="text-13px font-semibold text-slate-800 dark:text-slate-200">
+                Your installment plan over {maxTerm} months
+              </p>
+              <div className="flex justify-between items-center text-14px">
+                <span className="text-slate-600 dark:text-slate-400">
+                  Initial deposit ({downPaymentPercent}%)
+                </span>
+                <span className="font-semibold text-primary dark:text-accent">
+                  ₦{numberWithCommas(installmentBreakdown.downPayment)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-14px">
+                <span className="text-slate-600 dark:text-slate-400">Monthly installment</span>
+                <span className="font-bold text-primary dark:text-accent">
+                  ₦{numberWithCommas(installmentBreakdown.monthlyInstallment)}
+                  <span className="text-12px font-normal text-slate-500">/mo</span>
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-14px border-t border-primary/15 dark:border-accent/20 pt-2">
+                <span className="text-slate-600 dark:text-slate-400">Number of months</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  {maxTerm} months
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

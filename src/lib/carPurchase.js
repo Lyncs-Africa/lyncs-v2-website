@@ -1,4 +1,4 @@
-export const INSTALLMENT_DOWN_PAYMENT_PERCENT = 0.2; // 30% upfront down payment
+export const INSTALLMENT_DOWN_PAYMENT_PERCENT = 0.3; // 30% upfront down payment
 
 // Supported terms per backend handoff: 3, 6, 12, and 18 months
 export const INSTALLMENT_TERM_OPTIONS = {
@@ -21,20 +21,17 @@ export function getInstallmentTermOptions(usage) {
 }
 
 export function computeInstallmentBreakdown(price, months, isAdmin = false) {
-  const rate = getInstallmentInterestRate(isAdmin);
   const downPayment = Math.round(price * INSTALLMENT_DOWN_PAYMENT_PERCENT);
   const financedAmount = price - downPayment;
-  const interestAmount = Math.round(financedAmount * rate);
-  const financedAmountWithInterest = financedAmount + interestAmount;
-  const monthlyInstallment = Math.round(financedAmountWithInterest / months);
-  const totalPayable = downPayment + financedAmountWithInterest;
+  const monthlyInstallment = months ? Math.round(financedAmount / months) : 0;
+  const totalPayable = price;
 
   return {
     downPayment,
     financedAmount,
-    interestRate: rate,
-    interestAmount,
-    financedAmountWithInterest,
+    interestRate: 0,
+    interestAmount: 0,
+    financedAmountWithInterest: financedAmount,
     monthlyInstallment,
     totalPayable,
     months,

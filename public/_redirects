@@ -1,0 +1,6 @@
+# Car detail pages: IDs come from the catalog API at runtime and are not
+# pre-rendered in the static export. Serve the pre-built shell (/cars/view) for
+# any /cars/<id> request; the client reads the real ID from the URL.
+# Netlify serves a real file first when one exists, so /cars, /cars/new and
+# /cars/used (which are pre-rendered) are unaffected by this rule.
+/cars/*  /cars/view.html  200

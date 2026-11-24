@@ -4,6 +4,8 @@ import { Geist, Quicksand } from 'next/font/google'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import ScrollToTop from '../../components/ui/ScrollToTop'
+import CookieBanner from '../../components/CookieBanner'
+import GoogleAnalytics from '../../components/GoogleAnalytics'
 import ThemeProvider, { themeScript } from '../../components/theme/ThemeProvider'
 import QueryProvider from '../../components/providers/QueryProvider'
 import 'react-international-phone/style.css'
@@ -39,10 +41,12 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
       <body className="bg-white text-primary dark:bg-night dark:text-slate-100 font-Quicksand antialiased">
         <ThemeProvider>
           <QueryProvider>
-            <Header />
-            <main id="top">{children}</main>
-            <Footer />
-            <ScrollToTop />
+              <Header />
+              <main id="top">{children}</main>
+              <Footer />
+              <ScrollToTop />
+              <CookieBanner />
+              <GoogleAnalytics />
           </QueryProvider>
         </ThemeProvider>
       </body>

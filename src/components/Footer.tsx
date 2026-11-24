@@ -2,6 +2,13 @@ import Link from 'next/link'
 import {FaFacebookF, FaInstagram, FaLinkedinIn} from 'react-icons/fa'
 import {FaXTwitter} from 'react-icons/fa6'
 import type {IconType} from 'react-icons'
+import CookieSettingsLink from './CookieSettingsLink'
+
+const LEGAL_LINKS: { label: string; href: string }[] = [
+    {label: 'Privacy Policy', href: '/privacy'},
+    {label: 'Terms of Use', href: '/terms'},
+    {label: 'Cookie Policy', href: '/cookies'},
+]
 
 const SOCIALS: { href: string; label: string; Icon: IconType }[] = [
     {href: 'https://www.instagram.com/lyncsafrica/', label: 'Instagram', Icon: FaInstagram},
@@ -18,25 +25,35 @@ const COLUMNS: { title: string; links: { label: string; href: string; external?:
             {label: 'Buses', href: '/platform/buses'},
             {label: 'Flights', href: '/platform/flights'},
             {label: 'Car rentals', href: '/platform/car-rentals'},
+            {label: 'Car tow', href: '/platform/car-tow'},
+            {label: 'On demand mechanic', href: '/platform/mechanic'},
         ],
     },
     {
-        title: 'Explore',
+        title: 'Cars',
         links: [
             {label: 'Browse all cars', href: '/cars'},
-            {label: 'Swap your car for EV', href: '/cars/swap'},
+            {label: 'Swap your car for an EV', href: '/swap'},
+            {label: 'Buy new cars', href: '/cars?condition=new'},
+            {label: 'Buy used cars', href: '/cars?condition=used'},
+        ],
+    },
+    {
+        title: "Who it's for",
+        links: [
             {label: 'For businesses', href: '/businesses'},
             {label: 'For individuals', href: '/individuals'},
+            {label: 'For e-hailing drivers', href: '/drivers'},
+            {label: 'For school', href: '/schools'},
         ],
     },
     {
         title: 'Company',
         links: [
-            {label: 'About us', href: '/about'},
             {label: 'Careers', href: '/careers'},
+            {label: 'Contact', href: '/contact'},
             {label: 'Book a demo', href: '/book-demo'},
             {label: 'FAQ', href: '/faq'},
-            {label: 'Contact us', href: '/contact'},
             {label: 'Lyncs Business', href: 'https://app.lyncs.africa/register/', external: true},
         ],
     },
@@ -70,7 +87,7 @@ export default function Footer() {
             }}
         >
             <div className="mx-auto max-w-7xl">
-                <div className="grid gap-10 rounded-2xl bg-slate-800 p-6 text-white dark:bg-slate-900 dark:border dark:border-white/10 md:grid-cols-2 md:p-10 lg:grid-cols-5">
+                <div className="grid gap-10 rounded-2xl bg-slate-800 p-6 text-white dark:bg-slate-900 dark:border dark:border-white/10 md:grid-cols-2 md:p-10 lg:grid-cols-6">
                     {/* Brand + contact */}
                     <div className="space-y-4 lg:col-span-2">
                         <Link href="/" aria-label="Lyncs home" className="inline-block">
@@ -131,9 +148,23 @@ export default function Footer() {
 
                     {/* Bottom bar */}
                     <div
-                        className="border-t border-gray-600 pt-5 text-center text-sm text-gray-400 md:text-base lg:col-span-5">
-                        <p>© {new Date().getFullYear()} Lyncs. All rights reserved.</p>
-                        <p className="mt-1">Made with you in mind.</p>
+                        className="border-t border-gray-600 pt-5 text-sm text-gray-400 md:text-base lg:col-span-6">
+                        <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
+                            <div className="text-center md:text-left">
+                                <p>© {new Date().getFullYear()} Lyncs. All rights reserved.</p>
+                                <p className="mt-1">Made with you in mind.</p>
+                            </div>
+                            <nav
+                                aria-label="Legal"
+                                className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+                                {LEGAL_LINKS.map(({label, href}) => (
+                                    <Link key={href} href={href} className="text-gray-400 transition hover:text-white">
+                                        {label}
+                                    </Link>
+                                ))}
+                                <CookieSettingsLink/>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
