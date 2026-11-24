@@ -14,7 +14,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@jhb.software/payload-cloudinary-plugin": "^0.3.4",
+    "@jhb.software/payload-cloudinary-plugin": "^0.4.0",
     "@payloadcms/db-mongodb": "^3.0.0",
     "@payloadcms/next": "^3.0.0",
     "@payloadcms/richtext-lexical": "^3.0.0",
