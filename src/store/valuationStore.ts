@@ -9,6 +9,9 @@ import type {EvOption} from '@/lib/valuation/evOptions'
 
 export type Tab = 'owner' | 'fleet'
 
+// How the user wants to clear the balance left after the trade-in is applied.
+export type BalanceMode = 'once' | 'installment'
+
 // 'empty' -> form incomplete, 'loading' -> valuing, 'success' -> range found,
 // 'couldnt' -> car not in dataset (needs a human).
 export type ResultStatus = 'empty' | 'loading' | 'success' | 'couldnt'
@@ -61,6 +64,7 @@ type ValuationState = {
     status: ResultStatus
     result: ValuationRange | null
     tenor: Tenor
+    balanceMode: BalanceMode
 
     // EV the car is swapped into. `evs` is the loaded catalog; `selectedEvId` is
     // the user's explicit pick, or null to auto-match the best fit.
@@ -71,6 +75,7 @@ type ValuationState = {
     setOwnerField: <K extends keyof OwnerForm>(key: K, value: OwnerForm[K]) => void
     setFleetField: <K extends keyof FleetForm>(key: K, value: FleetForm[K]) => void
     setTenor: (tenor: Tenor) => void
+    setBalanceMode: (mode: BalanceMode) => void
     setResult: (status: ResultStatus, result: ValuationRange | null) => void
     setEvs: (evs: EvOption[]) => void
     setSelectedEv: (id: string | null) => void
@@ -86,6 +91,7 @@ export const useValuationStore = create<ValuationState>((set) => ({
     status: 'empty',
     result: null,
     tenor: 48,
+    balanceMode: 'once',
 
     evs: [],
     selectedEvId: null,
@@ -103,6 +109,8 @@ export const useValuationStore = create<ValuationState>((set) => ({
     setFleetField: (key, value) => set((s) => ({fleet: {...s.fleet, [key]: value}})),
 
     setTenor: (tenor) => set({tenor}),
+
+    setBalanceMode: (balanceMode) => set({balanceMode}),
 
     setResult: (status, result) => set({status, result}),
 

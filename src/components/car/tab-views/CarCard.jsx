@@ -146,7 +146,7 @@ export const CarCard = ({ car }) => {
         {/* Pricing & Landed Total */}
         <div className="pt-2 border-t border-slate-100 dark:border-white/10 space-y-1">
           <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
-            {hasPrice ? (isProvisional ? "Estimated total" : "Total landed price") : "Price unavailable"}
+            {hasPrice ? (isProvisional ? "Starting at" : "Total landed price") : "Price unavailable"}
           </p>
           <div className="flex items-baseline gap-2">
             {hasPrice ? (

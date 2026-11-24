@@ -12,11 +12,11 @@ export const EV_CONFIG = {
     // Minimum down payment, as a fraction of the EV price.
     depositPct: 0.2,
     // Financing tenors offered, in months.
-    // 36 = used EV, 48 = new EV.
-    tenorOptions: [36, 48] as const,
+    tenorOptions: [3, 6, 12, 18, 24, 36, 48] as const,
     // Annual interest rate as a decimal (e.g. 0.28 for 28%).
+    // 0 => interest-free: the monthly figure is simply balance ÷ tenor.
     // null => we don't quote a monthly figure at all (the line is hidden).
-    annualInterestRate: null as number | null,
+    annualInterestRate: 0 as number | null,
     // How long a locked-in quote is honoured.
     quoteHeldDays: 30,
 } as const

@@ -1,8 +1,12 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import CarListingDetailView from "../../../../components/car/CarListingDetailView.jsx";
+import CarDetailClient from "./CarDetailClient";
 import { LOCAL_CARS_RAW } from "../../../../lib/localCarsCatalog.js";
 
+// Catalog IDs come from the API at runtime and aren't all known at build time,
+// so we pre-render a shell ("/cars/view") that a Netlify rewrite (public/_redirects)
+// serves for any /cars/<id> path, plus the local catalog IDs we do know. The
+// client reads the real ID from the URL.
 export async function generateStaticParams() {
   const staticIds = (LOCAL_CARS_RAW || []).map((car: any) => ({
     id: String(car.id || car.productId),
@@ -32,7 +36,7 @@ export default async function SingleCarPage({
         </div>
       }
     >
-      <CarListingDetailView carId={decodedId} />
+      <CarDetailClient initialId={decodedId} />
     </Suspense>
   );
 }

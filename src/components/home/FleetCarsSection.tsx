@@ -38,31 +38,15 @@ export default function FleetCarsSection() {
         <section className="relative overflow-hidden bg-black pb-16 font-Quicksand text-white md:pb-24">
             <div className="mx-auto max-w-7xl px-4">
                 {/* Header */}
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                    <div className="max-w-2xl">
-                        <SectionBadge number="03" label="Ready to drive" variant="dark"/>
-                        <h2 className="mt-6 text-4xl font-bold !leading-[1.1] tracking-tight text-white md:text-[2.5rem] xl:text-[3rem]">
-                            EVs ready for your fleet{' '}
-                            <span className="text-accent">today</span>
-                        </h2>
-                        <p className="mt-4 text-base leading-relaxed text-slate-300">
-                            Pick the cars that fit your team, and we’ll value your current fleet against them.
-                        </p>
-                    </div>
-                    <div className="flex flex-wrap gap-3 lg:shrink-0">
-                        <Link
-                            href="/cars"
-                            className="inline-flex rounded-full border bg-white px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-slate-200"
-                        >
-                            See all cars
-                        </Link>
-                        <Link
-                            href="/swap"
-                            className="inline-flex rounded-full border border-white/30 px-6 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-white/5"
-                        >
-                            Get my fleet valued
-                        </Link>
-                    </div>
+                <div className="max-w-2xl">
+                    <SectionBadge number="03" label="Ready to drive" variant="dark"/>
+                    <h2 className="mt-6 text-4xl font-bold !leading-[1.1] tracking-tight text-white md:text-[2.5rem] xl:text-[3rem]">
+                        EVs ready for your fleet{' '}
+                        <span className="text-accent">today</span>
+                    </h2>
+                    <p className="mt-4 text-base leading-relaxed text-slate-300">
+                        Pick the cars that fit your team, and we’ll value your current fleet against them.
+                    </p>
                 </div>
 
                 {/* Car cards */}
@@ -113,32 +97,39 @@ export default function FleetCarsSection() {
                                         {car.rangeKm} km per charge · {seats}
                                     </p>
                                     <p className="mt-3 text-[20px] font-bold text-white">
-                                        From ₦{numberWithCommas(car.price)}
+                                        <span className="text-[15px] opacity-60 font-normal">Starting from</span> ₦{numberWithCommas(car.price)}
                                     </p>
-                                    <div className="mt-5 flex gap-2.5">
-                                        <button
-                                            type="button"
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                openCarDetails(car, true)
-                                            }}
-                                            className="inline-flex flex-1 justify-center rounded bg-white px-4 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-slate-200"
-                                        >
-                                            Purchase vehicle
-                                        </button>
-                                        <Link
-                                            href="/swap"
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="inline-flex flex-1 justify-center rounded border border-white/30 px-4 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-white/10"
-                                        >
-                                            Swap my fleet
-                                        </Link>
-                                    </div>
                                 </div>
                             </motion.div>
                         )
                     })}
                 </motion.div>
+
+                {/* Bottom CTA — browse the full catalogue or get a valuation */}
+                <div className="mt-16 flex flex-col gap-6 border-t border-white/10 pt-10 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="max-w-xl">
+                        <h3 className="text-[22px] font-bold tracking-tight text-white">
+                            Don’t see the right fit yet?
+                        </h3>
+                        <p className="mt-2 text-[15px] leading-relaxed text-slate-300">
+                            Browse the full line-up, or tell us what you run today and we’ll value your fleet against it.
+                        </p>
+                    </div>
+                    <div className="flex flex-wrap gap-3 sm:shrink-0">
+                        <Link
+                            href="/cars"
+                            className="inline-flex rounded-full border bg-white px-6 py-3 text-sm font-semibold tracking-wide text-primary transition hover:bg-slate-200"
+                        >
+                            See all cars
+                        </Link>
+                        <Link
+                            href="/swap"
+                            className="inline-flex rounded-full border border-white/30 px-6 py-3 text-sm font-semibold tracking-wide text-white transition hover:bg-white/5"
+                        >
+                            Get my fleet valued
+                        </Link>
+                    </div>
+                </div>
             </div>
 
             {/* Modal host so cards can open the car details drawer from the homepage */}

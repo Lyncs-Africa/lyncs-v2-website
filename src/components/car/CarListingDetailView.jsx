@@ -425,6 +425,19 @@ export default function CarListingDetailView({ carId: propCarId }) {
 
   const hasPrice = car?.priceNgn !== null && car?.priceNgn !== undefined;
   const isProvisional = car?.pricing?.status === "provisional";
+
+  // Vehicles arrive 60 days from today; show the buyer the expected date.
+  const arrivalDate = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 60);
+    return d.toLocaleDateString("en-GB", {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, []);
+
   // Purchase handlers
   const handleSelectPaymentMode = (mode) => {
     setPaymentMode(mode);
@@ -774,7 +787,7 @@ export default function CarListingDetailView({ carId: propCarId }) {
                   <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
                     {hasPrice
                       ? isProvisional
-                        ? "Estimated total"
+                        ? "Starting at"
                         : "Total landed price"
                       : "Price unavailable"}
                   </p>
@@ -894,11 +907,7 @@ export default function CarListingDetailView({ carId: propCarId }) {
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-5 sm:p-6 shadow-xs space-y-5">
             <div>
               <p className="text-11px uppercase tracking-wider text-slate-400 dark:text-slate-500 font-semibold">
-                {hasPrice
-                  ? isProvisional
-                    ? "Estimated total"
-                    : "Total landed price"
-                  : "Price unavailable"}
+                {hasPrice ? "Starting at" : "Price unavailable"}
               </p>
               <div className="flex items-baseline gap-2.5 mt-1 flex-wrap">
                 <span className="text-28px sm:text-32px font-bold text-slate-900 dark:text-white tracking-tight">
@@ -910,49 +919,23 @@ export default function CarListingDetailView({ carId: propCarId }) {
                   </span>
                 )}
               </div>
-              {isProvisional ? (
-                <p className="text-12px text-amber-600 dark:text-amber-400 font-medium mt-1">
-                  Estimated total; final clearing or vehicle classification may change the price.
-                </p>
-              ) : (
-                <p className="text-12px text-emerald-600 dark:text-emerald-400 font-medium mt-1">
-                  Total landed price for Lagos port delivery. Outright & installment plans available.
-                </p>
-              )}
             </div>
 
-            {/* Landed Pricing Breakdown Rows */}
-            {(car.basePriceNgn || car.shippingFeeNgn || car.pricing) && (
-              <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-3.5 space-y-2 text-12px border border-slate-100 dark:border-white/5">
-                <p className="font-semibold text-slate-700 dark:text-slate-300 text-11px uppercase tracking-wider">
-                  Landed Price Breakdown
-                </p>
-                {(car.basePriceNgn || car.pricing?.basePriceNgn) && (
-                  <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                    <span>Base vehicle price</span>
-                    <span className="font-medium text-slate-900 dark:text-slate-200">
-                      ₦{numberWithCommas(car.basePriceNgn || car.pricing?.basePriceNgn)}
-                    </span>
-                  </div>
-                )}
-                {(car.shippingFeeNgn || car.pricing?.shippingFeeNgn) && (
-                  <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                    <span>Import shipping</span>
-                    <span className="font-medium text-slate-900 dark:text-slate-200">
-                      ₦{numberWithCommas(car.shippingFeeNgn || car.pricing?.shippingFeeNgn)}
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>Port clearing</span>
-                  <span className="font-medium text-slate-900 dark:text-slate-200">
-                    {(car.clearingFeeNgn || car.pricing?.clearingFeeNgn)
-                      ? `₦${numberWithCommas(car.clearingFeeNgn || car.pricing?.clearingFeeNgn)}`
-                      : "₦0 (Provisional)"}
-                  </span>
+            {/* Important: expected arrival (today + 60 days) */}
+            <div className="rounded-xl bg-amber-50 dark:bg-amber-950/30 p-3.5 border border-amber-200/70 dark:border-amber-800/40">
+              <div className="flex items-start gap-2.5">
+                <BsCalendar4Event className="text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" size={16} />
+                <div>
+                  <p className="text-12px font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">
+                    Arrives in 60 days
+                  </p>
+                  <p className="text-13px text-amber-800 dark:text-amber-200 mt-0.5 leading-relaxed">
+                    Your car is expected to arrive by{" "}
+                    <strong>{arrivalDate}</strong>. Please plan around this delivery window before ordering.
+                  </p>
                 </div>
               </div>
-            )}
+            </div>
 
             <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-white/10">
               <button

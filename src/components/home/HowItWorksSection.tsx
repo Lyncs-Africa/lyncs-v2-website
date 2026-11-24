@@ -38,7 +38,7 @@ const STEPS: Step[] = [
         tags: ['18–24 months', 'Partner banks', 'Drive right away'],
         card: 'bg-[#FBEEDD]',
         dot: 'bg-amber-500',
-        stagger: 'md:mt-8',
+        stagger: 'md:mt-28',
     },
 ]
 
@@ -147,7 +147,6 @@ export default function HowItWorksSection() {
                     ))}
                 </motion.div>
 
-                {/* Soft nudge for anyone still weighing it up */}
                 <div className="mt-16 flex flex-col gap-6 border-t border-slate-200 pt-10 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
                     <div className="max-w-xl">
                         <h3 className="text-[22px] font-bold tracking-tight text-primary dark:text-white">

@@ -31,6 +31,7 @@ export default function SwapLockInStepModal({
   const owner = useValuationStore((s) => s.owner);
   const result = useValuationStore((s) => s.result);
   const tenor = useValuationStore((s) => s.tenor);
+  const balanceMode = useValuationStore((s) => s.balanceMode);
   const evs = useValuationStore((s) => s.evs);
   const selectedEvId = useValuationStore((s) => s.selectedEvId);
   const resetOwner = useValuationStore((s) => s.resetOwner);
@@ -56,6 +57,8 @@ export default function SwapLockInStepModal({
       result ? (result.min + result.max) / 2 : 0
     );
   const breakdown = result ? getBreakdown(result, tenor, effectiveTarget) : null;
+  const hasBalance = (breakdown?.financed ?? 0) > 0;
+  const isInstallment = hasBalance && balanceMode === "installment";
 
   const validate = () => {
     const errs = {};
@@ -109,17 +112,31 @@ export default function SwapLockInStepModal({
     fd.set("estimateMin", String(result.min));
     fd.set("estimateMax", String(result.max));
 
-    fd.set("tenor", `${tenor} months`);
-    fd.set("spreadOver", `${tenor} months`);
-    fd.set("tenorMonths", String(tenor));
-    fd.set("months", String(tenor));
-    fd.set("repaymentTenor", `${tenor} months`);
-    fd.set("installmentMonths", String(tenor));
+    // How the balance (if any) is being cleared.
+    fd.set("balancePaymentMode", isInstallment ? "installment" : "once");
+    fd.set(
+      "balancePaymentLabel",
+      !hasBalance
+        ? "Fully covered by trade-in"
+        : isInstallment
+        ? `Installments over ${tenor} months`
+        : "Pay balance at once"
+    );
+    fd.set("balanceToFinance", String(Math.round(breakdown?.financed ?? 0)));
+
+    if (isInstallment) {
+      fd.set("tenor", `${tenor} months`);
+      fd.set("spreadOver", `${tenor} months`);
+      fd.set("tenorMonths", String(tenor));
+      fd.set("months", String(tenor));
+      fd.set("repaymentTenor", `${tenor} months`);
+      fd.set("installmentMonths", String(tenor));
+    }
 
     fd.set("targetEvName", effectiveTarget.name);
     fd.set("targetEvPrice", String(effectiveTarget.price));
 
-    if (breakdown?.monthly != null) {
+    if (isInstallment && breakdown?.monthly != null) {
       fd.set("monthlyPayment", String(Math.round(breakdown.monthly)));
       fd.set("monthlyEstimate", String(Math.round(breakdown.monthly)));
     }
@@ -224,9 +241,14 @@ export default function SwapLockInStepModal({
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 text-slate-500 dark:text-slate-400">
             <span>
-              Toward {effectiveTarget.name} • Spread over {tenor} months
+              Toward {effectiveTarget.name}
+              {!hasBalance
+                ? " • Fully covered by trade-in"
+                : isInstallment
+                ? ` • Balance ${nairaM(breakdown.financed)} over ${tenor} months`
+                : ` • Balance ${nairaM(breakdown.financed)} paid at once`}
             </span>
-            {breakdown?.monthly != null && (
+            {isInstallment && breakdown?.monthly != null && (
               <span className="font-medium text-slate-700 dark:text-slate-200">
                 ~{monthlyLabel(breakdown.monthly)}/mo
               </span>

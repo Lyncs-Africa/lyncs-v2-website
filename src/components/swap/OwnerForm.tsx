@@ -24,6 +24,11 @@ export default function OwnerForm() {
             <p className="mt-1 text-sm text-slate-500 dark:text-white/60">
                 We&apos;ll use this to estimate what your car is worth toward an EV.
             </p>
+            <p className="mt-2 text-[13px] text-slate-500 dark:text-white/50">
+                We only accept the makes and models in the lists below for swap. If
+                your vehicle isn&apos;t listed, we&apos;re unable to take it as a swap
+                at this time.
+            </p>
 
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <ValuationSelect

@@ -38,6 +38,7 @@ function buildWhatsappHref(parts) {
 export default function SwapValuationStepModal({
   targetCar,
   onContinueToLockIn,
+  onOpenSpread,
   onBack,
   onClose,
   hideClose = false,
@@ -49,11 +50,14 @@ export default function SwapValuationStepModal({
   const status = useValuationStore((s) => s.status);
   const result = useValuationStore((s) => s.result);
   const tenor = useValuationStore((s) => s.tenor);
-  const setTenor = useValuationStore((s) => s.setTenor);
   const evs = useValuationStore((s) => s.evs);
   const setEvs = useValuationStore((s) => s.setEvs);
   const selectedEvId = useValuationStore((s) => s.selectedEvId);
   const setSelectedEv = useValuationStore((s) => s.setSelectedEv);
+
+  // How the user wants to clear whatever balance is left after the trade-in.
+  const balanceMode = useValuationStore((s) => s.balanceMode);
+  const setBalanceMode = useValuationStore((s) => s.setBalanceMode);
 
   useEffect(() => {
     if (!targetCar) return;
@@ -88,7 +92,7 @@ export default function SwapValuationStepModal({
       : null;
 
   return (
-    <div className="space-y-4 px-1 no-scrollbar font-Quicksand">
+    <div className="space-y-4 px-1 pb-28 no-scrollbar font-Quicksand">
       {/* Header matching PurchaseInstallmentTermModal */}
       <div className="flex items-start justify-between pb-2 border-b border-light dark:border-slate-800">
         <div>
@@ -113,6 +117,13 @@ export default function SwapValuationStepModal({
           </button>
         )}
       </div>
+
+      {/* Accept-list notice: we only swap the makes/models offered below. */}
+      <p className="text-12px text-slate-500 dark:text-slate-400 leading-snug">
+        We only accept the makes and models listed below for swap. If your
+        vehicle isn&apos;t in the list, we&apos;re unable to take it as a swap at
+        this time.
+      </p>
 
       {/* Vehicle Fields using HeroUI Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -305,48 +316,84 @@ export default function SwapValuationStepModal({
               )}
             </p>
 
-            {/* Spread over pills matching PurchaseInstallmentTermModal */}
-            <div className="pt-2 border-t border-light dark:border-slate-800 space-y-2">
-              <p className="text-13px font-medium text-black dark:text-white">
-                Spread remaining balance over
-              </p>
-              <div
-                className="flex flex-wrap gap-2"
-                role="radiogroup"
-                aria-label="Repayment tenor"
-              >
-                {EV_CONFIG.tenorOptions.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    role="radio"
-                    aria-checked={tenor === t}
-                    onClick={() => setTenor(t)}
-                    className={classNames(
-                      "px-5 py-2 rounded-full border text-13px font-medium transition-colors cursor-pointer",
-                      tenor === t
-                        ? "border-primary bg-primary text-white dark:bg-[#2D419A] dark:border-[#2D419A]"
-                        : "border-light dark:border-slate-800 bg-eminence dark:bg-slate-800 text-black dark:text-white hover:border-primary/50"
-                    )}
-                  >
-                    {t} months
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Pay the remaining balance at once, or spread it over months */}
+            {breakdown.financed > 0 && (
+              <div className="pt-2 border-t border-light dark:border-slate-800 space-y-2.5">
+                <p className="text-13px font-medium text-black dark:text-white">
+                  How would you like to pay the balance?
+                </p>
+                <div
+                  className="inline-flex items-center gap-1 rounded-full border border-light dark:border-slate-700 bg-eminence dark:bg-slate-800 p-1"
+                  role="radiogroup"
+                  aria-label="Balance payment method"
+                >
+                  {[
+                    { key: "once", label: "Pay at once" },
+                    { key: "installment", label: "Pay in installments" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      role="radio"
+                      aria-checked={balanceMode === opt.key}
+                      onClick={() => setBalanceMode(opt.key)}
+                      className={classNames(
+                        "rounded-full px-5 py-2 text-13px font-semibold transition-colors cursor-pointer",
+                        balanceMode === opt.key
+                          ? "bg-primary text-white dark:bg-[#2D419A] shadow-sm"
+                          : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
 
-            {breakdown.monthly != null && (
-              <div className="flex justify-between items-center pt-1 text-14px">
-                <span className="text-slate-600 dark:text-slate-400">
-                  Estimated monthly payment
-                </span>
-                <span className="font-bold text-primary dark:text-accent">
-                  {monthlyLabel(breakdown.monthly)}/mo
-                </span>
+                {balanceMode === "once" ? (
+                  <div className="flex justify-between items-center pt-1 text-14px">
+                    <span className="text-slate-600 dark:text-slate-400">
+                      Balance to pay
+                    </span>
+                    <span className="font-bold text-primary dark:text-accent">
+                      {nairaM(breakdown.financed)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={onOpenSpread}
+                      className="flex w-full items-center justify-between gap-3 rounded-xl border border-light dark:border-slate-700 bg-eminence dark:bg-slate-800 px-4 py-3 text-left transition-colors hover:border-primary/50 cursor-pointer"
+                    >
+                      <span className="text-13px">
+                        <span className="block text-slate-500 dark:text-slate-400">
+                          Spread over
+                        </span>
+                        <span className="block font-semibold text-black dark:text-white">
+                          {tenor} months
+                        </span>
+                      </span>
+                      <span className="text-13px font-semibold text-primary dark:text-accent">
+                        Change
+                      </span>
+                    </button>
+
+                    {breakdown.monthly != null && (
+                      <div className="flex justify-between items-center pt-1 text-14px">
+                        <span className="text-slate-600 dark:text-slate-400">
+                          Estimated monthly payment
+                        </span>
+                        <span className="font-bold text-primary dark:text-accent">
+                          {monthlyLabel(breakdown.monthly)}/mo
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
-            <p className="text-11px text-slate-400 dark:text-slate-500">
+            <p className="text-12px text-slate-400 dark:text-slate-500">
               Estimate only. Final value is confirmed after inspection and held for{" "}
               {EV_CONFIG.quoteHeldDays} days.
             </p>
@@ -354,25 +401,27 @@ export default function SwapValuationStepModal({
         )}
       </div>
 
-      {/* Footer Buttons matching PurchaseInstallmentTermModal */}
-      <div className="flex items-center justify-center gap-3 pt-4 border-t border-light dark:border-slate-800">
-        <Button
-          variant="bordered"
-          radius="full"
-          onPress={onBack}
-          className="border-slate-300 dark:border-slate-700 font-medium"
-        >
-          Back
-        </Button>
-        <Button
-          color="primary"
-          radius="full"
-          onPress={onContinueToLockIn}
-          isDisabled={status !== "success" || !result}
-          className="px-7 font-semibold text-white"
-        >
-          Lock in this value
-        </Button>
+      {/* Footer Buttons — fixed to the bottom of the drawer and centered */}
+      <div className="bg-white dark:bg-slate-900 fixed w-full bottom-0 left-0 z-20 md:rounded-bl-[24px] border-t border-light dark:border-slate-800">
+        <div className="min-h-[90px] md:p-4 p-3 flex items-center justify-center gap-3">
+          <Button
+            variant="bordered"
+            radius="full"
+            onPress={onBack}
+            className="border-slate-300 dark:border-slate-700 font-medium"
+          >
+            Back
+          </Button>
+          <Button
+            color="primary"
+            radius="full"
+            onPress={onContinueToLockIn}
+            isDisabled={status !== "success" || !result}
+            className="px-7 font-semibold text-white"
+          >
+            Continue to summary
+          </Button>
+        </div>
       </div>
     </div>
   );

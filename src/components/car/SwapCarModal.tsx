@@ -9,6 +9,7 @@ import { numberWithCommas } from "@/lib/utils.js";
 import SmallerModal from "@/components/car/shared/SmallerModal.jsx";
 import SwapValuationStepModal from "@/components/car/swap/SwapValuationStepModal.jsx";
 import SwapLockInStepModal from "@/components/car/swap/SwapLockInStepModal.jsx";
+import SwapSpreadTermModal from "@/components/car/swap/SwapSpreadTermModal.jsx";
 
 type SwapTargetInput = {
   id?: string | number;
@@ -39,6 +40,7 @@ export default function SwapCarModal({
   targetCar = null,
 }: SwapCarModalProps) {
   const [swapStep, setSwapStep] = useState<SwapStep>("owner-valuation");
+  const [spreadOpen, setSpreadOpen] = useState(false);
   const setTab = useValuationStore((s) => s.setTab);
 
   const normalizedTargetCar = useMemo<EvOption | null>(() => {
@@ -61,6 +63,7 @@ export default function SwapCarModal({
       setTab("owner");
     } else {
       setSwapStep("owner-valuation");
+      setSpreadOpen(false);
     }
   }, [isOpen, setTab]);
 
@@ -86,6 +89,7 @@ export default function SwapCarModal({
 
   const handleCloseAll = () => {
     setSwapStep("owner-valuation");
+    setSpreadOpen(false);
     onClose();
   };
 
@@ -164,6 +168,7 @@ export default function SwapCarModal({
               <SwapValuationStepModal
                 targetCar={normalizedTargetCar}
                 onContinueToLockIn={() => setSwapStep("owner-lockin")}
+                onOpenSpread={() => setSpreadOpen(true)}
                 onBack={handleCloseAll}
                 onClose={handleCloseAll}
                 hideClose
@@ -172,6 +177,20 @@ export default function SwapCarModal({
           )}
         </div>
       </div>
+
+      {/* "Spread over" term picker stacked in SmallerModal (rendered outside the
+          .slideUp drawer so its transform/overflow can't clip the overlay). */}
+      <SmallerModal
+        isOpen={isOpen && swapStep === "owner-valuation" && spreadOpen}
+        onClose={() => setSpreadOpen(false)}
+      >
+        {spreadOpen && (
+          <SwapSpreadTermModal
+            targetCar={normalizedTargetCar}
+            onClose={() => setSpreadOpen(false)}
+          />
+        )}
+      </SmallerModal>
 
       {/* Stepped Lock-In Modal stacked in SmallerModal */}
       <SmallerModal

@@ -62,6 +62,16 @@ const PurchaseInstallmentTermModal = ({
     }
   }, [contactInfo]);
 
+  // Default to the longest term available (48 months for brand-new, 36 for used)
+  // when the modal opens without a term already chosen.
+  useEffect(() => {
+    if (!months) {
+      const options = getInstallmentTermOptions(car?.usage);
+      onChangeMonths?.(Math.max(...options));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const notifyChange = (updatedForm) => {
     const fullName = [updatedForm.firstName, updatedForm.lastName]
       .filter(Boolean)
@@ -181,26 +191,15 @@ const PurchaseInstallmentTermModal = ({
             </span>
           </div>
 
-          <div className="flex justify-between items-center text-14px">
-            <span className="text-slate-600 dark:text-slate-400">Financed amount</span>
-            <span className="font-medium text-slate-800 dark:text-slate-200">
-              ₦{numberWithCommas(breakdown.financedAmount)}
-            </span>
-          </div>
-
           <div className="flex justify-between items-center text-14px border-t border-slate-200 dark:border-slate-800 pt-2">
             <span className="font-semibold text-slate-800 dark:text-slate-200">
-              Monthly installment ({months} mos)
+              Monthly installment ({months} months)
             </span>
             <span className="text-16px font-bold text-primary dark:text-accent">
               ₦{numberWithCommas(breakdown.monthlyInstallment)}
               <span className="text-12px font-normal text-slate-500">/mo</span>
             </span>
           </div>
-
-          <p className="text-11px text-slate-400 dark:text-slate-500 pt-1">
-            40% upfront deposit and 7.5% interest applied to financed amount.
-          </p>
         </div>
       )}
 
