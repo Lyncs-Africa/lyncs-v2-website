@@ -707,9 +707,9 @@ export default function CarListingDetailView({ carId: propCarId }) {
                   )}
 
                   {/* Bottom Counter Pill */}
-                  <div className="absolute bottom-3 right-3 z-20 bg-black/65 backdrop-blur-xs text-white text-12px font-semibold px-3 py-1 rounded-full">
+                  {/* <div className="absolute bottom-3 right-3 z-20 bg-black/65 backdrop-blur-xs text-white text-12px font-semibold px-3 py-1 rounded-full">
                     {activeImage + 1} / {images.length}
-                  </div>
+                  </div> */}
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center text-slate-300 dark:text-slate-600">
