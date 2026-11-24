@@ -5,6 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { IoClose, IoCheckmarkCircleOutline, IoNotificationsOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { submitCarRequest } from "../../lib/api/cars.js";
+import { normalizePhoneInput } from "../../lib/utils.js";
+import { PhoneInput } from "react-international-phone";
 import { Button, Input, Select, SelectItem } from "../ui/HeroUI.jsx";
 import cn from "classnames";
 
@@ -327,13 +329,12 @@ export default function NotifyMeModal({
                     <label className="text-12px font-semibold text-slate-700 dark:text-slate-300">
                       Phone / WhatsApp <span className="text-red-500">*</span>
                     </label>
-                    <Input
-                      type="tel"
+                    <PhoneInput
+                      defaultCountry="ng"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+234 800 000 0000"
+                      onChange={(val) => setPhone(normalizePhoneInput(val))}
+                      placeholder="800 000 0000"
                       className="w-full"
-                      required
                     />
                   </div>
                 </div>
