@@ -4,14 +4,22 @@ import React, { useMemo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button, Select, SelectItem } from "../../ui/HeroUI.jsx";
 import { CiSearch } from "react-icons/ci";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoNotificationsOutline } from "react-icons/io5";
 import cn from "classnames";
 import { numberWithCommas, titleCase } from "../../../lib/utils.js";
 import { useCarStore } from "../../../store/carStore.js";
 import { TOP_MAKES } from "../../../lib/vehicleBrands.js";
-import { CAR_TABS, getTab, USE_CASE_OPTIONS } from "../../../lib/carSegments.js";
+import {
+  CAR_TABS,
+  getTab,
+  USE_CASE_OPTIONS,
+  getSavedCatalogPreference,
+  saveCatalogPreference,
+} from "../../../lib/carSegments.js";
 import { useCarsCatalogInfiniteQuery } from "../../../hooks/useCarsCatalog";
 import CarCard from "./CarCard.jsx";
+import NotifyMeModal from "../NotifyMeModal.jsx";
+import CatalogPreferenceModal from "../CatalogPreferenceModal.jsx";
 
 export const MAKES = TOP_MAKES;
 
@@ -43,18 +51,69 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [origin, setOrigin] = useState("all");
-  const [useCase, setUseCase] = useState("all");
+  const [useCase, setUseCase] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = getSavedCatalogPreference();
+      if (saved) return saved;
+    }
+    return "all";
+  });
   const [sort, setSort] = useState("newest");
+  const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false);
+  const [isPrefModalOpen, setIsPrefModalOpen] = useState(false);
   const catalogGridRef = useRef(null);
   const sentinelRef = useRef(null);
 
   const isUsedTab = usage === "used" || usage === "used-cars";
   const normalizedUsage = isUsedTab ? "used" : "brand-new";
 
+  // Check 24-hour catalogue category preference on mount
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(search.trim()), 350);
+    const saved = getSavedCatalogPreference();
+    if (saved) {
+      setUseCase(saved);
+      setIsPrefModalOpen(false);
+    } else {
+      setIsPrefModalOpen(true);
+    }
+  }, []);
+
+  const handleSelectCatalogPreference = (category) => {
+    setUseCase(category);
+    saveCatalogPreference(category);
+    setIsPrefModalOpen(false);
+  };
+
+  const handleCloseCatalogPreference = () => {
+    saveCatalogPreference(useCase || "all");
+    setIsPrefModalOpen(false);
+  };
+
+  useEffect(() => {
+    const query = search.trim();
+    // Immediate reset when input is cleared
+    if (!query) {
+      setDebouncedSearch("");
+      return;
+    }
+    // Debounce backend search by 500ms so typing does not fire on every keystroke
+    const handler = setTimeout(() => {
+      setDebouncedSearch(query);
+    }, 500);
     return () => clearTimeout(handler);
   }, [search]);
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setDebouncedSearch(search.trim());
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
+    setDebouncedSearch("");
+  };
 
   // Fetch & infinite cache cars via React Query (/cars/catalog)
   const {
@@ -242,7 +301,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   return (
     <div className="w-full space-y-6">
       {/* Audience / condition tabs — one segmented toggle, two pills in a single track. */}
-      <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
+      {/* <div className="-mx-4 px-4 sm:mx-0 sm:px-0">
         <div
           className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800/60 p-1"
           role="tablist"
@@ -268,6 +327,47 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
               </Link>
             );
           })}
+        </div>
+      </div> */}
+
+      <div className="bg-white dark:bg-slate-900 rounded-t">
+        <div className="flex items-center justify-between gap-3 relative border-b border-slate-200 dark:border-slate-800">
+          <div className="flex text-sm sm:text-base items-center gap-5 sm:gap-8 text-slate-900 dark:text-slate-100 font-[400]">
+            <Link
+              href="/cars?condition=new"
+              scroll={false}
+              className={cn(
+                'relative cursor-pointer whitespace-nowrap py-3  flex items-center gap-2 transition-opacity',
+                {
+                  'after:content-[""] after:h-[2px] sm:after:h-[3px] after:w-full after:absolute after:bg-primary after:bottom-[-1px] after:left-0 after:rounded-full font-semibold text-primary dark:text-white':
+                    activeTab === 'new',
+                  'opacity-60 hover:opacity-100': activeTab !== 'new',
+                }
+              )}
+            >
+              <span>New</span>
+            </Link>
+            <Link
+              href="/cars?condition=used"
+              scroll={false}
+              className={cn(
+                'relative cursor-pointer whitespace-nowrap py-3  flex items-center gap-2 transition-opacity',
+                {
+                  'after:content-[""] after:h-[2px] sm:after:h-[3px] after:w-full after:absolute after:bg-primary after:bottom-[-1px] after:left-0 after:rounded-full font-semibold text-primary dark:text-white':
+                    activeTab === 'used',
+                  'opacity-60 hover:opacity-100': activeTab !== 'used',
+                }
+              )}
+            >
+              <span>Used</span>
+            </Link>
+          </div>
+          <Link
+            href="/request-vehicle"
+            className="inline-flex h-8 sm:h-10 items-center justify-center rounded-full bg-primary px-3.5 sm:px-5 text-12px sm:text-14px font-medium text-white shadow-xs transition hover:bg-primary/90 shrink-0 cursor-pointer"
+          >
+            Request a vehicle
+          </Link>
         </div>
       </div>
 
@@ -296,43 +396,50 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
             placeholder="Search by vehicle name or brand..."
-            className="w-full pl-10 pr-4 py-2.5 sm:py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-14px text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-accent/20 focus:border-primary dark:focus:border-accent shadow-xs"
+            className="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl text-14px text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-accent/20 focus:border-primary dark:focus:border-accent shadow-xs"
           />
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-          <div className="w-full sm:w-48">
-            <Select
-              placeholder="Use case"
-              selectedKeys={useCase ? [useCase] : ["all"]}
-              onSelectionChange={(keys) => setUseCase(Array.from(keys)[0] || "all")}
-              size="md"
-              aria-label="Filter by use case"
-            >
-              {USE_CASE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full sm:w-auto sm:flex sm:items-center">
+            <div className="w-full sm:w-48">
+              <Select
+                placeholder="Use case"
+                selectedKeys={useCase ? [useCase] : ["all"]}
+                onSelectionChange={(keys) => {
+                  const val = Array.from(keys)[0] || "all";
+                  setUseCase(val);
+                  saveCatalogPreference(val);
+                }}
+                size="md"
+                aria-label="Filter by use case"
+              >
+                {USE_CASE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
 
-          <div className="w-full sm:w-44">
-            <Select
-              placeholder="Fuel Type"
-              selectedKeys={type ? [type] : ["all"]}
-              onSelectionChange={(keys) => setType(Array.from(keys)[0] || "all")}
-              size="md"
-              aria-label="Filter by fuel type"
-            >
-              {TYPE_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </Select>
+            <div className="w-full sm:w-44">
+              <Select
+                placeholder="Fuel Type"
+                selectedKeys={type ? [type] : ["all"]}
+                onSelectionChange={(keys) => setType(Array.from(keys)[0] || "all")}
+                size="md"
+                aria-label="Filter by fuel type"
+              >
+                {TYPE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
           </div>
 
           {isUsedTab && (
@@ -369,12 +476,12 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
             </Select>
           </div>
 
-          <Link
+          {/* <Link
             href="/request-vehicle"
             className="inline-flex h-10 w-full sm:w-auto items-center justify-center rounded-full bg-primary px-5 text-14px font-medium text-white shadow-xs transition hover:bg-primary/90 shrink-0 cursor-pointer"
           >
             Request a vehicle
-          </Link>
+          </Link> */}
         </div>
       </div>
 
@@ -454,28 +561,49 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
               ))}
             </div>
           ) : filteredCars.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-12 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mx-auto flex items-center justify-center">
-                <CiSearch size={24} />
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-8 sm:p-12 text-center space-y-4">
+              <div className="w-14 h-14 rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent mx-auto flex items-center justify-center">
+                <IoNotificationsOutline size={28} />
               </div>
-              <h3 className="text-16px font-bold text-slate-800 dark:text-white">No Vehicles Found</h3>
-              <p className="text-13px text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                No vehicles matched your criteria. Try adjusting your brand or powertrain filters, or request a custom vehicle.
-              </p>
-              <div className="pt-2">
+              <div className="space-y-1.5">
+                <h3 className="text-17px font-bold text-slate-800 dark:text-white">
+                  {search ? `No vehicles found for "${search}"` : "No Vehicles Found"}
+                </h3>
+                <p className="text-13px sm:text-14px text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+                  {search
+                    ? `We don't have "${search}" in our catalog right now, but we can source it for you or alert you as soon as it arrives.`
+                    : "No vehicles matched your current filters. You can reset your filters or request to be notified when matching cars arrive."}
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Button
-                  size="sm"
+                  size="md"
                   color="primary"
                   radius="full"
-                  onPress={() => {
-                    setMake("");
-                    setType("all");
-                    setSearch("");
-                  }}
-                  className="text-white cursor-pointer"
+                  onPress={() => setIsNotifyModalOpen(true)}
+                  className="text-white font-medium px-6 w-full sm:w-auto cursor-pointer shadow-sm flex items-center justify-center gap-2"
                 >
-                  Reset All Filters
+                  <IoNotificationsOutline size={18} />
+                  <span>Notify Me When Available</span>
                 </Button>
+                {(make || type !== "all" || origin !== "all" || search) && (
+                  <Button
+                    size="md"
+                    variant="flat"
+                    radius="full"
+                    onPress={() => {
+                      setMake("");
+                      setType("all");
+                      setOrigin("all");
+                      setSearch("");
+                      setDebouncedSearch("");
+                    }}
+                    className="w-full sm:w-auto cursor-pointer"
+                  >
+                    Reset All Filters
+                  </Button>
+                )}
               </div>
             </div>
           ) : (
@@ -594,6 +722,30 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
           </div>
         </div>
       </div>
+
+      {/* Notify Me When Available Modal */}
+      <NotifyMeModal
+        isOpen={isNotifyModalOpen}
+        onClose={() => setIsNotifyModalOpen(false)}
+        onResetFilters={() => {
+          setSearch("");
+          setDebouncedSearch("");
+          setMake("");
+          setType("all");
+          setOrigin("all");
+        }}
+        initialVehicle={search || make || ""}
+        initialUsage={normalizedUsage}
+        initialFuelType={type !== "all" ? type : "petrol"}
+      />
+
+      {/* 24-Hour Catalog Category Preference Modal */}
+      <CatalogPreferenceModal
+        isOpen={isPrefModalOpen}
+        currentSelection={useCase}
+        onSelect={handleSelectCatalogPreference}
+        onClose={handleCloseCatalogPreference}
+      />
     </div>
   );
 };
