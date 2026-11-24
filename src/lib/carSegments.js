@@ -25,9 +25,8 @@ export const USE_CASE_OPTIONS = [
   { value: 'businesses', label: 'For businesses' },
   { value: 'top-executives', label: 'For top executives' },
   { value: 'drivers', label: 'For e-hailing drivers' },
-  { value: 'e-hailing', label: 'For e-hailing drivers' },
   { value: 'schools', label: 'For schools' },
-  { value: 'individuals', label: 'For individuals' },
+  { value: 'individuals', label: 'For staff members' },
 ]
 
 export const SEGMENT_KEYS = USE_CASE_OPTIONS.filter((o) => o.value !== 'all').map((o) => o.value)

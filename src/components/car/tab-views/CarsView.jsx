@@ -1,22 +1,15 @@
 "use client";
 
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import Link from "next/link";
-import { Button, Select, SelectItem } from "../../ui/HeroUI.jsx";
-import { CiSearch } from "react-icons/ci";
-import { IoClose, IoNotificationsOutline } from "react-icons/io5";
+import {Button, Select, SelectItem} from "../../ui/HeroUI.jsx";
+import {CiSearch} from "react-icons/ci";
+import {IoClose, IoNotificationsOutline} from "react-icons/io5";
 import cn from "classnames";
-import { numberWithCommas, titleCase } from "../../../lib/utils.js";
-import { useCarStore } from "../../../store/carStore.js";
-import { TOP_MAKES } from "../../../lib/vehicleBrands.js";
-import {
-  CAR_TABS,
-  getTab,
-  USE_CASE_OPTIONS,
-  getSavedCatalogPreference,
-  saveCatalogPreference,
-} from "../../../lib/carSegments.js";
-import { useCarsCatalogInfiniteQuery } from "../../../hooks/useCarsCatalog";
+import {titleCase} from "../../../lib/utils.js";
+import {TOP_MAKES} from "../../../lib/vehicleBrands.js";
+import {getSavedCatalogPreference, getTab, saveCatalogPreference, USE_CASE_OPTIONS,} from "../../../lib/carSegments.js";
+import {useCarsCatalogInfiniteQuery} from "../../../hooks/useCarsCatalog";
 import CarCard from "./CarCard.jsx";
 import NotifyMeModal from "../NotifyMeModal.jsx";
 import CatalogPreferenceModal from "../CatalogPreferenceModal.jsx";
@@ -24,27 +17,27 @@ import CatalogPreferenceModal from "../CatalogPreferenceModal.jsx";
 export const MAKES = TOP_MAKES;
 
 export const TYPE_OPTIONS = [
-  { value: "all", label: "All types" },
-  { value: "electric", label: "Electric" },
-  { value: "petrol", label: "Petrol" },
-  { value: "hybrid", label: "Hybrid" },
+  {value: "all", label: "All types"},
+  {value: "electric", label: "Electric"},
+  {value: "petrol", label: "Petrol"},
+  {value: "hybrid", label: "Hybrid"},
 ];
 
 export const ORIGIN_OPTIONS = [
-  { value: "all", label: "All used cars" },
-  { value: "local", label: "Nigerian used" },
-  { value: "imported", label: "Foreign used" },
+  {value: "all", label: "All used cars"},
+  {value: "local", label: "Nigerian used"},
+  {value: "imported", label: "Foreign used"},
 ];
 
 export const SORT_OPTIONS = [
-  { value: "newest", label: "Newest first" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
+  {value: "newest", label: "Newest first"},
+  {value: "price_asc", label: "Price: Low to High"},
+  {value: "price_desc", label: "Price: High to Low"},
 ];
 
 const PAGE_SIZE = 12;
 
-const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
+const CarsView = ({usage = "brand-new", activeTab = "new"}) => {
   const activeTabMeta = getTab(activeTab);
   const [type, setType] = useState("all");
   const [make, setMake] = useState("");
@@ -135,7 +128,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
   });
 
   // Deduplicate loaded cars across pages using platform:id key
-  const { cars, paginationInfo } = useMemo(() => {
+  const {cars, paginationInfo} = useMemo(() => {
     const pages = data?.pages || [];
     const carMap = new Map();
     let latestPagination = null;
@@ -277,8 +270,8 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
       rafId = requestAnimationFrame(updateSticky);
     };
 
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize, { passive: true });
+    window.addEventListener("scroll", onScrollOrResize, {passive: true});
+    window.addEventListener("resize", onScrollOrResize, {passive: true});
 
     let resizeObserver = null;
     if (typeof ResizeObserver !== "undefined") {
@@ -295,7 +288,6 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
-
 
 
   return (
@@ -330,9 +322,11 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
         </div>
       </div> */}
 
-      <div className="bg-white dark:bg-slate-900 rounded-t">
-        <div className="flex items-center justify-between gap-3 relative border-b border-slate-200 dark:border-slate-800">
-          <div className="flex text-sm sm:text-base items-center gap-5 sm:gap-8 text-slate-900 dark:text-slate-100 font-[400]">
+      <div>
+        <div
+          className="flex items-center justify-between gap-3 relative border-b border-slate-200 dark:border-slate-800">
+          <div
+            className="flex text-sm sm:text-base items-center gap-5 sm:gap-8 text-slate-900 dark:text-slate-100 font-[400]">
             <Link
               href="/cars?condition=new"
               scroll={false}
@@ -345,7 +339,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
                 }
               )}
             >
-              <span>New</span>
+              <span>New Vehicles</span>
             </Link>
             <Link
               href="/cars?condition=used"
@@ -359,7 +353,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
                 }
               )}
             >
-              <span>Used</span>
+              <span>Used Vehicles</span>
             </Link>
           </div>
           <Link
@@ -389,8 +383,9 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Search */}
         <div className="relative flex-1 max-w-lg">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-            <CiSearch size={20} />
+          <div
+            className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+            <CiSearch size={20}/>
           </div>
           <input
             type="search"
@@ -489,14 +484,15 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
       {make && (
         <div className="flex items-center gap-2">
           <span className="text-12px text-slate-500 dark:text-slate-400">Filtered by:</span>
-          <span className="inline-flex items-center gap-1.5 bg-primary/10 dark:bg-accent/20 text-primary dark:text-accent text-12px font-semibold pl-3 pr-1.5 py-1 rounded-full">
+          <span
+            className="inline-flex items-center gap-1.5 bg-primary/10 dark:bg-accent/20 text-primary dark:text-accent text-12px font-semibold pl-3 pr-1.5 py-1 rounded-full">
             {titleCase(make)}
             <button
               type="button"
               onClick={() => setMake("")}
               className="hover:bg-primary/20 dark:hover:bg-accent/30 rounded-full p-0.5 cursor-pointer"
             >
-              <IoClose size={14} />
+              <IoClose size={14}/>
             </button>
           </span>
           <button
@@ -527,8 +523,9 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
                     : "border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/20"
                 )}
               >
-                <span className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden p-0.5">
-                  <img src={brand.image} alt={brand.name} className="w-full h-full object-contain" />
+                <span
+                  className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden p-0.5">
+                  <img src={brand.image} alt={brand.name} className="w-full h-full object-contain"/>
                 </span>
                 <span className="text-12px">{brand.name}</span>
               </button>
@@ -543,27 +540,29 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
         <div className="lg:col-span-2">
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {Array.from({ length: 6 }).map((_, i) => (
+              {Array.from({length: 6}).map((_, i) => (
                 <div
                   key={i}
                   className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden flex flex-col justify-between animate-pulse"
                 >
-                  <div className="bg-slate-200 dark:bg-slate-800 h-[11.5rem] w-full" />
+                  <div className="bg-slate-200 dark:bg-slate-800 h-[11.5rem] w-full"/>
                   <div className="p-4 space-y-3">
-                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
-                    <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/2" />
+                    <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"/>
+                    <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/2"/>
                     <div className="pt-2 flex justify-between items-center">
-                      <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-24" />
-                      <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-full w-24" />
+                      <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-24"/>
+                      <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-full w-24"/>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredCars.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-8 sm:p-12 text-center space-y-4">
-              <div className="w-14 h-14 rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent mx-auto flex items-center justify-center">
-                <IoNotificationsOutline size={28} />
+            <div
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-8 sm:p-12 text-center space-y-4">
+              <div
+                className="w-14 h-14 rounded-full bg-primary/10 text-primary dark:bg-accent/15 dark:text-accent mx-auto flex items-center justify-center">
+                <IoNotificationsOutline size={28}/>
               </div>
               <div className="space-y-1.5">
                 <h3 className="text-17px font-bold text-slate-800 dark:text-white">
@@ -584,7 +583,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
                   onPress={() => setIsNotifyModalOpen(true)}
                   className="text-white font-medium px-6 w-full sm:w-auto cursor-pointer shadow-sm flex items-center justify-center gap-2"
                 >
-                  <IoNotificationsOutline size={18} />
+                  <IoNotificationsOutline size={18}/>
                   <span>Notify Me When Available</span>
                 </Button>
                 {(make || type !== "all" || origin !== "all" || search) && (
@@ -621,24 +620,24 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {filteredCars.map((car) => {
                   const key = `${car.platform || car.source || "guazi"}:${car.id || car.productId}`;
-                  return <CarCard key={key} car={car} />;
+                  return <CarCard key={key} car={car}/>;
                 })}
               </div>
 
               {/* Next Page Auto-loading Skeleton */}
               {isFetchingNextPage && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                  {Array.from({ length: 2 }).map((_, i) => (
+                  {Array.from({length: 2}).map((_, i) => (
                     <div
                       key={`loading-more-${i}`}
                       className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden animate-pulse flex flex-col justify-between"
                     >
-                      <div className="bg-slate-200 dark:bg-slate-800 h-[11.5rem] w-full" />
+                      <div className="bg-slate-200 dark:bg-slate-800 h-[11.5rem] w-full"/>
                       <div className="p-4 space-y-3">
-                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4" />
-                        <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/2" />
+                        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4"/>
+                        <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/2"/>
                         <div className="pt-2 flex justify-between items-center">
-                          <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-24" />
+                          <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded w-24"/>
                         </div>
                       </div>
                     </div>
@@ -647,7 +646,7 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
               )}
 
               {/* Infinite Scroll Sentinel */}
-              <div ref={sentinelRef} className="h-8 w-full pointer-events-none" />
+              <div ref={sentinelRef} className="h-8 w-full pointer-events-none"/>
 
               {/* Manual Load More Button fallback */}
               {hasNextPage && !isFetchingNextPage && (
@@ -664,7 +663,8 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
 
               {/* End of catalog indicator */}
               {!hasNextPage && filteredCars.length > 0 && (
-                <div className="text-center py-6 text-13px text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-white/10 mt-6">
+                <div
+                  className="text-center py-6 text-13px text-slate-400 dark:text-slate-500 border-t border-slate-100 dark:border-white/10 mt-6">
                   You have viewed all available vehicles ({filteredCars.length} loaded)
                 </div>
               )}
@@ -676,9 +676,10 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
         <div
           ref={sidebarRef}
           className="hidden lg:block lg:col-span-1 sticky self-start z-10 w-full"
-          style={{ top: "146px" }}
+          style={{top: "146px"}}
         >
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-xs">
+          <div
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-xs">
             <div className="flex items-center justify-between mb-3 border-b border-slate-100 dark:border-white/10 pb-2">
               <p className="font-semibold text-16px text-slate-900 dark:text-white">Shop by Make</p>
               {make && (
@@ -706,7 +707,8 @@ const CarsView = ({ usage = "brand-new", activeTab = "new" }) => {
                         : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-white/5"
                     )}
                   >
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                    <span
+                      className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
                       <img
                         src={option.image}
                         alt={option.name}
